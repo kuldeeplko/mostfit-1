@@ -64,8 +64,14 @@ class Areas < Application
   def branches
     if params[:id]
       area = Area.get(params[:id])
-      next unless area
-      return("<option value=''>Select branch</option>"+area.branches(:order => [:name]).map{|br| "<option value=#{br.id}>#{br.name}</option>"}.join)
+      # I'm not sure what this 'next' was supposed to accomplish, next only makes sense in loops. With
+      # ruby 1.9 this generates a syntax error: Invalid next, so I replaced it with a more sensible(?)
+      # conditional
+
+      # next unless area
+      if area
+        return("<option value=''>Select branch</option>"+area.branches(:order => [:name]).map{|br| "<option value=#{br.id}>#{br.name}</option>"}.join)
+      end
     end
   end
 

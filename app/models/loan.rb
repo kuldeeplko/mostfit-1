@@ -34,10 +34,8 @@ class Loan
   #  after  :destroy, :update_history
 
   before :valid?, :set_amount
-  validates_with_method :original_properties_specified?, :when => Proc.new{|l| l.taken_over?}
-  validates_with_method :taken_over_properly?, :when => Proc.new{|l| l.taken_over?}
-
-
+  validates_with_method :original_properties_specified?, :when => :taken_over
+  validates_with_method :taken_over_properly?, :when => :taken_over
 
   attr_accessor :history_disabled  # set to true to disable history writing by this object
   attr_accessor :interest_percentage
@@ -200,7 +198,7 @@ class Loan
   validates_with_method  :scheduled_disbursal_date,     :method => :scheduled_disbursal_before_scheduled_first_payment?
   validates_with_method  :cheque_number,                :method => :check_validity_of_cheque_number
   validates_with_method  :client_active,                :method => :is_client_active
-  validates_with_method  :verified_by_user_id,          :method => :verified_cannot_be_deleted, :if => Proc.new{|x| x.deleted_at != nil}
+  validates_with_method  :verified_by_user_id,          :method => :verified_cannot_be_deleted_if_not_deleted
 
   #product validations
 
@@ -1671,11 +1669,17 @@ class Loan
     end
     return true
   end
+
   def verified_cannot_be_deleted
     return true unless verified_by_user_id
     throw :halt
   end
-  
+
+  def verified_cannot_be_deleted_if_not_deleted
+    verified_cannot_be_deleted if self.deleted_at != nil
+  end
+
+ 
   def check_insurance_policy
     return true unless insurance_policy
     return [false, "Insurance Policy is not valid"] unless insurance_policy.valid?

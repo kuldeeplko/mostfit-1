@@ -463,11 +463,11 @@ FactoryGirl.define do
     association         :rule
   end
 
-  factory :predicate do
-    condition_type      'condition'
-    operator            'equal'
-    association         :rule
-  end
+#  factory :predicate do
+#    condition_type      'condition'
+#    operator            'equal'
+#    association         :rule
+#  end
 
   #
   # Account rules

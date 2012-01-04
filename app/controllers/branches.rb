@@ -81,33 +81,45 @@ class Branches < Application
   def centers
     if params[:id] 
       branch = Branch.get(params[:id])
-      next unless branch
-      centers = params[:paying] ? Center.paying_today(session.user, Date.parse(params[:date]), params[:id]) : branch.centers(:order => [:name]) 
-      return("<option value=''>Select center</option>"+centers.map{|cen| "<option value=#{cen.id}>#{cen.name}:#{cen.branch.name}</option>"}.join)
+      # I'm not sure what this 'next' was supposed to accomplish, next only makes sense in loops. With
+      # ruby 1.9 this generates a syntax error: Invalid next, so I replaced it with a more sensible(?)
+      # conditional (see the following actions as well..)
+
+      # next unless branch
+      if branch
+        centers = params[:paying] ? Center.paying_today(session.user, Date.parse(params[:date]), params[:id]) : branch.centers(:order => [:name]) 
+        return("<option value=''>Select center</option>"+centers.map{|cen| "<option value=#{cen.id}>#{cen.name}:#{cen.branch.name}</option>"}.join)
+      end
     end
   end
 
   def accounts
     if params[:id]
       branch = Branch.get(params[:id])
-      next unless branch
-      return("<option value=''>Select account</option>"+branch.accounts(:order => [:name]).map{|acc| "<option value=#{acc.id}>#{acc.name}</option>"}.join)
+      # next unless branch
+      if branch
+        return("<option value=''>Select account</option>"+branch.accounts(:order => [:name]).map{|acc| "<option value=#{acc.id}>#{acc.name}</option>"}.join)
+      end
     end
   end
 
   def cash_accounts
     if params[:id]
       branch = Branch.get(params[:id])
-      next unless branch
-      return("<option value=''>Select account</option>"+branch.accounts(:account_category => "Cash", :order => [:name]).map{|a| "<option value=#{a.id}>#{a.name}</option>"}.join)
+      # next unless branch
+      if branch
+        return("<option value=''>Select account</option>"+branch.accounts(:account_category => "Cash", :order => [:name]).map{|a| "<option value=#{a.id}>#{a.name}</option>"}.join)
+      end
     end
   end
 
   def bank_accounts
     if params[:id]
       branch = Branch.get(params[:id])
-      next unless branch
-      return("<option value=''>Select account</option>"+branch.accounts(:account_category => "Bank", :order => [:name]).map{|a| "<option value=#{a.id}>#{a.name}</option>"}.join)
+      # next unless branch
+      if branch
+        return("<option value=''>Select account</option>"+branch.accounts(:account_category => "Bank", :order => [:name]).map{|a| "<option value=#{a.id}>#{a.name}</option>"}.join)
+      end
     end
   end
 

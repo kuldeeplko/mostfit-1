@@ -82,7 +82,7 @@ Merb::BootLoader.before_app_loads do
     Paperclip.options[:command_path] = "/usr/bin"
   end
   # load the extensions
-  require 'lib/extensions.rb'
+  require Merb.root / 'lib/extensions.rb'
 
   Merb::Plugins.config[:exceptions] = {
     :email_addresses => ['svs@intellecap.net'],
@@ -138,8 +138,8 @@ Merb::BootLoader.after_app_loads do
   end
 
   # set the rights
-  require 'config/misfit'
-  require 'lib/reportage.rb'
+  require Merb.root / 'config/misfit'
+  require Merb.root / 'lib/reportage.rb'
   Mostfit::Business::Rules.deploy
   # enable the extensions
   Misfit::Extensions.hook

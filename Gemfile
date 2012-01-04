@@ -57,6 +57,8 @@ gem 'uuid'
 gem 'builder'
 gem 'gettext'
 gem 'tlsmail'
+gem 'cronedit'
+gem 'log4r'
 
 # pdf-generation
 # PDF functionality should be ported to Prawn, pdf-writer is no longer maintained.
