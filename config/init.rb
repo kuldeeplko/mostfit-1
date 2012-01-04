@@ -1,8 +1,7 @@
 # Go to http://wiki.merbivore.com/pages/init-rb
 # require 'lib/irb.rb'
 require 'yaml'
-require 'config/dependencies.rb'
-require 'version.rb'
+require Merb.root / 'version'
 
 use_orm :datamapper
 use_test :rspec
@@ -34,28 +33,29 @@ Merb::BootLoader.before_app_loads do
     :in_with_paise   => { :number =>   {:precision => 3, :delimiter => ',',  :separator => '.', :regex => /(\d+?)(?=(\d\d)+(\d)(?!\d))(\.\d+)?/},
                           :currency => { :format => '%u %n', :precision => 2, :delimiter => ',' } })
   Numeric::Transformer.change_default_format(:mostfit_default)
-  require 'config/constants.rb'
-  require 'lib/rules'
-  require 'lib/reporting'
+  require Merb.root / 'config/constants'
+  require Merb.root / 'lib/rules'
+  require Merb.root / 'lib/reporting'
+  require Merb.root / 'lib/string.rb'
+  require Merb.root / 'lib/grapher.rb'
+  require Merb.root / 'lib/functions.rb'
+  require Merb.root / 'lib/core_ext.rb'
+  require Merb.root / 'lib/fees_container.rb'
+  require Merb.root / 'lib/datevector.rb'
+
   require 'uuid'
-  require 'ftools'
+  require 'fileutils'
   require 'logger'
   require 'dm-pagination'
   require 'dm-pagination/paginatable'
   require 'dm-pagination/pagination_builder'
-  require 'lib/string.rb'
-  require 'lib/grapher.rb'
-  require 'lib/functions.rb'
-  require 'lib/core_ext.rb'
-  require 'lib/fees_container.rb'
-  require 'lib/datevector.rb'
   require 'gettext'
   require 'haml_gettext'
 
-  #initialize i18n
+  # initialize i18n
   require 'i18n'
   require 'i18n-translate'
-  #load all localize file
+  # load all localize file
   I18n::Backend::Simple.send(:include, I18n::Backend::Translate)
   I18n::Backend::Simple.send(:include, I18n::Backend::PO)
   I18n.load_path << "#{Merb.root}/config/locales/hi.po"

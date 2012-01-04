@@ -318,9 +318,10 @@ module FinancialFunctions
     (cashflows.enum_for(:each_with_index).collect{|x,i| x/((1+discount_rate)**i)}).inject(0){|a,b| a+b}
   end
 
+  # Documentation?
   def irr(cash_flows, iterations = 100)
-    (1..iterations).inject do |rate,|
-      npv = cash_flows.enum_for(:each_with_index).inject {|(m,),(c,t)| m+c/(1.0+rate)**t}
+    (1..iterations).inject do |rate,ignored|
+      npv = cash_flows.enum_for(:each_with_index).inject {|(m,ignored),(c,t)| m+c/(1.0+rate)**t}
       rate * (1 - npv / cash_flows.first)
     end
   end
