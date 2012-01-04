@@ -11,14 +11,14 @@ class Journal
   property :date,           Date,   :index => true, :default => Date.today
   property :created_at,     DateTime, :index => true  
   property :deleted_at,     ParanoidDateTime, :index => true  
-  property :batch_id,       Integer, :nullable => true
+  property :batch_id,       Integer, :required => false
   property :uuid,           String, :default => lambda{ |obj, p| UUID.generate }
   belongs_to :batch
   belongs_to :journal_type
   has n, :postings
   has n, :accounts, :through => :postings
 
-  property :verified_by_user_id, Integer, :nullable => true, :index => true
+  property :verified_by_user_id, Integer, :required => false, :index => true
   belongs_to :verified_by,  :child_key => [:verified_by_user_id],        :model => 'User'
   validates_with_method :verified_by_user_id, :method => :verified_cannot_be_deleted, :on => [:destroy]
   validates_with_method :verified_by_user_id, :method => :verified_cannot_be_deleted, :if => Proc.new{|p| p.deleted_at != nil}

@@ -15,18 +15,18 @@ class Accrual
   CURRENCIES = [DEFAULT_CURRENCY]
   
   property :id,                 Serial
-  property :amount,             Float, :nullable => false
+  property :amount,             Float, :required => true
   property :currency,           Enum.send('[]', *CURRENCIES)
   property :accrual_type,       Enum.send('[]', *ACCRUAL_TYPES)
-  property :accrue_overdue_amount, Boolean, :nullable => false, :default => false
-  property :is_penalty,         Boolean, :nullable => false, :default => false
-  property :accrue_from_date,   Date, :nullable => false
-  property :accrue_till_date,   Date, :nullable => false
-  property :accrue_on_date,     Date, :nullable => false
-  property :created_at,         DateTime, :nullable => false, :default => DateTime.now
-  property :created_by_user_id, Integer, :nullable => false
+  property :accrue_overdue_amount, Boolean, :required => true, :default => false
+  property :is_penalty,         Boolean, :required => true, :default => false
+  property :accrue_from_date,   Date, :required => true
+  property :accrue_till_date,   Date, :required => true
+  property :accrue_on_date,     Date, :required => true
+  property :created_at,         DateTime, :required => true, :default => DateTime.now
+  property :created_by_user_id, Integer, :required => true
 
-  belongs_to :loan, :nullable => true
+  belongs_to :loan, :required => false
   belongs_to :created_by, :child_key => [:created_by_user_id], :model => 'User'
 
   ACCRUE_SIMPLE_INTEREST_RECEIVABLE = { :accrual_type => ACCRUE_INTEREST_RECEIVABLE, :is_penalty => false }

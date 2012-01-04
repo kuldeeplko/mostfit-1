@@ -14,31 +14,31 @@ class Payment
 
   property :id,                  Serial
   property :guid,                String, :default => lambda{ |obj, p| UUID.generate }
-  property :amount,              Float, :nullable => false, :index => true
+  property :amount,              Float, :required => true, :index => true
   property :type,                Enum.send('[]',*PAYMENT_TYPES), :index => true
   property :comment,             String, :length => 50
-  property :received_on,         Date,    :nullable => false, :index => true
-  property :deleted_by_user_id,  Integer, :nullable => true
+  property :received_on,         Date,    :required => true, :index => true
+  property :deleted_by_user_id,  Integer, :required => false
   # Default this one to today?
-  property :created_at,          DateTime,:nullable => false, :index => true
-  property :deleted_at,          ParanoidDateTime, :nullable => true, :index => true
-  property :created_by_user_id,  Integer, :nullable => false, :index => true
-  property :verified_by_user_id, Integer, :nullable => true, :index => true
-  property :loan_id,             Integer, :nullable => true, :index => true
-  property :client_id,           Integer, :nullable => true, :index => true
-  property :c_center_id,           Integer, :nullable => true, :index => true
-  property :c_branch_id,           Integer, :nullable => false, :index => true
-  property :fee_id,              Integer, :nullable => true, :index => true
+  property :created_at,          DateTime,:required => true, :index => true
+  property :deleted_at,          ParanoidDateTime, :required => false, :index => true
+  property :created_by_user_id,  Integer, :required => true, :index => true
+  property :verified_by_user_id, Integer, :required => false, :index => true
+  property :loan_id,             Integer, :required => false, :index => true
+  property :client_id,           Integer, :required => false, :index => true
+  property :c_center_id,           Integer, :required => false, :index => true
+  property :c_branch_id,           Integer, :required => true, :index => true
+  property :fee_id,              Integer, :required => false, :index => true
   property :desktop_id,          Integer
   property :origin,              String, :default => DEFAULT_ORIGIN
 
   belongs_to :organization, :parent_key => [:org_guid], :child_key => [:parent_org_guid], :required => false
-  property   :parent_org_guid, String, :nullable => true
+  property   :parent_org_guid, String, :required => false
   
   belongs_to :domain, :parent_key => [:domain_guid], :child_key => [:parent_domain_guid], :required => false
-  property   :parent_domain_guid, String, :nullable => true
+  property   :parent_domain_guid, String, :required => false
 
-  belongs_to :loan, :nullable => true
+  belongs_to :loan, :required => false
   belongs_to :client
   belongs_to :fee
   belongs_to :created_by,  :child_key => [:created_by_user_id],   :model => 'User'

@@ -6,7 +6,7 @@ class Weeksheet
   property :date, Date
   property :staff_member_id, Integer
   property :center_id, Integer
-  property :meeting_day,          Enum.send('[]', *DAYS), :nullable => false, :default => :none, :index => true
+  property :meeting_day,          Enum.send('[]', *DAYS), :required => true, :default => :none, :index => true
   property :meeting_time_hours,   Integer, :length => 2, :index => true
   property :meeting_time_minutes, Integer, :length => 2, :index => true
 

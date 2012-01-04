@@ -5,11 +5,11 @@ class User
   after  :save,    :set_staff_member
 
   property :id,           Serial
-  property :login,        String, :nullable => false
+  property :login,        String, :required => true
   property :created_at,   DateTime              
   property :updated_at,   DateTime
-  property :password_changed_at, DateTime, :default => Time.now, :nullable => false
-  property :active,       Boolean, :default => true, :nullable => false
+  property :password_changed_at, DateTime, :default => Time.now, :required => true
+  property :active,       Boolean, :default => true, :required => true
   property :preferred_locale,        String
 
   # permissions
@@ -19,7 +19,7 @@ class User
   ALLOWED_ROLES = ROLES - PROHIBITED_ROLES
   ROLES_TO_S = Hash.new{ |hash, role| hash[role] = role.to_s.split('_').join(' ').capitalize }
 
-  property :role, Enum.send('[]', *ROLES), :nullable => false
+  property :role, Enum.send('[]', *ROLES), :required => true
 
   # it gets                                   
   #   - :password and :password_confirmation accessors

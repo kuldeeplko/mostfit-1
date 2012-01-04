@@ -46,21 +46,21 @@ class Loan
   attr_accessor :loan_extended          # set to true if you have mixed in the appropriate loan repayment functions
 
   property :id,                             Serial
-  property :discriminator,                  Discriminator, :nullable => false, :index => true
+  property :discriminator,                  Discriminator, :required => true, :index => true
 
-  property :amount,                         Float, :nullable => false, :index => true  # this is the disbursed amount
+  property :amount,                         Float, :required => true, :index => true  # this is the disbursed amount
   property :amount_applied_for,             Float, :index => true
   property :amount_sanctioned,              Float, :index => true
 
-  property :interest_rate,                  Float, :nullable => false, :index => true
-  property :installment_frequency,          Enum.send('[]', *INSTALLMENT_FREQUENCIES), :nullable => false, :index => true
-  property :number_of_installments,         Integer, :nullable => false, :index => true
-  property :weekly_off,                     Integer, :nullable => true # cwday pls
-  property :client_id,                      Integer, :nullable => false, :index => true
+  property :interest_rate,                  Float, :required => true, :index => true
+  property :installment_frequency,          Enum.send('[]', *INSTALLMENT_FREQUENCIES), :required => true, :index => true
+  property :number_of_installments,         Integer, :required => true, :index => true
+  property :weekly_off,                     Integer, :required => false # cwday pls
+  property :client_id,                      Integer, :required => true, :index => true
 
-  property :scheduled_disbursal_date,       Date, :nullable => false, :auto_validation => false, :index => true
-  property :scheduled_first_payment_date,   Date, :nullable => false, :auto_validation => false, :index => true
-  property :applied_on,                     Date, :nullable => false, :auto_validation => false, :index => true, :default => Date.today
+  property :scheduled_disbursal_date,       Date, :required => true, :auto_validation => false, :index => true
+  property :scheduled_first_payment_date,   Date, :required => true, :auto_validation => false, :index => true
+  property :applied_on,                     Date, :required => true, :auto_validation => false, :index => true, :default => Date.today
   property :approved_on,                    Date, :auto_validation => false, :index => true
   property :rejected_on,                    Date, :auto_validation => false, :index => true
   property :disbursal_date,                 Date, :auto_validation => false, :index => true
@@ -76,19 +76,19 @@ class Loan
   property :deleted_at,                     ParanoidDateTime
   property :loan_product_id,                Integer,  :index => true
 
-  property :applied_by_staff_id,               Integer, :nullable => true, :index => true
-  property :approved_by_staff_id,              Integer, :nullable => true, :index => true
-  property :rejected_by_staff_id,              Integer, :nullable => true, :index => true
-  property :disbursed_by_staff_id,             Integer, :nullable => true, :index => true
-  property :written_off_by_staff_id,           Integer, :nullable => true, :index => true
-  property :preclosed_by_staff_id,             Integer, :nullable => true, :index => true
-  property :suggested_written_off_by_staff_id, Integer, :nullable => true, :index => true
-  property :write_off_rejected_by_staff_id,    Integer, :nullable => true, :index => true
-  property :validated_by_staff_id,             Integer, :nullable => true, :index => true
-  property :verified_by_user_id,               Integer, :nullable => true, :index => true
-  property :created_by_user_id,                Integer, :nullable => true, :index => true
-  property :cheque_number,                     String,  :length => 20, :nullable => true, :index => true
-  property :cycle_number,                      Integer, :default => 1, :nullable => false, :index => true
+  property :applied_by_staff_id,               Integer, :required => false, :index => true
+  property :approved_by_staff_id,              Integer, :required => false, :index => true
+  property :rejected_by_staff_id,              Integer, :required => false, :index => true
+  property :disbursed_by_staff_id,             Integer, :required => false, :index => true
+  property :written_off_by_staff_id,           Integer, :required => false, :index => true
+  property :preclosed_by_staff_id,             Integer, :required => false, :index => true
+  property :suggested_written_off_by_staff_id, Integer, :required => false, :index => true
+  property :write_off_rejected_by_staff_id,    Integer, :required => false, :index => true
+  property :validated_by_staff_id,             Integer, :required => false, :index => true
+  property :verified_by_user_id,               Integer, :required => false, :index => true
+  property :created_by_user_id,                Integer, :required => false, :index => true
+  property :cheque_number,                     String,  :length => 20, :required => false, :index => true
+  property :cycle_number,                      Integer, :default => 1, :required => true, :index => true
 
   #these amount and disbursal dates are required for TakeOver loan types. 
   property :original_amount,                    Integer
@@ -97,8 +97,8 @@ class Loan
   property :taken_over_on,                      Date
   property :taken_over_on_installment_number,   Integer
 
-  property :loan_utilization_id,                Integer, :lazy => true, :nullable => true
-  property :under_claim_settlement,             Date, :nullable => true
+  property :loan_utilization_id,                Integer, :lazy => true, :required => false
+  property :under_claim_settlement,             Date, :required => false
 
   # Caching baby!
 
@@ -129,10 +129,10 @@ class Loan
 
   # associations
   belongs_to :client
-  belongs_to :funding_line,              :nullable => true
+  belongs_to :funding_line,              :required => false
   belongs_to :loan_product
-  belongs_to :loan_purpose,              :nullable  => true
-  belongs_to :occupation,                :nullable => true
+  belongs_to :loan_purpose,              :required => true
+  belongs_to :occupation,                :required => false
   belongs_to :applied_by,                :child_key => [:applied_by_staff_id],                :model => 'StaffMember'
   belongs_to :approved_by,               :child_key => [:approved_by_staff_id],               :model => 'StaffMember'
   belongs_to :rejected_by,               :child_key => [:rejected_by_staff_id],               :model => 'StaffMember'
@@ -147,11 +147,11 @@ class Loan
   belongs_to :verified_by,               :child_key => [:verified_by_user_id],                :model => 'User'
   belongs_to :repayment_style
 
-  belongs_to :organization, :parent_key => [:org_guid], :child_key => [:parent_org_guid], :nullable => true  
-  property   :parent_org_guid, String, :nullable => true
+  belongs_to :organization, :parent_key => [:org_guid], :child_key => [:parent_org_guid], :required => false  
+  property   :parent_org_guid, String, :required => false
   
-  belongs_to :domain, :parent_key => [:domain_guid], :child_key => [:parent_domain_guid], :nullable => true
-  property   :parent_domain_guid, String, :nullable => true
+  belongs_to :domain, :parent_key => [:domain_guid], :child_key => [:parent_domain_guid], :required => false
+  property   :parent_domain_guid, String, :required => false
 
   has n, :loan_history,                                                                       :model => 'LoanHistory'
   has n, :payments

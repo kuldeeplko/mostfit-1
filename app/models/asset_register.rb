@@ -3,13 +3,13 @@ class AssetRegister
   before :save, :convert_blank_to_nil
   
   property :id,              Serial
-  property :name,            String,  :length => 100,         :nullable => false, :index => true
-  property :asset_type,      String,  :length => 100,         :nullable => false
-  property :issue_date,      Date,    :default => Date.today, :nullable => false
-  property :returned_date,   Date,    :nullable => true
+  property :name,            String,  :length => 100,         :required => true, :index => true
+  property :asset_type,      String,  :length => 100,         :required => true
+  property :issue_date,      Date,    :default => Date.today, :required => true
+  property :returned_date,   Date,    :required => false
   property :issued_by,       String,  :length => 100
-  property :branch_name,     String,  :nullable => true,      :index => true
-  property :branch_id,       Integer, :nullable => false,     :index => true
+  property :branch_name,     String,  :required => false,      :index => true
+  property :branch_id,       Integer, :required => true,     :index => true
 
   belongs_to  :manager,  :child_key => [:manager_staff_id],  :model => 'StaffMember'
   belongs_to  :branch,   :child_key => [:branch_id],         :model => 'Branch'

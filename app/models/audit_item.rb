@@ -8,7 +8,7 @@ class AuditItem
   property :due_on, Date
   property :created_at, DateTime
   property :status, Enum[:outstanding, :completed], :default => :outstanding
-  property :result, Enum['',:pass, :fail], :default => '', :nullable => true
+  property :result, Enum['',:pass, :fail], :default => '', :required => false
 
   belongs_to :assigned_to, :model => StaffMember
 

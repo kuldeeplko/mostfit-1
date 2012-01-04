@@ -5,7 +5,7 @@ class CreditAccountRule
   property :rule_book_id, Integer  
   # This account_id may be wrong? We already have a credit_account_id below
   property :account_id,   Integer
-  property :percentage,   Float, :nullable => false, :default => 100
+  property :percentage,   Float, :required => true, :default => 100
 
   belongs_to :rule_book
   belongs_to :credit_account, Account

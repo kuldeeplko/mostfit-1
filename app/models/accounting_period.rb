@@ -19,16 +19,16 @@ class AccountingPeriod
   
   property :id,         Serial
   property :name,       String
-  property :begin_date, Date, :nullable => false, :default => Date.today
-  property :end_date,   Date, :nullable => false, :default => Date.today+365
-  property :closed,     Boolean, :nullable => false, :default => false
-  property :created_at, DateTime, :nullable => false, :default => Time.now
+  property :begin_date, Date, :required => true, :default => Date.today
+  property :end_date,   Date, :required => true, :default => Date.today+365
+  property :closed,     Boolean, :required => true, :default => false
+  property :created_at, DateTime, :required => true, :default => Time.now
 
   has n, :account_balances
   has n, :accounts, :through => :account_balances
   
   belongs_to :organization
-  property :organization_id, Integer, :nullable => true
+  property :organization_id, Integer, :required => false
 
   # Let's make sure closed is never nil to avoid confusing error messages from #closing_done_sequentially
   # which may bork if closed is nil instead of false

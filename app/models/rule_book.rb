@@ -9,21 +9,21 @@ class RuleBook
   property :id,     Serial
   property :name,   String
   property :action, Enum.send('[]',*ACTIONS)
-  property :fee_id, Integer, :nullable => true
-  property :from_date, Date, :nullable => false, :default => Date.today
-  property :to_date, Date, :nullable => false, :default => Date.today+365
-  property :created_at, DateTime, :nullable => false, :default => Time.now 
-  property :active,          Boolean, :default => true, :nullable => false, :index => true  
-  property :created_by_user_id, Integer, :nullable => false
-  property :updated_by_user_id, Integer, :nullable => true
+  property :fee_id, Integer, :required => false
+  property :from_date, Date, :required => true, :default => Date.today
+  property :to_date, Date, :required => true, :default => Date.today+365
+  property :created_at, DateTime, :required => true, :default => Time.now 
+  property :active,          Boolean, :default => true, :required => true, :index => true  
+  property :created_by_user_id, Integer, :required => true
+  property :updated_by_user_id, Integer, :required => false
   
   has n, :credit_account_rules
   has n, :debit_account_rules
   has n, :credit_accounts, :model => 'Account', :through => :credit_account_rules
   has n, :debit_accounts,  :model => 'Account', :through => :debit_account_rules
 
-  belongs_to :branch,         Branch, :nullable => true
-  belongs_to :fee,            Fee, :nullable => true
+  belongs_to :branch,         Branch, :required => false
+  belongs_to :fee,            Fee, :required => false
   belongs_to :journal_type
   belongs_to :created_by, :child_key => [:created_by_user_id], :model => 'User'  
   belongs_to :updated_by, :child_key => [:updated_by_user_id], :model => 'User'  

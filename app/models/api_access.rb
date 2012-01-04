@@ -2,8 +2,8 @@ class ApiAccess
   include DataMapper::Resource
   
   property :id, Serial
-  property :origin, String, :nullable => false
-  property :description, String, :nullable => false
+  property :origin, String, :required => true
+  property :description, String, :required => true
 
   belongs_to :branch
 

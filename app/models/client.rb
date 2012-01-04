@@ -14,47 +14,47 @@ class Client
   after  :save,   :update_loan_cache
   
   property :id,              Serial
-  property :reference,       String, :length => 100, :nullable => false, :index => true
-  property :name,            String, :length => 100, :nullable => false, :index => true
-  property :gender,     Enum.send('[]', *['', 'female', 'male']), :nullable => true, :lazy => true
+  property :reference,       String, :length => 100, :required => true, :index => true
+  property :name,            String, :length => 100, :required => true, :index => true
+  property :gender,     Enum.send('[]', *['', 'female', 'male']), :required => false, :lazy => true
   property :spouse_name,     String, :length => 100, :lazy => true
   property :date_of_birth,   Date,   :index => true, :lazy => true
   property :spouse_date_of_birth, Date, :index => true, :lazy => true
   property :address,         Text, :lazy => true
-  property :active,          Boolean, :default => true, :nullable => false, :index => true
-  property :inactive_reason, Enum.send('[]', *INACTIVE_REASONS), :nullable => true, :index => true, :default => ''
+  property :active,          Boolean, :default => true, :required => true, :index => true
+  property :inactive_reason, Enum.send('[]', *INACTIVE_REASONS), :required => false, :index => true, :default => ''
   property :date_joined,     Date,    :index => true
-  property :grt_pass_date,   Date,    :index => true, :nullable => true
-  property :client_group_id, Integer, :index => true, :nullable => true
-  property :center_id,       Integer, :index => true, :nullable => true
+  property :grt_pass_date,   Date,    :index => true, :required => false
+  property :client_group_id, Integer, :index => true, :required => false
+  property :center_id,       Integer, :index => true, :required => false
   property :created_at,      DateTime, :default => Time.now
   property :deleted_at,      ParanoidDateTime
   property :updated_at,      DateTime
   property :deceased_on,     Date, :lazy => true
 #  property :client_type,     Enum["standard", "takeover"] #, :default => "standard"
-  property :created_by_user_id,  Integer, :nullable => false, :index => true
-  property :created_by_staff_member_id,  Integer, :nullable => false, :index => true
-  property :verified_by_user_id, Integer, :nullable => true, :index => true
+  property :created_by_user_id,  Integer, :required => true, :index => true
+  property :created_by_staff_member_id,  Integer, :required => true, :index => true
+  property :verified_by_user_id, Integer, :required => false, :index => true
   property :tags, Flag.send("[]", *FLAGS)
 
-  property :account_number, String, :length => 20, :nullable => true, :lazy => true
+  property :account_number, String, :length => 20, :required => false, :lazy => true
   property :type_of_account, Enum.send('[]', *['', 'savings', 'current', 'no_frill', 'fixed_deposit', 'loan', 'other']), :lazy => true
-  property :bank_name,      String, :length => 20, :nullable => true, :lazy => true
-  property :bank_branch,         String, :length => 20, :nullable => true, :lazy => true
-  property :join_holder,    String, :length => 20, :nullable => true, :lazy => true
+  property :bank_name,      String, :length => 20, :required => false, :lazy => true
+  property :bank_branch,         String, :length => 20, :required => false, :lazy => true
+  property :join_holder,    String, :length => 20, :required => false, :lazy => true
 #  property :client_type,    Enum[:default], :default => :default
-  property :number_of_family_members, Integer, :length => 10, :nullable => true, :lazy => true
-  property :school_distance, Integer, :length => 10, :nullable => true, :lazy => true
-  property :phc_distance, Integer, :length => 10, :nullable => true, :lazy => true
-  property :member_literate, Enum.send('[]', *['', 'no', 'yes']), :default => '', :nullable => true, :lazy => true
-  property :husband_litrate, Enum.send('[]', *['', 'no', 'yes']), :default => '', :nullable => true, :lazy => true
-  property :other_productive_asset, String, :length => 30, :nullable => true, :lazy => true
-  property :income_regular, Enum.send('[]', *['', 'no', 'yes']), :default => '', :nullable => true, :lazy => true
-  property :client_migration, Enum.send('[]', *['', 'no', 'yes']), :default => '', :nullable => true, :lazy => true
-  property :pr_loan_amount, Integer, :length => 10, :nullable => true, :lazy => true
-  property :other_income, Integer, :length => 10, :nullable => true, :lazy => true
-  property :total_income, Integer, :length => 10, :nullable => true, :lazy => true
-  property :poverty_status, String, :length => 10, :nullable => true, :lazy => true
+  property :number_of_family_members, Integer, :length => 10, :required => false, :lazy => true
+  property :school_distance, Integer, :length => 10, :required => false, :lazy => true
+  property :phc_distance, Integer, :length => 10, :required => false, :lazy => true
+  property :member_literate, Enum.send('[]', *['', 'no', 'yes']), :default => '', :required => false, :lazy => true
+  property :husband_litrate, Enum.send('[]', *['', 'no', 'yes']), :default => '', :required => false, :lazy => true
+  property :other_productive_asset, String, :length => 30, :required => false, :lazy => true
+  property :income_regular, Enum.send('[]', *['', 'no', 'yes']), :default => '', :required => false, :lazy => true
+  property :client_migration, Enum.send('[]', *['', 'no', 'yes']), :default => '', :required => false, :lazy => true
+  property :pr_loan_amount, Integer, :length => 10, :required => false, :lazy => true
+  property :other_income, Integer, :length => 10, :required => false, :lazy => true
+  property :total_income, Integer, :length => 10, :required => false, :lazy => true
+  property :poverty_status, String, :length => 10, :required => false, :lazy => true
   property :children_girls_under_5_years, Integer, :length => 10, :default => 0, :lazy => true
   property :children_girls_5_to_15_years, Integer, :length => 10, :default => 0, :lazy => true
   property :children_girls_over_15_years, Integer, :length => 10, :default => 0, :lazy => true
@@ -83,17 +83,17 @@ class Client
   property :not_irrigated_land_own_wasteland, Integer, :lazy => true
   property :not_irrigated_land_leased_wasteland, Integer, :lazy => true
   property :not_irrigated_land_shared_wasteland, Integer, :lazy => true
-  property :caste, Enum.send('[]', *['', 'sc', 'st', 'obc', 'general']), :default => '', :nullable => true, :lazy => true
-  property :religion, Enum.send('[]', *['', 'hindu', 'muslim', 'sikh', 'jain', 'buddhist', 'christian']), :default => '', :nullable => true, :lazy => true
+  property :caste, Enum.send('[]', *['', 'sc', 'st', 'obc', 'general']), :default => '', :required => false, :lazy => true
+  property :religion, Enum.send('[]', *['', 'hindu', 'muslim', 'sikh', 'jain', 'buddhist', 'christian']), :default => '', :required => false, :lazy => true
   validates_length :number_of_family_members, :max => 20
   validates_length :school_distance, :max => 200
   validates_length :phc_distance, :max => 500
 
   belongs_to :organization, :parent_key => [:org_guid], :child_key => [:parent_org_guid], :required => false
-  property   :parent_org_guid, String, :nullable => true
+  property   :parent_org_guid, String, :required => false
   
   belongs_to :domain, :parent_key => [:domain_guid], :child_key => [:parent_domain_guid], :required => false
-  property   :parent_domain_guid, String, :nullable => true
+  property   :parent_domain_guid, String, :required => false
 
   has n, :loans
   has n, :payments
@@ -106,7 +106,7 @@ class Client
 
   belongs_to :center
   belongs_to :client_group
-  belongs_to :occupation, :nullable => true
+  belongs_to :occupation, :required => false
   belongs_to :client_type
   belongs_to :created_by,        :child_key => [:created_by_user_id],         :model => 'User'
   belongs_to :created_by_staff,  :child_key => [:created_by_staff_member_id], :model => 'StaffMember'

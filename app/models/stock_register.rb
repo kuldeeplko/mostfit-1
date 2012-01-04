@@ -3,15 +3,15 @@ class StockRegister
   before :save, :convert_blank_to_nil
   
   property :id,               Serial
-  property :name,             String,    :length => 100,  :nullable => true,  :index => true
-  property :stock_code,       String,    :length => 10,   :nullable => false,  :index => true
-  property :stock_name,       String,    :length => 100,  :nullable => true,   :index => true
-  property :stock_quantity,   Integer,                    :nullable => true
-  property :bill_number,      String,                     :nullable => false,  :index => true
-  property :bill_date,        Date,                       :nullable => false
-  property :date_of_entry,    Date,      :default => Date.today, :nullable => false
-  property :branch_name,      String,    :nullable => true,     :index => true
-  property :branch_id,        Integer,   :nullable => false,    :index => true
+  property :name,             String,    :length => 100,  :required => false,  :index => true
+  property :stock_code,       String,    :length => 10,   :required => true,  :index => true
+  property :stock_name,       String,    :length => 100,  :required => false,   :index => true
+  property :stock_quantity,   Integer,                    :required => false
+  property :bill_number,      String,                     :required => true,  :index => true
+  property :bill_date,        Date,                       :required => true
+  property :date_of_entry,    Date,      :default => Date.today, :required => true
+  property :branch_name,      String,    :required => false,     :index => true
+  property :branch_id,        Integer,   :required => true,    :index => true
 
 
   belongs_to  :manager,  :child_key => [:manager_staff_id],  :model => 'StaffMember'

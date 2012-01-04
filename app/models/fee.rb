@@ -28,12 +28,12 @@ class Fee
   FeeDue        = Struct.new(:applicable, :paid, :due)
   FeeApplicable = Struct.new(:loan_id, :client_id, :fees_applicable)
   property :id,            Serial
-  property :name,          String, :nullable => false
+  property :name,          String, :required => true
   property :percentage,    Float
   property :amount,        Integer
   property :min_amount,    Integer
   property :max_amount,    Integer
-  property :payable_on,    Enum.send('[]',*PAYABLE.map{|m| m[0]}), :nullable => false
+  property :payable_on,    Enum.send('[]',*PAYABLE.map{|m| m[0]}), :required => true
   property :overridable_by, Flag[:data_entry, :mis_manager, :admin,:staff_member]
 
   property :round_to,       Float

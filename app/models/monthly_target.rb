@@ -2,9 +2,9 @@ class MonthlyTarget
   include DataMapper::Resource
 
   property :id,                   Serial
-  property :for_month,            Date, :nullable => false, :index => true
+  property :for_month,            Date, :required => true, :index => true
   # staff_member_id should be supplied by belongs_to :staff_member below
-  property :staff_member_id,      Integer, :nullable => false, :index => true
+  property :staff_member_id,      Integer, :required => true, :index => true
   property :disbursements_target, Float
   property :collections_target,   Float
 

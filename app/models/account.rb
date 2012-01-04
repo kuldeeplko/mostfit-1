@@ -5,14 +5,14 @@ class Account
 
   property :id,                     Serial  
   property :name,                   String, :index => true
-  property :opening_balance,        Integer, :nullable => false, :default => 0
-  property :opening_balance_on_date, Date, :nullable => false, :default => Date.today
+  property :opening_balance,        Integer, :required => true, :default => 0
+  property :opening_balance_on_date, Date, :required => true, :default => Date.today
   property :gl_code,                String, :index => true
   property :parent_id,              Integer, :index => true
   property :account_id,             Integer, :index => true
-  property :account_category,       Enum.send('[]', *['', 'Cash', 'Bank']), :default => '', :nullable => true, :index => true
-  property :asset_class,            Enum.send('[]', *(['', ASSET_CLASSES].flatten)), :default => '', :nullable => true, :index => true
-  property :income_head,           Enum.send('[]', *(['', INCOME_HEADS].flatten)), :default => '', :nullable => true, :index => true
+  property :account_category,       Enum.send('[]', *['', 'Cash', 'Bank']), :default => '', :required => false, :index => true
+  property :asset_class,            Enum.send('[]', *(['', ASSET_CLASSES].flatten)), :default => '', :required => false, :index => true
+  property :income_head,           Enum.send('[]', *(['', INCOME_HEADS].flatten)), :default => '', :required => false, :index => true
 
   property :created_at,            DateTime
   property :deleted_at,            DateTime
@@ -20,7 +20,7 @@ class Account
   belongs_to :account, :model => 'Account', :child_key => [:parent_id]
   belongs_to :account_type
   
-  property   :branch_id,               Integer, :nullable => true, :index => true
+  property   :branch_id,               Integer, :required => false, :index => true
   belongs_to :branch,                  :model => 'Branch', :child_key => [:branch_id]
 
   has n, :credit_account_rules

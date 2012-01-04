@@ -4,55 +4,55 @@ class Cacher
 
    property :id,                              Serial
   property :type,                            Discriminator
-  property :date,                            Date, :nullable => false, :index => true
-  property :model_name,                      String, :nullable => false, :index => true
-  property :model_id,                        Integer, :nullable => false, :index => true, :unique => [:model_name, :date]
+  property :date,                            Date, :required => true, :index => true
+  property :model_name,                      String, :required => true, :index => true
+  property :model_id,                        Integer, :required => true, :index => true, :unique => [:model_name, :date]
   property :branch_id,                       Integer, :index => true
   property :center_id,                       Integer, :index => true
   property :funding_line_id,                 Integer, :index => true
-  property :scheduled_outstanding_total,     Float, :nullable => false
-  property :scheduled_outstanding_principal, Float, :nullable => false
-  property :actual_outstanding_total,        Float, :nullable => false
-  property :actual_outstanding_principal,    Float, :nullable => false
-  property :actual_outstanding_interest,     Float, :nullable => false
-  property :scheduled_principal_due,         Float, :nullable => false
-  property :scheduled_interest_due,          Float, :nullable => false
-  property :principal_due,                   Float, :nullable => false
-  property :interest_due,                    Float, :nullable => false
-  property :principal_paid,                  Float, :nullable => false
-  property :interest_paid,                   Float, :nullable => false
-  property :total_principal_due,             Float, :nullable => false
-  property :total_interest_due,              Float, :nullable => false
-  property :total_principal_paid,            Float, :nullable => false
-  property :total_interest_paid,             Float, :nullable => false
-  property :advance_principal_paid,          Float, :nullable => false
-  property :advance_interest_paid,           Float, :nullable => false
-  property :total_advance_paid,              Float, :nullable => false
-  property :advance_principal_paid_today,    Float, :nullable => false
-  property :advance_interest_paid_today,     Float, :nullable => false
-  property :total_advance_paid_today,        Float, :nullable => false
-  property :advance_principal_adjusted,      Float, :nullable => false
-  property :advance_interest_adjusted,       Float, :nullable => false
-  property :advance_principal_adjusted_today,      Float, :nullable => false
-  property :advance_interest_adjusted_today,       Float, :nullable => false
-  property :total_advance_adjusted_today,   Float, :nullable => false
-  property :advance_principal_outstanding,   Float, :nullable => false  #
-  property :advance_interest_outstanding,    Float, :nullable => false  # these are adjusted balances
-  property :total_advance_outstanding,       Float, :nullable => false  #
-  property :principal_in_default,            Float, :nullable => false
-  property :interest_in_default,             Float, :nullable => false
-  property :total_fees_due,                  Float, :nullable => false
-  property :total_fees_paid,                 Float, :nullable => false
-  property :fees_due_today,                  Float, :nullable => false
-  property :fees_paid_today,                 Float, :nullable => false
-  property :principal_at_risk,               Float, :nullable => false
+  property :scheduled_outstanding_total,     Float, :required => true
+  property :scheduled_outstanding_principal, Float, :required => true
+  property :actual_outstanding_total,        Float, :required => true
+  property :actual_outstanding_principal,    Float, :required => true
+  property :actual_outstanding_interest,     Float, :required => true
+  property :scheduled_principal_due,         Float, :required => true
+  property :scheduled_interest_due,          Float, :required => true
+  property :principal_due,                   Float, :required => true
+  property :interest_due,                    Float, :required => true
+  property :principal_paid,                  Float, :required => true
+  property :interest_paid,                   Float, :required => true
+  property :total_principal_due,             Float, :required => true
+  property :total_interest_due,              Float, :required => true
+  property :total_principal_paid,            Float, :required => true
+  property :total_interest_paid,             Float, :required => true
+  property :advance_principal_paid,          Float, :required => true
+  property :advance_interest_paid,           Float, :required => true
+  property :total_advance_paid,              Float, :required => true
+  property :advance_principal_paid_today,    Float, :required => true
+  property :advance_interest_paid_today,     Float, :required => true
+  property :total_advance_paid_today,        Float, :required => true
+  property :advance_principal_adjusted,      Float, :required => true
+  property :advance_interest_adjusted,       Float, :required => true
+  property :advance_principal_adjusted_today,      Float, :required => true
+  property :advance_interest_adjusted_today,       Float, :required => true
+  property :total_advance_adjusted_today,   Float, :required => true
+  property :advance_principal_outstanding,   Float, :required => true  #
+  property :advance_interest_outstanding,    Float, :required => true  # these are adjusted balances
+  property :total_advance_outstanding,       Float, :required => true  #
+  property :principal_in_default,            Float, :required => true
+  property :interest_in_default,             Float, :required => true
+  property :total_fees_due,                  Float, :required => true
+  property :total_fees_paid,                 Float, :required => true
+  property :fees_due_today,                  Float, :required => true
+  property :fees_paid_today,                 Float, :required => true
+  property :principal_at_risk,               Float, :required => true
 
   # we need to track also the changes in status
   # i.e. from approved to disbursed, etc.
 
   STATUSES.each do |status|
-    property "#{status.to_s}_count".to_sym,  Integer, :nullable => false, :default => 0
-    property "#{status.to_s}".to_sym,        Float,   :nullable => false, :default => 0
+    property "#{status.to_s}_count".to_sym,  Integer, :required => true, :default => 0
+    property "#{status.to_s}".to_sym,        Float,   :required => true, :default => 0
   end
 
   property :created_at,                      DateTime

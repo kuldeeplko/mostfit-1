@@ -10,17 +10,17 @@ class Portfolio
   after  :save,    :update_portfolio_value
   
   property :id, Serial
-  property :name, String, :index => true, :nullable => false, :length => 3..20
-  property :funder_id, Integer, :index => true, :nullable => false
-  property :start_value, Float, :nullable => true
-  property :outstanding_value, Float, :nullable => true
-  property :principal_repaid, Float, :nullable => true
-  property :interest_repaid, Float, :nullable => true
-  property :fees_repaid, Float, :nullable => true
-  property :last_payment_date, Date, :nullable => true
-  property :outstanding_calculated_on, DateTime, :nullable => true
-  property :verified_by_user_id,            Integer, :nullable => true, :index => true
-  property :created_by_user_id,  Integer, :nullable => false, :index => true
+  property :name, String, :index => true, :required => true, :length => 3..20
+  property :funder_id, Integer, :index => true, :required => true
+  property :start_value, Float, :required => false
+  property :outstanding_value, Float, :required => false
+  property :principal_repaid, Float, :required => false
+  property :interest_repaid, Float, :required => false
+  property :fees_repaid, Float, :required => false
+  property :last_payment_date, Date, :required => false
+  property :outstanding_calculated_on, DateTime, :required => false
+  property :verified_by_user_id,            Integer, :required => false, :index => true
+  property :created_by_user_id,  Integer, :required => true, :index => true
 
   property :created_at, DateTime, :default => Time.now
   property :updated_at, DateTime, :default => Time.now

@@ -5,7 +5,7 @@ class Attendance
 
   property :id,              Serial
   property :date,            Date, :index => true
-  property :status,          Enum.send('[]', *ATTENDANCY_STATES), :nullable => false, :index => true
+  property :status,          Enum.send('[]', *ATTENDANCY_STATES), :required => true, :index => true
   property :desktop_id,          Integer
   property :origin,              String, :default => DEFAULT_ORIGIN
 

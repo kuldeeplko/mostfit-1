@@ -8,7 +8,7 @@ class AccountBalance
   property :closing_balance, Float
   property :created_at, DateTime
   property :verified_on, DateTime
-  property :verified_by_user_id,            Integer, :nullable => true, :index => true
+  property :verified_by_user_id,            Integer, :required => false, :index => true
   property :accounting_period_id, Integer, :key => true
   property :account_id, Integer, :key => true
   belongs_to :verified_by, :child_key => [:verified_by_user_id], :model => 'User'

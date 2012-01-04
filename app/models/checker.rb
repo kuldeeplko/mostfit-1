@@ -10,10 +10,10 @@ class Checker
   attr_accessor :value
 
   property :id, Serial
-  property :model_name, String, :nullable => false
+  property :model_name, String, :required => true
   property :unique_field, String
-  property :reference,   String,:nullable => false, :unique => :model_name
-  property :check_field, String, :nullable => false
+  property :reference,   String,:required => true, :unique => :model_name
+  property :check_field, String, :required => true
   property :as_on, Date
 
   property :expected_value, Float
