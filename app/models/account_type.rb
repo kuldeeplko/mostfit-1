@@ -7,9 +7,9 @@ class AccountType
   property :code, String, :index => true  
   
   has n, :accounts
-  validates_present :name
-  validates_present :code
-  validates_length :name,   :minimum => 3
-  validates_length :code,   :minimum => 3
-  validates_is_unique :code
+  validates_presence_of :name
+  validates_presence_of :code
+  validates_length_of :name,   :minimum => 3
+  validates_length_of :code,   :minimum => 3
+  validates_uniqueness_of :code
 end

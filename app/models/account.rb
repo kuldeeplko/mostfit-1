@@ -35,13 +35,13 @@ class Account
   
   is :tree, :order => :name
   
-  validates_present   :name 
-  validates_present   :gl_code
-  validates_length    :name,     :minimum => 3
-  validates_length    :gl_code,  :minimum => 3  
-  validates_is_unique :name, :scope => :branch
-  validates_is_unique :gl_code, :scope => :branch
-  validates_is_number :opening_balance
+  validates_presence_of   :name 
+  validates_presence_of   :gl_code
+  validates_length_of    :name,     :minimum => 3
+  validates_length_of    :gl_code,  :minimum => 3  
+  validates_uniqueness_of :name, :scope => :branch
+  validates_uniqueness_of :gl_code, :scope => :branch
+  validates_numericality_of :opening_balance
 
   # the following is forced upon us as a result of the current design where the account type is a master table
   # Danger, Will Robinson! This will break if anyone edits the master table for account_types

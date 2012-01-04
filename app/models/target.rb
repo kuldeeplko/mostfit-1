@@ -22,9 +22,9 @@ class Target
 
   validates_with_method :attached_id, :check_existance
   validates_with_method :deadline, :future_date
-  validates_present :target_value
+  validates_presence_of :target_value
   validates_with_method :target_value, :target_value_invalid
-  validates_present :start_date, :deadline
+  validates_presence_of :start_date, :deadline
   validates_with_method :deadline, :start_date_cannot_be_greater_than_deadline
 
   before :valid?, :set_start_value

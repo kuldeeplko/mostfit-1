@@ -6,7 +6,7 @@ class StaffMember
   property :id,      Serial
   property :name,    String, :length => 100, :required => true
   property :mobile_number,  String, :length => 12,  :required => false
-  property :creation_date,  Date, :length => 12,  :required => false, :default => Date.today
+  property :creation_date,  Date, :required => false, :default => Date.today
   property :active,  Boolean, :default => true, :required => true  
   property :user_id,  Integer,  :required => false  
   # no designations, they are derived from the relations it has
@@ -31,8 +31,8 @@ class StaffMember
 
   belongs_to :user
 
-  validates_is_unique :name
-  validates_length :name, :min => 3
+  validates_uniqueness_of :name
+  validates_length_of :name, :min => 3
 
   def self.search(q, per_page)
     if /^\d+$/.match(q)

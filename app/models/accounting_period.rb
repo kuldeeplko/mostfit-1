@@ -32,7 +32,7 @@ class AccountingPeriod
 
   # Let's make sure closed is never nil to avoid confusing error messages from #closing_done_sequentially
   # which may bork if closed is nil instead of false
-  validates_present :closed
+  validates_presence_of :closed
 
   validates_with_method :cannot_overlap
   validates_with_method :closing_done_sequentially

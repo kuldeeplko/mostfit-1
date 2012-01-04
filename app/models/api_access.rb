@@ -7,5 +7,5 @@ class ApiAccess
 
   belongs_to :branch
 
-  validates_is_unique   :origin
+  validates_uniqueness_of   :origin
 end

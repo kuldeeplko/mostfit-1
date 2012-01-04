@@ -7,8 +7,8 @@ class Weeksheet
   property :staff_member_id, Integer
   property :center_id, Integer
   property :meeting_day,          Enum.send('[]', *DAYS), :required => true, :default => :none, :index => true
-  property :meeting_time_hours,   Integer, :length => 2, :index => true
-  property :meeting_time_minutes, Integer, :length => 2, :index => true
+  property :meeting_time_hours,   Integer, :index => true
+  property :meeting_time_minutes, Integer, :index => true
 
   has n, :weeksheet_rows
   belongs_to :staff_member

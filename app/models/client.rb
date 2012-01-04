@@ -43,28 +43,28 @@ class Client
   property :bank_branch,         String, :length => 20, :required => false, :lazy => true
   property :join_holder,    String, :length => 20, :required => false, :lazy => true
 #  property :client_type,    Enum[:default], :default => :default
-  property :number_of_family_members, Integer, :length => 10, :required => false, :lazy => true
-  property :school_distance, Integer, :length => 10, :required => false, :lazy => true
-  property :phc_distance, Integer, :length => 10, :required => false, :lazy => true
+  property :number_of_family_members, Integer, :required => false, :lazy => true
+  property :school_distance, Integer, :required => false, :lazy => true
+  property :phc_distance, Integer, :required => false, :lazy => true
   property :member_literate, Enum.send('[]', *['', 'no', 'yes']), :default => '', :required => false, :lazy => true
   property :husband_litrate, Enum.send('[]', *['', 'no', 'yes']), :default => '', :required => false, :lazy => true
   property :other_productive_asset, String, :length => 30, :required => false, :lazy => true
   property :income_regular, Enum.send('[]', *['', 'no', 'yes']), :default => '', :required => false, :lazy => true
   property :client_migration, Enum.send('[]', *['', 'no', 'yes']), :default => '', :required => false, :lazy => true
-  property :pr_loan_amount, Integer, :length => 10, :required => false, :lazy => true
-  property :other_income, Integer, :length => 10, :required => false, :lazy => true
-  property :total_income, Integer, :length => 10, :required => false, :lazy => true
-  property :poverty_status, String, :length => 10, :required => false, :lazy => true
-  property :children_girls_under_5_years, Integer, :length => 10, :default => 0, :lazy => true
-  property :children_girls_5_to_15_years, Integer, :length => 10, :default => 0, :lazy => true
-  property :children_girls_over_15_years, Integer, :length => 10, :default => 0, :lazy => true
-  property :children_sons_under_5_years, Integer, :length => 10, :default => 0, :lazy => true
-  property :children_sons_5_to_15_years, Integer, :length => 10, :default => 0, :lazy => true
-  property :children_sons_over_15_years, Integer, :length => 10, :default => 0, :lazy => true
-  property :not_in_school_working_girls, Integer, :length => 10, :default => 0, :lazy => true
-  property :not_in_school_bonded_girls, Integer, :length => 10, :default => 0, :lazy => true
-  property :not_in_school_working_sons, Integer, :length => 10, :default => 0, :lazy => true
-  property :not_in_school_bonded_sons, Integer, :length => 10, :default => 0, :lazy => true
+  property :pr_loan_amount, Integer, :required => false, :lazy => true
+  property :other_income, Integer, :required => false, :lazy => true
+  property :total_income, Integer, :required => false, :lazy => true
+  property :poverty_status, String, :required => false, :lazy => true
+  property :children_girls_under_5_years, Integer, :default => 0, :lazy => true
+  property :children_girls_5_to_15_years, Integer, :default => 0, :lazy => true
+  property :children_girls_over_15_years, Integer, :default => 0, :lazy => true
+  property :children_sons_under_5_years, Integer,  :default => 0, :lazy => true
+  property :children_sons_5_to_15_years, Integer,  :default => 0, :lazy => true
+  property :children_sons_over_15_years, Integer,  :default => 0, :lazy => true
+  property :not_in_school_working_girls, Integer,  :default => 0, :lazy => true
+  property :not_in_school_bonded_girls, Integer,   :default => 0, :lazy => true
+  property :not_in_school_working_sons, Integer,   :default => 0, :lazy => true
+  property :not_in_school_bonded_sons, Integer,    :default => 0, :lazy => true
   property :irrigated_land_own_fertile, Integer, :lazy => true
   property :irrigated_land_leased_fertile, Integer, :lazy => true
   property :irrigated_land_shared_fertile, Integer, :lazy => true
@@ -85,9 +85,9 @@ class Client
   property :not_irrigated_land_shared_wasteland, Integer, :lazy => true
   property :caste, Enum.send('[]', *['', 'sc', 'st', 'obc', 'general']), :default => '', :required => false, :lazy => true
   property :religion, Enum.send('[]', *['', 'hindu', 'muslim', 'sikh', 'jain', 'buddhist', 'christian']), :default => '', :required => false, :lazy => true
-  validates_length :number_of_family_members, :max => 20
-  validates_length :school_distance, :max => 200
-  validates_length :phc_distance, :max => 500
+  validates_length_of :number_of_family_members, :max => 20
+  validates_length_of :school_distance, :max => 200
+  validates_length_of :phc_distance, :max => 500
 
   belongs_to :organization, :parent_key => [:org_guid], :child_key => [:parent_org_guid], :required => false
   property   :parent_org_guid, String, :required => false
@@ -102,7 +102,7 @@ class Client
   has n, :claims
   has n, :guarantors
   has n, :applicable_fees,    :child_key => [:applicable_id], :applicable_type => "Client"
-  validates_length :account_number, :max => 20
+  validates_length_of :account_number, :max => 20
 
   belongs_to :center
   belongs_to :client_group
@@ -127,10 +127,10 @@ class Client
     :url => "/uploads/:class/:id/:basename.:extension",
     :path => "#{Merb.root}/public/uploads/:class/:id/:basename.:extension"
 
-  validates_length    :name, :min => 3
-  validates_present   :center
-  validates_present   :date_joined
-  validates_is_unique :reference
+  validates_length_of    :name, :min => 3
+  validates_presence_of   :center
+  validates_presence_of   :date_joined
+  validates_uniqueness_of :reference
   validates_with_method  :verified_by_user_id,          :method => :verified_cannot_be_deleted, :if => Proc.new{|x| x.deleted_at != nil}
   validates_attachment_thumbnails :picture
   validates_with_method :date_joined, :method => :dates_make_sense

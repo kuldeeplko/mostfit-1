@@ -3,7 +3,7 @@ class LoanProduct
   before :save, :convert_blank_to_nil
 
   property :id, Serial, :required => true, :index => true
-  property :name, String, :required => true, :index => true, :min => 3
+  property :name, String, :required => true, :index => true
 #  property :reference, String
   property :max_amount, Integer, :required => true, :index => true
   property :min_amount, Integer, :required => true, :index => true
@@ -49,13 +49,14 @@ class LoanProduct
   property   :parent_domain_guid, String, :required => false
 
   validates_with_method :min_is_less_than_max
-  validates_is_unique   :name
-  validates_is_number   :max_amount, :min_amount
+  validates_uniqueness_of   :name
+  validates_length_of :name, :min => 3
+  validates_numericality_of   :max_amount, :min_amount
   # validates_with_method :check_loan_type_correctness
 
   # while migrating, we have to provde a reference for every data point
   # this is for reasons of sanity.
-  # validates_present :reference, :if => Proc.new{|t| Mfi.first.state == :migration}
+  # validates_presence_of :reference, :if => Proc.new{|t| Mfi.first.state == :migration}
   
   def self.from_csv(row, headers)
     min_interest = row[headers[:min_interest_rate]].to_f < 1 ? row[headers[:min_interest_rate]].to_f*100 : row[headers[:min_interest_rate]]

@@ -12,8 +12,8 @@ class Attendance
   belongs_to :client
   belongs_to :center
 
-  validates_present     :status
-  validates_present     :client,:date
+  validates_presence_of     :status
+  validates_presence_of     :client,:date
   validates_with_method :date, :method=>:not_in_future? 
 
   def self.attendancy_states

@@ -7,7 +7,7 @@ class Branch
   
   property :id,      Serial
   property :name,    String, :length => 100, :required => true, :index => true
-  property :code,    String, :length => 10, :required => false, :index => true, :min => 1, :max => 10
+  property :code,    String, :length => 10, :required => false, :index => true
   property :address, Text,   :lazy => true
   property :contact_number, String, :length => 40, :lazy => true
   property :landmark,       String, :length => 100, :lazy => true  
@@ -29,12 +29,12 @@ class Branch
   belongs_to :domain, :parent_key => [:domain_guid], :child_key => [:parent_domain_guid], :required => false
   property   :parent_domain_guid, String, :required => false
 
-  validates_is_unique   :code
-  validates_is_unique   :name
-  validates_length      :code, :min => 1, :max => 10
+  validates_uniqueness_of   :code
+  validates_uniqueness_of   :name
+  validates_length_of      :code, :min => 1, :max => 10
 
-  validates_length      :name, :min => 3
-  validates_present     :manager
+  validates_length_of      :name, :min => 3
+  validates_presence_of     :manager
   validates_with_method :manager, :method => :manager_is_an_active_staff_member?
 
   def self.from_csv(row, headers)

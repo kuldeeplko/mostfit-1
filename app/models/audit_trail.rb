@@ -13,7 +13,7 @@ class AuditTrail
 
   # Not sure what this means:
   # we need this dummy validation to define the reallocation context which bubbles down into AuditTrail as well. 
-  validates_present :created_at, :when => [:default, :reallocate]
+  validates_presence_of :created_at, :when => [:default, :reallocate]
 
   def trail_for(obj, limit = nil)
     attrs = {

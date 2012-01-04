@@ -1,8 +1,8 @@
 class Rule
   include DataMapper::Resource
   property :id,                  Serial
-  property :name,                String, :required => true, :min => 1, :index => true
-  property :model_name,          String, :required => true, :min => 1, :index => true
+  property :name,                String, :required => true, :index => true
+  property :model_name,          String, :required => true, :index => true
   property :permit,              Boolean, :index => true, :default => true
   property :on_action,           Enum[:create, :update, :save, :destroy], :required => true, :index => true
 
@@ -15,13 +15,13 @@ class Rule
 # has n,   :conditions
 # has n,   :pre_conditions, :model => Condition, :is_rule => false
 
-  validates_present :name
-  validates_present :model_name
-  validates_present :permit
-  validates_present :on_action
-  validates_present :active
-  validates_present :condition #precondition can be null (condition should not be null)
-  validates_is_unique :name
+  validates_presence_of :name
+  validates_presence_of :model_name
+  validates_presence_of :permit
+  validates_presence_of :on_action
+  validates_presence_of :active
+  validates_presence_of :condition #precondition can be null (condition should not be null)
+  validates_uniqueness_of :name
   validates_with_method :apply_rule
 
 

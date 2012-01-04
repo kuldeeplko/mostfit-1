@@ -162,7 +162,7 @@ class Loan
   has n, :accruals
   #validations
 
-  validates_present      :client, :scheduled_disbursal_date, :scheduled_first_payment_date, :applied_by, :applied_on
+  validates_presence_of      :client, :scheduled_disbursal_date, :scheduled_first_payment_date, :applied_by, :applied_on
 
   validates_with_method  :amount,                       :method => :amount_greater_than_zero?
   validates_with_method  :interest_rate,                :method => :interest_rate_greater_than_or_equal_to_zero?

@@ -58,7 +58,7 @@ class Mfi
   property :system_state, Enum.send('[]', *SYSTEM_STATES), :default => :running
 
   property :main_text, Text, :required => false, :lazy => true
-  validates_length :name, :min => 0, :max => 20
+  validates_length_of :name, :min => 0, :max => 20
   before :valid?, :save_image
   
   validates_with_method :check_contact_details, :if => Proc.new{|m| m.new?}

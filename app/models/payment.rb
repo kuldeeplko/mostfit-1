@@ -46,7 +46,7 @@ class Payment
   belongs_to :deleted_by,  :child_key => [:deleted_by_user_id],   :model => 'User'
   belongs_to :verified_by,  :child_key => [:verified_by_user_id],        :model => 'User'
 
-  validates_present     :created_by, :received_by, :if => Proc.new{|p| p.deleted_at == nil}
+  validates_presence_of     :created_by, :received_by, :if => Proc.new{|p| p.deleted_at == nil}
   validates_with_method :loan_or_client_present?,  :method => :loan_or_client_present?, :when => [:default, :reallocate]
   validates_with_method :only_take_payments_on_disbursed_loans?, :if => Proc.new{|p| (p.type == :principal or p.type == :interest)}
   validates_with_method :created_by,  :method => :created_by_active_user?, :if => Proc.new{|p| p.deleted_at == nil}

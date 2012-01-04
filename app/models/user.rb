@@ -25,11 +25,11 @@ class User
   #   - :password and :password_confirmation accessors
   #   - :crypted_password and :salt db columns        
   # from the mixin.
-  validates_present :login
-  validates_format :login, :with => /^[A-Za-z0-9_]+$/
-  validates_length :login, :min => 3
-  validates_is_unique :login
-  validates_length :password, :min => 6, :if => Proc.new{|u| not u.password.nil?}
+  validates_presence_of :login
+  validates_format_of :login, :with => /^[A-Za-z0-9_]+$/
+  validates_length_of :login, :min => 3
+  validates_uniqueness_of :login
+  validates_length_of :password, :min => 6, :if => Proc.new{|u| not u.password.nil?}
   has 1, :staff_member
   has 1, :funder
 

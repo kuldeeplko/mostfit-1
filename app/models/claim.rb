@@ -25,7 +25,7 @@ class Claim
   
   belongs_to :client
   
-  validates_present :client
+  validates_presence_of :client
   validates_with_method :client, :client_marked_inactive
 #  validates_with_method :payment_to_client_on, :payment_to_client_after_receipt
   validates_with_method :amount_to_be_paid_to_client, :payment_to_client_not_more_than_claim

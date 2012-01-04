@@ -27,8 +27,8 @@ class Document
       :url => "/uploads/:class/:id/4/:basename.:extension",
       :path => "#{Merb.root}/public/uploads/:class/:id/4/:basename.:extension" 
 
-  validates_present :document_type
-  validates_is_unique :number, :scope => [:document_type_id, :parent_id, :parent_model]
+  validates_presence_of :document_type
+  validates_uniqueness_of :number, :scope => [:document_type_id, :parent_id, :parent_model]
 
   def parent
     Kernel.const_get(parent_model).get(parent_id)

@@ -17,7 +17,7 @@ class StockRegister
   belongs_to  :manager,  :child_key => [:manager_staff_id],  :model => 'StaffMember'
   belongs_to  :branch,   :child_key => [:branch_id],         :model => 'Branch'
 
-  validates_present       :manager
+  validates_presence_of       :manager
   validates_with_method   :manager,   :manager_is_an_active_staff_member?
   
   private

@@ -3,13 +3,15 @@ class Comment
   
   property :id, Serial
   
-  property :text,           Text, :min => 5
+  property :text,           Text
   # Perhaps we should validate these two
   property :parent_model,   String
   property :parent_id,      Integer
   property :created_at,     DateTime
   
   belongs_to :user
+
+  validates_length_of :text, :min => 5
 
   def self.for(object)
     Comment.all(:parent_model => object.class.to_s, :parent_id => object.id)

@@ -12,10 +12,10 @@ class Guarantor
  
   belongs_to :client
   belongs_to :guarantor_occupation, :required => false, :child_key => [:guarantor_occupation_id], :model => 'Occupation'  
-  validates_present :name
-  validates_present :father_name
-  validates_length :name,   :minimum => 3
-  validates_length :father_name,   :minimum => 3
+  validates_presence_of :name
+  validates_presence_of :father_name
+  validates_length_of :name,   :minimum => 3
+  validates_length_of :father_name,   :minimum => 3
 end
 
 # We migrated data for Intellecash using the followng

@@ -14,7 +14,7 @@ class Bookmark
   property :share_with, Flag.send('[]', *User::ROLES), :required => true, :default => :none, :index => true
   belongs_to :user
   
-  validates_is_unique :name, :with_scope => [:type, :user]
+  validates_uniqueness_of :name, :with_scope => [:type, :user]
 
   def self.for(user, type=:system)
     {

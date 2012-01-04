@@ -30,7 +30,7 @@ class Portfolio
   has n, :loans, :through => :portfolio_loans
   belongs_to :created_by,  :child_key => [:created_by_user_id],   :model => 'User'
 
-  validates_is_unique :name
+  validates_uniqueness_of :name
   belongs_to :verified_by, :child_key => [:verified_by_user_id], :model => 'User'
   validates_with_method :verified_by_user_id, :method => :verified_cannot_be_deleted, :when => [:destroy]
 

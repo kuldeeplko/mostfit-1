@@ -11,10 +11,10 @@ class Condition
 
   belongs_to :rule
 
-  validates_present :keys
-  validates_present :comparator
-  validates_present :value
-  validates_present :rule
+  validates_presence_of :keys
+  validates_presence_of :comparator
+  validates_presence_of :value
+  validates_presence_of :rule
 
   def self.get_model(model_name)
     model, key_type = nil, :secondary

@@ -20,8 +20,8 @@ class Center
   property :contact_number,       String, :length => 40, :lazy => true
   property :landmark,             String, :length => 100, :lazy => true  
   property :meeting_day,          Enum.send('[]', *DAYS), :required => true, :default => :none, :index => true
-  property :meeting_time_hours,   Integer, :length => 2, :index => true
-  property :meeting_time_minutes, Integer, :length => 2, :index => true
+  property :meeting_time_hours,   Integer, :index => true
+  property :meeting_time_minutes, Integer, :index => true
   property :created_at,           DateTime, :required => true, :default => Time.now, :index => true
   property :creation_date,        Date
   belongs_to :branch
@@ -33,13 +33,13 @@ class Center
   has n, :center_meeting_days
   has n, :weeksheets
   
-  validates_is_unique   :code, :scope => :branch_id
-  validates_length      :code, :min => 1, :max => 12
+  validates_uniqueness_of   :code, :scope => :branch_id
+  validates_length_of      :code, :min => 1, :max => 12
 
-  validates_length      :name, :min => 3
-  validates_is_unique   :name
-  validates_present     :manager
-  validates_present     :branch
+  validates_length_of      :name, :min => 3
+  validates_uniqueness_of   :name
+  validates_presence_of     :manager
+  validates_presence_of     :branch
   validates_with_method :meeting_time_hours,   :method => :hours_valid?
   validates_with_method :meeting_time_minutes, :method => :minutes_valid?
 

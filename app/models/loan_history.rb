@@ -87,7 +87,7 @@ class LoanHistory
   belongs_to :funding_line, :funder, :loan_product
 
   
-  validates_present :loan,:scheduled_outstanding_principal,:scheduled_outstanding_total,:actual_outstanding_principal,:actual_outstanding_total
+  validates_presence_of :loan,:scheduled_outstanding_principal,:scheduled_outstanding_total,:actual_outstanding_principal,:actual_outstanding_total
 
   def total_paid
     (principal_paid + interest_paid + fees_paid_today).round(2)
