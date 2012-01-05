@@ -66,9 +66,11 @@ gem 'log4r'
 gem 'pdf-writer'                , :git => "git://github.com/tundal45/pdf-writer.git"
 
 group :development do
+  gem 'mongrel'                 , '1.2.0.pre2'  # needed for ruby-1.9 (jan'12)
   # maintainer slice
-  gem 'dm-sqlite-adapter'        , dm_gems_version
-  gem 'git'                      , '1.2.5'
+  gem 'dm-sqlite-adapter'       , dm_gems_version
+  gem 'git'                     , '1.2.5'
   #merb depends on this older version of rspec
-  gem 'rspec'					   ,'1.3', :require => 'spec'
+  gem 'rspec'                   ,'1.3', :require => 'spec'
 end
+

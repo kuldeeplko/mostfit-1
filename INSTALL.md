@@ -3,68 +3,32 @@ INSTALLING
 
 This document describes how to quickly install Mostfit (the branch that you are looking at).
 
-Both `rvm` and `gemsets` are employed to do so.
+Both `rvm` and `bundler` are employed to do so.
 
-This is not a copy-paste script for a clean install ubuntu -- YMMV.
+This is not a copy-paste script for a clean install of Ubuntu -- I warned you!
 
 
 
-##  SECOND ATTEMPT
+##  Let's get it on...
 
 I heard that I was doing it wrong, so here my second attempt.  This seems to work nicely.
 
+    rvm install 1.9.3-head  # we develop on 1.9.3 for gem load speed-ups
+    rvm gemset create mostfit_gems
+    rvm use 1.9.3-head@mostfit_gems
+    rvm rubygems 1.8.12  # most current at time of writing
 
-    git clone git@git.mostfit.in:mostfit.git
-    # git co new-layout   # in case the branch is other then master
+    git clone https://github.com/Mostfit/mostfit.git
+    cd mostfit
+    # git co $BRANCH_NAME  # in case the branch is other then master
 
-    rvm use 1.8.7  # install it if you haven't got it already
-    rvm gemset create mostfit
-    rvm use 1.8.7@mostfit
-    rvm rubygems 1.4.2
-    # got an error but that could be safely ignored in my case
+    gem update rake  # get the latest
+    gem install bundler --pre  # --pre gives huge speedups (jan'12)
 
-    (cd gems/cache; gem install --local * --no-ri --no-rdoc)
-    # got errors: pdf-writer wants color, and roo wants spreadsheet, google-spreadsheet-ruby wants hpricot
-
-    cp config/example.database.yml config/database.yml
-    vi config/database.yml
-
-    bin/merb
-
-
-
-
-
-##  FIRST ATTEMPT
-
-Here I use thor, which is not the most ideal method...
-
-
-    git clone git@git.mostfit.in:mostfit.git
-    # git co new-layout   # in case the branch is other then master
-
-    rvm use 1.8.7  # install it if you haven't got it already
-    rvm gemset create mostfit
-    rvm use 1.8.7@mostfit
-    rvm rubygems 1.4.2
-
-    # found this in install instructions
-    gem install thor -v 0.9.9
-    gem install dm-observer -v 0.10.1
-    gem install uuid pdf-writer mongrel log4r
-
-    sudo apt-get install libmysqlclient16-dev mysql-server
-
-    thor merb:gem:redeploy
-    thor merb:gem:install
-
-    gem install uuid pdf-writer mongrel log4r i18n-translators-tools \
-                i18n-translators-tools google-spreadsheet-ruby i18n \
-                fastercsv rgettext roo
+    bundle install  # go call some family, or read hackernews!
 
     cp config/example.database.yml config/database.yml
-    vi config/database.yml
+    $EDITOR config/database.yml  # with me `echo $EDITOR` returns "vi"
 
-    bin/merb
-
-
+    bundle exec merb -i  # for the console
+    bundle exec merb     # for the webapp
