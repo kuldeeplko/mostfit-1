@@ -2,9 +2,11 @@ if defined?(Merb::Plugins)
 
   $:.unshift File.dirname(__FILE__)
 
-  dependency 'merb-slices', :immediate => true
-  dependency 'cronedit', '0.3.0'
-  dependency 'git', '1.2.5'
+# These dependencies should now be handled by the Gemfile
+#  dependency 'merb-slices', :immediate => true
+#  dependency 'cronedit', '0.3.0'
+#  dependency 'git', '1.2.5'
+
   Merb::Plugins.add_rakefiles "maintainer/merbtasks", "maintainer/slicetasks", "maintainer/spectasks"
   
   require Merb.root / 'slices/maintainer/lib/constants.rb'
