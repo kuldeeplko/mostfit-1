@@ -64,6 +64,11 @@ gem 'pdf-writer',               :git => "git://github.com/tundal45/pdf-writer.gi
 gem 'dm-sqlite-adapter',        dm_gems_version
 gem 'git',                      '~> 1.2'
 
+# These should be pre-installed as detailed in INSTALL.md
+gem 'linecache19'
+gem 'ruby-debug-base19'
+gem 'ruby-debug19'
+
 group :development do
   gem 'mongrel',                '1.2.0.pre2'  # needed for ruby-1.9 (jan'12)
 

@@ -6,20 +6,20 @@ if (local_gem_dir = File.join(File.dirname(__FILE__), '..', '..', 'gems')) && $B
   $BUNDLE = true; Gem.clear_paths; Gem.path.unshift(local_gem_dir)
 end
 
-require 'rake/rdoctask'
+require 'rdoc/task'
 
 require 'merb-core'
 require 'merb-core/tasks/merb'
 
 include FileUtils
 
-# Load the basic runtime dependencies; this will include 
+# Load the basic runtime dependencies; this will include
 # any plugins and therefore plugin rake tasks.
 init_env = ENV['MERB_ENV'] || 'rake'
 Merb.load_dependencies(:environment => init_env)
-     
+
 # Get Merb plugins and dependencies
-Merb::Plugins.rakefiles.each { |r| require r } 
+Merb::Plugins.rakefiles.each { |r| require r }
 
 # Load any app level custom rakefile extensions from lib/tasks
 tasks_path = File.join(File.dirname(__FILE__), "lib", "tasks")

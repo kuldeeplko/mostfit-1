@@ -54,8 +54,14 @@ least I warned you :)
     rvm gemset create mostfit_gems
     rvm use 1.9.3-head@mostfit_gems
     rvm rubygems 1.8.12  # most current at time of writing
-    gem install ruby-debug19 -- --with-ruby-include= \
-      $rvm_path/src/ruby-1.9.3-head/  # should point to source just installed
+    # Trick from: http://blog.wyeworks.com/2011/11/1/ruby-1-9-3-and-ruby-debug
+    (cd /tmp; \
+      BASE_URL="http://rubyforge.org/frs/download.php/75414"; \
+      INCLUDE="--with-ruby-include=$rvm_path/src/ruby-1.9.3-head/"; \
+      wget $BASE_URL/linecache19-0.5.13.gem; \
+      wget $BASE_URL/ruby-debug-base19-0.11.26.gem; \
+      gem install linecache19-0.5.13.gem -- $INCLUDE; \
+      gem install ruby-debug-base19-0.11.26.gem -- $INCLUDE; )
 
 
     # 3. Setup MySQL
