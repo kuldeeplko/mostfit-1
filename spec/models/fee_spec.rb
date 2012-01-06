@@ -30,11 +30,13 @@ describe Fee do
   end
 
   before :each do
+    RepaymentStyle.all.destroy!
     ApplicableFee.all.destroy!
     Loan.all.destroy!
     Fee.all.destroy!
 
     @loan = Factory(:loan, :applied_by => @manager, :funding_line => @funding_line, :client => @client, :loan_product => @loan_product)
+    @loan.valid?
     @loan.errors.each {|e| puts e}
     @loan.should be_valid
 

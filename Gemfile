@@ -68,6 +68,7 @@ gem 'git',                      '~> 1.2'
 group :development do
   gem 'mongrel',                '1.2.0.pre2'  # needed for ruby-1.9 (jan'12)
   # merb depends on this older version of rspec
-  gem 'rspec',                  '1.3', :require => 'spec'
+  gem 'rspec',                  '~> 2.8'
+  gem 'factory_girl',           '~> 2.3'
 end
 

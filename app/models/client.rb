@@ -238,7 +238,7 @@ class Client
   private
   def convert_blank_to_nil
     self.attributes.each{|k, v|
-      if v.is_a?(String) and v.empty? and self.class.send(k).type==Integer
+      if v.is_a?(String) and v.empty? and self.class.send(k).class==Integer
         self.send("#{k}=", nil)
       end
     }

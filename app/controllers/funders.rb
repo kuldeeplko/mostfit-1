@@ -49,8 +49,12 @@ class Funders < Application
   def funding_lines
     if params[:id]
       funder = Funder.get(params[:id])
-      next unless funder
-      return("<option value=''>Select funding lines</option>"+funder.funding_lines.map{|fl| "<option value=#{fl.id}>#{fl.name}</option>"}.join)
+      # Another next call that doesn't seem to make sense, see the comments in the areas controller
+      # next unless funder
+      if funder
+        return("<option value=''>Select funding lines</option>"+funder.funding_lines.map{|fl| "<option value=#{fl.id}>#{fl.name}</option>"}.join)
+      end
+
     end
   end
 
