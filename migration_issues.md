@@ -60,6 +60,16 @@ These have been commented and replaced with
     end
 
 
+conflicting property names
+--------------------------
+
+The dirty property on Reports is now a reserved name in datamapper.
+
+    property :dirty, Boolean
+
+Should be renamed..
+
+
 #class instead of #type
 -----------------------
 
