@@ -89,7 +89,9 @@ class Mfi
     $globals[:mfi_details] = Mfi.new(self.attributes)
     self.in_operation_since = self.in_operation_since.strftime("%Y-%m-%d")
     File.open(File.join(Merb.root, "config", "mfi.yml"), "w"){|f|
-      f.puts self.to_yaml
+      # In Ruby 1.9.2 self.to_attributes was failing with the syntax error "wrong argument type Symbol (expected String)"
+      # Presumably self.attributes.to_yaml has the same effect and it works
+      f.puts self.attributes.to_yaml
     }
     FileUtils.touch(File.join(Merb.root, "tmp", "restart.txt"))    
     Mfi.activate

@@ -1676,7 +1676,11 @@ class Loan
   end
 
   def verified_cannot_be_deleted_if_not_deleted
-    verified_cannot_be_deleted if self.deleted_at != nil
+    if self.deleted_at != nil
+      verified_cannot_be_deleted
+    else
+      true
+    end
   end
 
  

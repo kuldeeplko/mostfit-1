@@ -4,7 +4,7 @@ module DateParser
 
   # parses the date if nil, Date or Mash, otherwise throw an exception
   def parse_dates
-    cols = properties.to_a.find_all{ |x| x.type == Date }.map{ |x| x = x.name }
+    cols = properties.to_a.find_all{ |x| x.class == Date }.map{ |x| x = x.name }
     cols.each do |col|
       value = send(col)
       if value.class == Date or value.class == NilClass
