@@ -54,8 +54,8 @@ gem 'gettext'
 gem 'tlsmail'
 gem 'cronedit'
 gem 'log4r'
+gem 'rake',                     '~> 0.9'
 
-# pdf-generation
 # PDF functionality should be ported to Prawn, pdf-writer is no longer maintained.
 # We use this fork because it contains fixes for ruby 1.9
 gem 'pdf-writer',               :git => "git://github.com/tundal45/pdf-writer.git"
@@ -64,10 +64,13 @@ gem 'pdf-writer',               :git => "git://github.com/tundal45/pdf-writer.gi
 gem 'dm-sqlite-adapter',        dm_gems_version
 gem 'git',                      '~> 1.2'
 
-
 group :development do
   gem 'mongrel',                '1.2.0.pre2'  # needed for ruby-1.9 (jan'12)
-  # merb depends on this older version of rspec
+
+  # This currently gives problems:
+  # gem 'ruby-debug19'
+  # So we install it system-wide with extra options as shown in INSTALL.md
+
   gem 'rspec',                  '~> 2.8'
   gem 'factory_girl',           '~> 2.3'
 end
