@@ -23,7 +23,7 @@ I heard that I was doing it wrong, so here my second attempt.  This seems to wor
     # git co $BRANCH_NAME  # in case the branch is other then master
 
     gem update rake  # get the latest
-    gem install bundler --pre  # --pre gives huge speedups (jan'12)
+    gem install bundler --pre  # --pre (=1.1) gives huge speedups
 
     bundle install  # go call some family, or read hackernews!
 
