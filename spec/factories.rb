@@ -7,6 +7,7 @@ FACTORY_OCCUPATIONS = %w[Carpenter Astrologer Engineer Teller Cook Butcher Actua
 FACTORY_PROVINCES   = ['Maharashtra', 'Andra Pradesh', 'Madhya Pradesh', 'Kerala', 'Tamil Nadu'].freeze
 FACTORY_PURPOSES    = ['Buying a boat', 'Christmas presents', 'Wife\'s birthday'].freeze
 FACTORY_ASSETS      = ['Laptop charger', 'Laser printer', 'Mobile phone', 'Airconditioner'].freeze
+FACTORY_REPAYMENTS  = %[Flat EquatedWeekly BulletLoan BulletLoanWithPeriodicInterest CustomPrincipal CustomPrincipalAndInterest].freeze
 
 FactoryGirl.define do
 
@@ -27,6 +28,8 @@ FactoryGirl.define do
   # Loan sequences
   sequence(:loan_product_name)  { |n| "Loan product #{n}" }
   sequence(:loan_purpose)       { |n| [FACTORY_PURPOSES[n%FACTORY_PURPOSES.length], n.to_s].join(' ') }
+  # RepaymentStyle sequences
+  sequence(:repayment_style)    { |n| FACTORY_REPAYMENTS[n%FACTORY_REPAYMENTS.length] }
   # Fee sequences
   sequence(:fee_name)           { |n| "Fee #{n}" }
   # Account sequences
@@ -95,6 +98,7 @@ FactoryGirl.define do
     active          true
     gender          'male'
     date_joined     { Date.parse('2000-01-01') }
+    type_of_account 'savings'
 
     association     :client_type
     association     :center
@@ -242,6 +246,7 @@ FactoryGirl.define do
     association                   :funding_line
     association                   :client
     association                   :loan_product
+    association                   :loan_purpose
     association                   :repayment_style
 
     # These cached properties should probably be set automatically somewhere?
@@ -356,8 +361,8 @@ FactoryGirl.define do
   end
 
   factory :repayment_style do
-    name                'EquatedWeekly'
-    style               'EquatedWeekly'
+    style               { Factory.next(:repayment_style) }
+    name                { self.style }
     rounding_style      'round' # Took me forever to figure this one out but if we don't specify a rounding style loans will bork badly
     round_total_to      1
     round_interest_to   1

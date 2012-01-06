@@ -8,12 +8,12 @@ if (local_gem_dir = File.join(File.dirname(__FILE__), '..', 'gems')) && $BUNDLE.
 end
 
 require "merb-core"
-require "spec" # Satisfies Autotest and anyone else not using the Rake tasks
+require "rspec" # Satisfies Autotest and anyone else not using the Rake tasks
 
 # this loads all plugins required in your init file so don't add them
 # here again, Merb will do it for you
 Merb.start_environment(:testing => true, :adapter => 'runner', :environment => ENV['MERB_ENV'] || 'test')
-Spec::Runner.configure do |config|
+RSpec.configure do |config|
 #  config.include(Merb::Test::ViewHelper)
   config.include(Merb::Test::RouteHelper)
   config.include(Merb::Test::ControllerHelper)
@@ -21,8 +21,8 @@ Spec::Runner.configure do |config|
  
   config.before(:all) do
     if Merb.orm == :datamapper
-      DataMapper.auto_migrate!
-      (repository.adapter.query("show tables") - ["payments", "journals", "postings"]).each{|t| repository.adapter.execute("alter table #{t} ENGINE=MYISAM")}
+      # DataMapper.auto_migrate!
+      (repository.adapter.select("show tables") - ["payments", "journals", "postings"]).each{|t| repository.adapter.execute("alter table #{t} ENGINE=MYISAM")}
     end
 
     mfi = Mfi.first
@@ -39,14 +39,14 @@ Spec::Runner.configure do |config|
   # The following is run before each individual spec (but not between tests within a spec)
   #
   config.before(:all) do
-    [AccountType, Account, Currency, JournalType, CreditAccountRule, DebitAccountRule, RuleBook, StaffMember, User, Funder, FundingLine, Branch, Center, ClientType, Client, LoanProduct, LoanHistory, Region, Area, Portfolio].each do |model|
+    [AccountType, Account, Currency, JournalType, CreditAccountRule, DebitAccountRule, RuleBook, StaffMember, User, Funder, FundingLine, Branch, Center, ClientType, Client, LoanProduct, LoanHistory, Region, Area, Portfolio, RepaymentStyle].each do |model|
       model.all.destroy!
     end
   end
 end
 
 # Don't include the factories until the environment has been loaded
-require 'spec/factories'
+require Merb.root / 'spec/factories'
 
 
 class MockLog
