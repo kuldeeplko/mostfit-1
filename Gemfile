@@ -53,6 +53,7 @@ gem 'builder'
 gem 'gettext'
 gem 'tlsmail'
 gem 'cronedit'
+gem 'colored'
 gem 'log4r'
 gem 'rake',                     '~> 0.9'
 
@@ -76,7 +77,7 @@ group :development do
   # gem 'ruby-debug19'
   # So we install it system-wide with extra options as shown in INSTALL.md
 
-  gem 'rspec',                  '~> 2.8'
+  gem 'rspec',                  '~> 1.3'
   gem 'factory_girl',           '~> 2.3'
 end
 
