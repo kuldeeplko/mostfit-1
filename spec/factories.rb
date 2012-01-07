@@ -1,4 +1,6 @@
-require 'factory_girl'
+# This really shouldn't be necessary but it's the only way I could get rspect to
+# find the factory_girl include. Without the absolute path we get 'no such file to load'
+require File.join( ENV['GEM_HOME'], 'gems', 'factory_girl-2.3.2', 'lib', 'factory_girl')
 
 FACTORY_NAMES       = %w[Smith Anderson Rodriguez Gonzalez Campbell Parker Moore Helen Donald Richard Dick Deborah].freeze
 FACTORY_PLACES      = %w[Mumbai Hyderabad Pune Bangalore Cochin Chennai Kolkata].freeze
@@ -182,6 +184,7 @@ FactoryGirl.define do
     name            { Factory.next(:province) }
     code            { Factory.next(:center_code) }
     meeting_day     :wednesday
+    creation_date   { Date.new( 2000, 01, 01 ) }
 
     association     :branch
     association     :manager, :factory => :staff_member
