@@ -7,7 +7,7 @@ This document aims to describe any remaining issues regarding the migration to r
 association#lazy? is deprecated
 -------------------------------
 
-Used in app/models/data_access_observer.rb
+Used in `app/models/data_access_observer.rb`
 
     def self.get_object_state(obj, type)
       #load lazy attributes forcefully here
@@ -20,7 +20,7 @@ This results in:
     undefined method 'lazy?' for #<DataMapper::Associations::ManyToMany::Relationship:0xa21069c>
 
 
-object.to_yaml was failing in app/models/mfi.rb
+`object.to_yaml` was failing in `app/models/mfi.rb`
 -----------------------------------------------
 
 The custom #save method in mfi.rb used to read:
@@ -29,7 +29,7 @@ The custom #save method in mfi.rb used to read:
       f.puts self.to_yaml
     }
 
-But in Ruby 1.9.2 self.to_attributes was failing with the syntax error "wrong argument type Symbol (expected String)", I replaced this with
+But in Ruby 1.9.2 `self.to_attributes` was failing with the syntax error "wrong argument type Symbol (expected String)", I replaced this with
 
     File.open(File.join(Merb.root, "config", "mfi.yml"), "w"){|f|
       f.puts self.attributes.to_yaml
@@ -81,7 +81,7 @@ changed to:
 
     if v.is_a?(String) and v.empty? and self.class.send(k).class==Integer
 
-app/models/date_parser.rb:
+`app/models/date_parser.rb:`
 
     cols = properties.to_a.find_all{ |x| x.type == Date }.map{ |x| x = x.name }
 
@@ -93,12 +93,12 @@ changed to:
 validation failures
 -------------------
 
-This one isn't strictly about the migration but a validation that was working before started failing but no errors.full_messages was returned (only nil.)
-Traced the problem to #verified_cannot_be_deleted_if_not_deleted in Loan. It used to read:
+This one isn't strictly about the migration but a validation that was working before started failing but no `errors.full_messages` was returned (only nil.)
+Traced the problem to `#verified_cannot_be_deleted_if_not_deleted` in Loan. It used to read:
 
     verified_cannot_be_deleted if self.deleted_at != nil
 
-Meaning that if deleted_at was nil, the method returned nil and so failed the validation for no reason and without a message. Replaced with:
+Meaning that if `deleted_at` was nil, the method returned nil and so failed the validation for no reason and without a message. Replaced with:
 
     if self.deleted_at != nil
       verified_cannot_be_deleted
