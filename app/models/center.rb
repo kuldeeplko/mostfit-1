@@ -224,7 +224,7 @@ class Center
   end
   
   def creation_date_ok
-    return true if clients.map{|c| c.loans}.count == 0
+    return true if clients.map{|c| c.loans}.flatten.count == 0
     return true if creation_date <= loans.aggregate(:applied_on.min)
     return [false, "Creation date cannot be after the first loan application date"]
   end

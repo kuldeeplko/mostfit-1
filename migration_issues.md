@@ -4,6 +4,74 @@ Migration Issues
 This document aims to describe any remaining issues regarding the migration to ruby 1.9, merb 1.1.3 and datamapper 1.1
 
 
+Open Issues
+===========
+
+`current_validation_context` is deprecated
+------------------------------------------
+
+A private method from DataMapper is used in `app/models/payment.rb`, here:
+
+    def received_by_active_staff_member?
+      return true if self.send(:current_validation_context) == :reallocate
+      ...
+    end
+
+This is part of the DM private api and while it still exists somewhere, this call now fails with an NoMethodError.
+
+conflicting property names
+--------------------------
+
+The dirty property on Reports is now a reserved name in datamapper.
+
+    property :dirty, Boolean
+
+Should be renamed..
+
+validation failures
+-------------------
+
+This one isn't strictly about the migration but a validation that was working before started failing but no `errors.full_messages` was returned (only nil.)
+Traced the problem to `#verified_cannot_be_deleted_if_not_deleted` in Loan. It used to read:
+
+    verified_cannot_be_deleted if self.deleted_at != nil
+
+Meaning that if `deleted_at` was nil, the method returned nil and so failed the validation for no reason and without a message. Replaced with:
+
+    if self.deleted_at != nil
+      verified_cannot_be_deleted
+    else
+      true
+    end
+
+
+`deleted_at` issues
+-------------------
+
+Several models use `deleted_at` attributes for 'paranoid' deletion. However in client_spec.rb we have the test:
+
+    it "should not be deleteable if verified" do
+      @client.verified_by = @user
+      @client.save
+      @client.destroy.should be_false
+    end
+
+`Client#destroy` does not take the required validation (`verified_cannot_be_deleted`) into account, nor does it seem to use deleted_at in any way.
+This means the test fails since `#destroy` is never prevented.
+Perhaps it would be wise to override the `destroy` method on these models? Or should we just rewrite the test to test against setting `deleted_at` followed by `save`?
+
+It seems like this one should have been failing under the old datamapper already but it didn't for some reason.
+
+
+Fixed Issues
+============
+
+`Enum` properties in DM 1.1 now allow blank!
+--------------------------------------------
+
+
+
+
 `association#lazy?` issues
 --------------------------
 
@@ -47,6 +115,23 @@ in DM 1.1 this results in a LocalJumpError getting raised. Replaced as follows:
 I don't think the returned `false` was being used anywhere..
 
 
+Counting nested arrays
+----------------------
+
+In `app/models/center.rb` we were doing this:
+
+    return true if clients.map{|c| c.loans}.count == 0
+
+But an array that contains an empty array ([[]]) still has a count of 1, so this always returned false.
+The next line depends on the count being > 0 so this threw an error.
+
+Replaced with:
+
+    return true if clients.map{|c| c.loans}.flatten.count == 0
+
+I'm not sure why this was working before, this was already existing behavior in ruby 1.8
+
+
 `object.to_yaml` was failing in `app/models/mfi.rb`
 ---------------------------------------------------
 
@@ -87,16 +172,6 @@ These have been commented and replaced with
     end
 
 
-conflicting property names
---------------------------
-
-The dirty property on Reports is now a reserved name in datamapper.
-
-    property :dirty, Boolean
-
-Should be renamed..
-
-
 #class instead of #type
 -----------------------
 
@@ -117,18 +192,3 @@ changed to:
     cols = properties.to_a.find_all{ |x| x.class == Date }.map{ |x| x = x.name }
 
 
-validation failures
--------------------
-
-This one isn't strictly about the migration but a validation that was working before started failing but no `errors.full_messages` was returned (only nil.)
-Traced the problem to `#verified_cannot_be_deleted_if_not_deleted` in Loan. It used to read:
-
-    verified_cannot_be_deleted if self.deleted_at != nil
-
-Meaning that if `deleted_at` was nil, the method returned nil and so failed the validation for no reason and without a message. Replaced with:
-
-    if self.deleted_at != nil
-      verified_cannot_be_deleted
-    else
-      true
-    end

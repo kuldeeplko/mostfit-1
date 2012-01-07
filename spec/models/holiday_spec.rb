@@ -24,7 +24,7 @@ describe Holiday do
     @h.should_not be_valid
   end
 
-  it "should have a behaivour" do
+  it "should have a valid behavior" do
     @h.shift_meeting = nil
     @h.should_not be_valid
   end
@@ -32,7 +32,6 @@ describe Holiday do
   it "should update" do
     @h.shift_meeting = :after
     @h.save
-    @h.errors.each {|e| puts "!!e"}
     @h.should be_valid
   end
 

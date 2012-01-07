@@ -3,6 +3,10 @@ require File.join( File.dirname(__FILE__), '..', "spec_helper" )
 describe ClientGroup do
 
   before(:each) do
+    ClientGroup.all.destroy!
+    Center.all.destroy!
+    Loan.all.destroy!
+
     @client_group = Factory(:client_group)
   end
 

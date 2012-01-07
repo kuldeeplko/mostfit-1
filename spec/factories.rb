@@ -9,7 +9,7 @@ FACTORY_OCCUPATIONS = %w[Carpenter Astrologer Engineer Teller Cook Butcher Actua
 FACTORY_PROVINCES   = ['Maharashtra', 'Andra Pradesh', 'Madhya Pradesh', 'Kerala', 'Tamil Nadu'].freeze
 FACTORY_PURPOSES    = ['Buying a boat', 'Christmas presents', 'Wife\'s birthday'].freeze
 FACTORY_ASSETS      = ['Laptop charger', 'Laser printer', 'Mobile phone', 'Airconditioner'].freeze
-FACTORY_REPAYMENTS  = %[Flat EquatedWeekly BulletLoan BulletLoanWithPeriodicInterest CustomPrincipal CustomPrincipalAndInterest].freeze
+FACTORY_REPAYMENTS  = %w[Flat EquatedWeekly BulletLoan BulletLoanWithPeriodicInterest CustomPrincipal CustomPrincipalAndInterest].freeze
 
 FactoryGirl.define do
 
@@ -603,6 +603,7 @@ FactoryGirl.define do
   end
 
   factory :comment do
+    text                'Cool story bro'
     association         :user
   end
 
