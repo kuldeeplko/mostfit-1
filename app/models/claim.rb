@@ -122,9 +122,9 @@ class Claim
   def convert_blank_to_nil
     self.attributes.each{|k, v|
       next if k == :id
-      if v.is_a?(String) and v.empty? and [Float, Integer].include?(self.class.send(k).type)
+      if v.is_a?(String) and v.empty? and [Float, Integer].include?(self.class.send(k).class)
         self.send("#{k}=", nil)
-      elsif [Date].include?(self.class.send(k).type)
+      elsif [Date].include?(self.class.send(k).class)
         self.send("#{k}=", nil) if v.blank? or (v.class==String and v[:month] and v[:month].blank? and v[:day] and v[:day].blank? and v[:year] and v[:year].blank?)
       end
     }
