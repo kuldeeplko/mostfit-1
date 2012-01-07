@@ -4,8 +4,8 @@ Migration Issues
 This document aims to describe any remaining issues regarding the migration to ruby 1.9, merb 1.1.3 and datamapper 1.1
 
 
-association#lazy? is deprecated
--------------------------------
+association#lazy? issues
+------------------------
 
 Used in `app/models/data_access_observer.rb`
 
@@ -18,6 +18,12 @@ Used in `app/models/data_access_observer.rb`
 This results in:
 
     undefined method 'lazy?' for #<DataMapper::Associations::ManyToMany::Relationship:0xa21069c>
+
+After some more digging, perhaps `lazy?` wasn't deprecated but `original_attributes` used to report only actual model attributes and not associations? I fixed this by only including actual properties, like so:
+
+    @ributes = original_attributes = obj.original_attributes.map{|k,v| {k.name => (k.is_a?(DataMapper::Property) && k.lazy? ? obj.send(k.name) : v)}}.inject({}){|s,x| s+=x}
+
+This precludes associations from being logged, but I believe that's also how it worked before(?)
 
 
 `object.to_yaml` was failing in `app/models/mfi.rb`

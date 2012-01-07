@@ -11,7 +11,7 @@ class DataAccessObserver
 
   def self.get_object_state(obj, type)
     #load lazy attributes forcefully here
-    @ributes = original_attributes = obj.original_attributes.map{|k,v| {k.name => (k.lazy? ? obj.send(k.name) : v)}}.inject({}){|s,x| s+=x}
+    @ributes = original_attributes = obj.original_attributes.map{|k,v| {k.name => (k.is_a?(DataMapper::Property) && k.lazy? ? obj.send(k.name) : v)}}.inject({}){|s,x| s+=x}
     @action = type
   end
   
