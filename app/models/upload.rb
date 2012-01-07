@@ -1,4 +1,4 @@
-class Upload  
+class Upload
   require "log4r"
 
   include DataMapper::Resource
@@ -22,13 +22,13 @@ class Upload
 
 
   # Asking for trouble? Let's just make this a permanent, optional relationship
-  if Mfi.first.system_state == :migration
-    MODELS.each do |model|
-      has n, model
-    end
-  end
+  # if Mfi.first.system_state == :migration
+  #   MODELS.each do |model|
+  #     has n, model
+  #   end
+  # end
 
-  before :valid? do 
+  before :valid? do
     self.directory ||= UUID.generate
     self.state ||= :new
     self.state_detail = Marshal.dump(@state_detail_hash)
@@ -51,7 +51,7 @@ class Upload
 
   def csv_file_for(model)
     f = File.join(Merb.root, "uploads", directory, "#{model.to_s.snake_case}.csv")
-    File.exists?(f) ? f : false 
+    File.exists?(f) ? f : false
   end
 
   def details
@@ -73,7 +73,7 @@ class Upload
     link_text
   end
 
-  
+
   def move(tempfile)
     # moves the tempfile to a nice location
     File.makedirs(File.join(Merb.root, "uploads", directory))
@@ -141,14 +141,14 @@ class Upload
     @log.info("Stopping processing")
     self.state = :uploaded
     self.save
-    if options[:erase] 
+    if options[:erase]
       @log.info("Erasing records from database")
       destroy_models
     end
     @log.info("deleting csv files")
     FileUtils.rm Dir.glob(File.join("uploads",directory,"*csv"))
   end
-  
+
   # turns an excel file into its constituent worksheets as CSV files
   def process_excel_to_csv
     # DIRTY HACK!
@@ -161,7 +161,7 @@ class Upload
       self.update(:state => :extracted)
     end
   end
-  
+
   # returns an array containing names of the csv files in the directory
   def csv_files
     Dir.glob(File.join("uploads", directory, "*csv")).map{|c| c.split("/")[-1]}
@@ -170,7 +170,7 @@ class Upload
   # @param model is a pluralised symbol i.e. :clients
   def reload(model)
     load_csv({:erase => false, :verbose => false}, [model])
-  end 
+  end
 
   # Loads the extracted CSV files into the database. Params are passed in the options hash as follows
   #
@@ -186,7 +186,7 @@ class Upload
       @log.error("No CSV files found here. Exiting")
       return
     end
-    
+
     models.each {|model|
       self.state_detail = "started processing #{model}"
       self.save
@@ -198,7 +198,7 @@ class Upload
       model = Kernel.const_get(model.to_s.singularize.camel_case)
       if [Branch, Center, Client, Loan].include?(model) and StaffMember.count == 0                       # some models need staff members
         @log.error("No point continuing with #{model} without any staff members")
-        next 
+        next
       end
 
       @log.info("Creating #{model.to_s.plural}")
@@ -210,7 +210,7 @@ class Upload
       unique_field = _o[0]
       @log.debug(unique_field ? unique_field.to_s : "No unique field")
       unless unique_field
-        @log.error("Atleast one property in #{model} must be unique") 
+        @log.error("Atleast one property in #{model} must be unique")
         break
       end
 
@@ -222,7 +222,7 @@ class Upload
         error = true
         row = row.compact # drop all nils. this means we can deal with blank columns tranpsarently
         if idx==0
-          row.to_enum(:each_with_index).collect{|name, index| 
+          row.to_enum(:each_with_index).collect{|name, index|
             headers[name.downcase.gsub(' ', '_').to_sym] = index
           }
           headers[:upload_id] = headers.keys.count
@@ -250,7 +250,7 @@ class Upload
               if idx%100==99
                 reload
                 return if self.state == :stopped
-                @log.info("Created #{idx-99} - #{idx+1}. Some more left")    
+                @log.info("Created #{idx-99} - #{idx+1}. Some more left")
               end
             else
               @log.error("<font color='red'>#{model}: Problem in inserting #{row[headers[:serial_number]]}. Reason: #{record.errors.to_a.join(', ')}</font>") if log
@@ -265,11 +265,11 @@ class Upload
               error_count += 1                                                                    # so we can iterate down to perfection
             end
           end
-        end    
+        end
       }
       rescue Exception =>e
       end
-      @log.info("<font color='#8DC73F'><b>Created #{done} #{model.to_s.plural}</b></strong> Skipped #{skipped}") 
+      @log.info("<font color='#8DC73F'><b>Created #{done} #{model.to_s.plural}</b></strong> Skipped #{skipped}")
       error_file.close
       FileUtils.rm(error_filename, :force => true) if error_count == 0
       self.state = :complete; self.save
