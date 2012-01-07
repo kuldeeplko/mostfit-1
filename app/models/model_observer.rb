@@ -20,25 +20,28 @@ class ModelObserver
   end
 
   after :create do
-    return false unless Mfi.first.event_model_logging_enabled
-    ModelObserver.make_event_entry(self, :create)
+    unless Mfi.first.event_model_logging_enabled
+      ModelObserver.make_event_entry(self, :create)
+    end
   end
 
   after :update do
-    return false unless Mfi.first.event_model_logging_enabled
-    action = :update
-    class_of_self = nil
-    ANOMALIES.each{|x|
-      class_of_self =  x.to_s.downcase.to_sym if self.is_a?(x)
-    }
-    unless class_of_self.nil?
-      action = :destroy unless self.deleted_at.nil?
+    unless Mfi.first.event_model_logging_enabled
+      action = :update
+      class_of_self = nil
+      ANOMALIES.each{|x|
+        class_of_self =  x.to_s.downcase.to_sym if self.is_a?(x)
+      }
+      unless class_of_self.nil?
+        action = :destroy unless self.deleted_at.nil?
+      end
+      ModelObserver.make_event_entry(self, action)
     end
-    ModelObserver.make_event_entry(self, action)
   end
 
   after :destroy do
-    return false unless Mfi.first.event_model_logging_enabled
-    ModelObserver.make_event_entry(self, :destroy)
+    unless Mfi.first.event_model_logging_enabled
+      ModelObserver.make_event_entry(self, :destroy)
+    end
   end
 end

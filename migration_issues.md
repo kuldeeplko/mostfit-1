@@ -4,8 +4,8 @@ Migration Issues
 This document aims to describe any remaining issues regarding the migration to ruby 1.9, merb 1.1.3 and datamapper 1.1
 
 
-association#lazy? issues
-------------------------
+`association#lazy?` issues
+--------------------------
 
 Used in `app/models/data_access_observer.rb`
 
@@ -26,8 +26,29 @@ After some more digging, perhaps `lazy?` wasn't deprecated but `original_attribu
 This precludes associations from being logged, but I believe that's also how it worked before(?)
 
 
+`DataMapper::Observer` callbacks no longer alllow `return`
+----------------------------------------------------------
+
+In `app/models/model_observer.rb`, if conditions were not met we called return, as in:
+
+    after :create do
+      return false unless Mfi.first.event_model_logging_enabled
+      ModelObserver.make_event_entry(self, :create)
+    end
+
+in DM 1.1 this results in a LocalJumpError getting raised. Replaced as follows:
+
+    after :create do
+      unless Mfi.first.event_model_logging_enabled
+        ModelObserver.make_event_entry(self, :create)
+      end
+    end
+
+I don't think the returned `false` was being used anywhere..
+
+
 `object.to_yaml` was failing in `app/models/mfi.rb`
------------------------------------------------
+---------------------------------------------------
 
 The custom #save method in mfi.rb used to read:
 
@@ -42,8 +63,8 @@ But in Ruby 1.9.2 `self.to_attributes` was failing with the syntax error "wrong 
     }
 
 
-next in controllers
--------------------
+`next` in controllers
+---------------------
 
 In several controller 'next' seems to be called in an inappropriate way, e.g. app/controllers/funders.rb:
 
