@@ -4,6 +4,7 @@ describe LoanProduct do
 
   before(:each) do
     LoanProduct.all.destroy!
+    RepaymentStyle.all.destroy!
 
     @loan_product = Factory( :loan_product,
       :name => "Test product", :min_amount => 100, :max_amount => 10000, :min_interest_rate => 8, :max_interest_rate => 10, 

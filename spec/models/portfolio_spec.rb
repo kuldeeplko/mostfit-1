@@ -33,7 +33,7 @@ describe Portfolio do
     @portfolio.verified_by = Factory(:user)
     @portfolio.save
     @portfolio.should be_valid
-    @portfolio.destroy.should eql(nil)
+    @portfolio.destroy.should eql(false)
     
     @portfolio.verified_by = nil
     @portfolio.save

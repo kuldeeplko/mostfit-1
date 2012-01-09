@@ -4,6 +4,7 @@ describe Payment do
 
   before(:each) do
     Payment.all.destroy!
+    RepaymentStyle.all.destroy!
 
     @payment = Factory(:payment,
       :amount       => 10.50,

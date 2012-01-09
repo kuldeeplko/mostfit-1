@@ -3,8 +3,10 @@ require File.join( File.dirname(__FILE__), '..', "spec_helper" )
 describe Journal do
 
   before(:each) do
+    Currency.all.destroy!
+    JournalType.all.destroy!
     @currency = Factory(:currency)
-    @journal_Type = Factory(:journal_type)
+    @journal_type = Factory(:journal_type)
   end
   
   it "should create double entry transactions correctly" do
@@ -47,6 +49,7 @@ describe Journal do
       Factory(:account, :name => 'debit account 2', :opening_balance => 0) => 400,
     }
 
+    # Status is now returning false here.. Not sure why yet
     status, journal = Journal.create_transaction(journal, debit_accounts, credit_accounts)
     status.should be_true
     journal.should be_valid
