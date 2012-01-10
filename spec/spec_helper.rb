@@ -8,7 +8,7 @@ rescue LoadError
   Bundler.setup
 end
 
-require "spec" # Satisfies Autotest and anyone else not using the Rake tasks
+require "rspec" # Satisfies Autotest and anyone else not using the Rake tasks
 require "merb-core"
 
 require "erb"

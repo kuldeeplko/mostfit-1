@@ -21,7 +21,8 @@ gem 'merb-gen',                 merb_gems_version
 # Merb authentication
 gem 'merb-auth-core',           merb_related_gems
 gem 'merb-auth-more',           merb_related_gems
-gem 'merb-auth-slice-password', merb_related_gems
+# Breaks with rspec 2.8, hasn't been updated since 2008, solution pending
+# gem 'merb-auth-slice-password', merb_related_gems
 
 # Other Merb plugins
 gem 'merb-haml',                merb_gems_version
