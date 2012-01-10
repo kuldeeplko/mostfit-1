@@ -12,7 +12,15 @@ class Client
   after  :save,   :check_client_deceased
   after  :save,   :levy_fees
   after  :save,   :update_loan_cache
-  
+
+  # This is replacing the old #verified_cannot_be_deleted validation method
+  # DM 1.1 no longer calls validations before destroying a record. This is
+  # the proper pattern for preventing records being destroyed
+  # source: http://datamapper.org/docs/callbacks
+  before :destroy do |client|
+    throw :halt if client.is_verified?
+  end
+ 
   property :id,              Serial
   property :reference,       String, :length => 100, :required => true, :index => true
   property :name,            String, :length => 100, :required => true, :index => true
@@ -131,10 +139,16 @@ class Client
   validates_presence_of   :center
   validates_presence_of   :date_joined
   validates_uniqueness_of :reference
-  validates_with_method  :verified_by_user_id,          :method => :verified_cannot_be_deleted, :if => Proc.new{|x| x.deleted_at != nil}
   # validates_attachment_thumbnails :picture
   validates_with_method :date_joined, :method => :dates_make_sense
   validates_with_method :inactive_reason, :method => :cannot_have_inactive_reason_if_active
+
+
+  # Used by the before :destroy callback to determine whether a record can be destroyed.
+  # Clients that have been verified may not be destroyed
+  def is_verified?
+    !self.verified_by.blank?
+  end
 
   def update_loan_cache
     loans.each{|l| l.update_loan_cache(true); l.save}
@@ -259,12 +273,6 @@ class Client
     return [false, "GRT Pass Date cannot be before Date Joined"]  if grt_pass_date < date_joined
     return [false, "Client cannot die before he became a client"] if deceased_on and (deceased_on < date_joined or deceased_on < grt_pass_date)
     true
-  end
-
-  def verified_cannot_be_deleted
-    return true unless verified_by_user_id
-    throw :halt
-    [false, "Verified client. Cannot be deleted"]
   end
 
   def self.death_cases(obj, from_date, to_date)
