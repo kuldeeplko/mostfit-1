@@ -1,6 +1,6 @@
 class Fee
   include DataMapper::Resource
-  
+
   # PAYABLE is a hash which enables us to call the correct function on the correct model
   # to determine which date the fee is payable on.
   # It is of the format
@@ -11,13 +11,13 @@ class Fee
   # ^ Good to see some docs but the example seems to have more elements than the actual table below. Model can be scrapped I think?
 
   PAYABLE = [
-             [:loan_applied_on, Loan, :applied_on], 
+             [:loan_applied_on, Loan, :applied_on],
              [:loan_approved_on, Loan, :approved_on],
              [:loan_disbursal_date, Loan, :disbursal_date],
-             [:loan_scheduled_first_payment_date, Loan, :scheduled_first_payment_date], 
+             [:loan_scheduled_first_payment_date, Loan, :scheduled_first_payment_date],
              [:loan_first_payment_date, Loan, :first_payment_date],
-             [:client_grt_pass_date, Client, :grt_pass_date], 
-             [:client_date_joined, Client, :date_joined], 
+             [:client_grt_pass_date, Client, :grt_pass_date],
+             [:client_date_joined, Client, :date_joined],
              [:loan_installment_dates, Loan, :installment_dates],
              [:policy_issue_date, InsurancePolicy, :date_from],
              #[:policy_loan_application_date, InsurancePolicy, :loan_applied_on],
@@ -31,7 +31,7 @@ class Fee
   property :name,          String, :required => true
   property :percentage,    Float
   property :amount,        Integer
-  property :min_amount,    Integer
+  property :min_amount,    Integer  # min/max only when percentage is used
   property :max_amount,    Integer
   property :payable_on,    Enum.send('[]',*PAYABLE.map{|m| m[0]}), :required => true
   property :overridable_by, Flag[:data_entry, :mis_manager, :admin,:staff_member]
@@ -53,10 +53,10 @@ class Fee
   has n, :insurance_policies, :through => :applicable_insurance_policies
   has n, :audit_trails, :auditable_type => "Fee", :child_key => ["auditable_id"]
 
-  
+
   validates_with_method :amount_is_okay
   validates_with_method :min_lte_max
-  
+
   def amount_is_okay
     return true if (amount or percentage)
     return [false, "Either an amount or a percentage must be specified"]
@@ -102,7 +102,7 @@ class Fee
       return obj.premium
     end
   end
-  
+
   # find whether the fee is applicable to an object
   def is_applicable?(obj)
     if obj.is_a?(Loan)
@@ -113,11 +113,11 @@ class Fee
       obj.insurance_product.fees.include?(self)
     end
   end
-  
+
   # returns the applicable fees for a list of ids and applicable type. Additional params can be provided by hash
   def self.applicable(ids, hash = {}, applicable_type = 'Loan')
     date = hash.delete(:date) || Date.today
-    
+
     query  = {:applicable_on.lte => date}
     query[:applicable_id] = ids unless ids == :all
     query[:applicable_type] = applicable_type
@@ -125,7 +125,7 @@ class Fee
     ApplicableFee.all(query)
   end
 
-  # returns the paid fee for a list of ids and applicable type. Additional params can be provided by hash 
+  # returns the paid fee for a list of ids and applicable type. Additional params can be provided by hash
   def self.paid(ids, hash = {}, applicable_type = 'Loan')
     if ids.length > 0
       query = {:applicable_id => ids, :applicable_type => 'Loan', :applicable_on.lte => hash[:date] || Date.today}
@@ -133,8 +133,8 @@ class Fee
       query_str = ApplicableFee.all(query).map{|x| "(#{x.fee_id}, #{x.applicable_id})"}.join(", ")
       parent_col = ((applicable_type == 'Loan') ? "loan_id" : "client_id")
       if query_str.length > 0
-        repository.adapter.query(%Q{SELECT #{parent_col}, SUM(amount) 
-                                  FROM payments 
+        repository.adapter.query(%Q{SELECT #{parent_col}, SUM(amount)
+                                  FROM payments
                                   WHERE (fee_id, #{parent_col}) in (#{query_str})
                                         AND deleted_at is NULL
                                   GROUP BY #{parent_col}
@@ -147,10 +147,10 @@ class Fee
     end
   end
 
-  # returns any due fee for a list of ids and applicable type. Additional params can be provided by hash 
+  # returns any due fee for a list of ids and applicable type. Additional params can be provided by hash
   def self.due(ids, hash={}, applicable_type = 'Loan')
     return {} if ids.blank?
-    fees_applicable = self.applicable(ids, hash, applicable_type).aggregate(:applicable_id, :amount.sum).to_hash      
+    fees_applicable = self.applicable(ids, hash, applicable_type).aggregate(:applicable_id, :amount.sum).to_hash
     fees_paid       = self.paid(ids, hash, applicable_type)
     fees = {}
 
@@ -201,14 +201,14 @@ class Fee
     elsif obj.class==Area
       from  = "areas a, branches b, centers c, clients cl, payments p, fees f"
       where = %Q{
-                  a.id=#{obj.id} and a.id=b.area_id and c.branch_id=b.id and cl.center_id=c.id 
+                  a.id=#{obj.id} and a.id=b.area_id and c.branch_id=b.id and cl.center_id=c.id
                   and p.client_id=cl.id and p.type=3 and p.fee_id=f.id
                   and p.deleted_at is NULL and p.received_on>='#{from_date.strftime('%Y-%m-%d')}' and p.received_on<='#{to_date.strftime('%Y-%m-%d')}'
                };
     elsif obj.class==Region
       from  = "regions r, areas a, branches b, centers c, clients cl, payments p, fees f"
       where = %Q{
-                  r.id=#{obj.id} and r.id=a.region_id and a.id=b.area_id and c.branch_id=b.id and cl.center_id=c.id 
+                  r.id=#{obj.id} and r.id=a.region_id and a.id=b.area_id and c.branch_id=b.id and cl.center_id=c.id
                   and p.client_id=cl.id and p.type=3 and p.fee_id=f.id
                   and p.deleted_at is NULL and p.received_on>='#{from_date.strftime('%Y-%m-%d')}' and p.received_on<='#{to_date.strftime('%Y-%m-%d')}'
                };
