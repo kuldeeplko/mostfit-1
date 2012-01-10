@@ -214,3 +214,15 @@ issues with `upload.rb`
 
 I (cies) commented out some code on upload that prevents it from running
 under DM 1.2
+
+
+alligned generated files with newly gen'ed merb app
+---------------------------------------------------
+
+Doing so I (cies) found the following:
+
+  * `config/init.rb`, is a dance with the devil
+  * `config/environment/huge.rb`; wtf?
+
+Besides that all seemed pretty much in line...
+

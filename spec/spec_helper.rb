@@ -1,28 +1,36 @@
-require "rubygems"
-require "erb"
-require File.join(File.dirname(__FILE__), 'spec_helper_html.rb')
-# Add the local gems dir if found within the app root; any dependencies loaded
-# hereafter will try to load from the local gems before loading system gems.
-if (local_gem_dir = File.join(File.dirname(__FILE__), '..', 'gems')) && $BUNDLE.nil?
-  $BUNDLE = true; Gem.clear_paths; Gem.path.unshift(local_gem_dir)
+begin
+  # Just in case the bundle was locked
+  # This shouldn't happen in a dev environment but lets be safe
+  require File.expand_path('../.bundle/environment', __FILE__)
+rescue LoadError
+  require 'rubygems'
+  require 'bundler'
+  Bundler.setup
 end
 
+require "spec" # Satisfies Autotest and anyone else not using the Rake tasks
 require "merb-core"
-require "rspec" # Satisfies Autotest and anyone else not using the Rake tasks
+
+require "erb"
+require File.join(File.dirname(__FILE__), 'spec_helper_html.rb')
 
 # this loads all plugins required in your init file so don't add them
 # here again, Merb will do it for you
 Merb.start_environment(:testing => true, :adapter => 'runner', :environment => ENV['MERB_ENV'] || 'test')
 RSpec.configure do |config|
-#  config.include(Merb::Test::ViewHelper)
+  # config.include(Merb::Test::ViewHelper)
   config.include(Merb::Test::RouteHelper)
   config.include(Merb::Test::ControllerHelper)
   config.include(Spec::Matchers)
- 
+
   config.before(:all) do
     if Merb.orm == :datamapper
       # DataMapper.auto_migrate!
-      (repository.adapter.select("show tables") - ["payments", "journals", "postings"]).each{|t| repository.adapter.execute("alter table #{t} ENGINE=MYISAM")}
+      (repository.adapter.select("show tables") - ["payments", "journals", "postings"]).each do |t|
+        # This probably has been done for 'performance' reasons.
+        # But we simply do not know...  Piyush?
+        repository.adapter.execute("alter table #{t} ENGINE=MYISAM")
+      end
     end
 
     mfi = Mfi.first
