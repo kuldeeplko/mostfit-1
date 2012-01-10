@@ -1,23 +1,23 @@
-# config.ru
-require 'rubygems'
-
-# Uncomment if your app uses bundled gems.
-gems_dir = File.expand_path(File.join(File.dirname(__FILE__), 'gems'))
-Gem.clear_paths
-$BUNDLE = true
-Gem.path.unshift(gems_dir)
+begin
+  # Try to require the preresolved locked set of gems.
+  require File.expand_path('../.bundle/environment', __FILE__)
+rescue LoadError
+  # Fall back on doing an unlocked resolve at runtime.
+  require "rubygems"
+  require "bundler"
+  Bundler.setup
+end
 
 require 'merb-core'
 
-Merb::Config.setup(:merb_root   => File.expand_path(File.dirname(__FILE__)),
-                   :environment => ENV['RACK_ENV'])
-Merb.environment = "production" #Merb::Config[:environment]
-Merb.root = Merb::Config[:merb_root]
-Merb::BootLoader.run
+Merb::Config.setup(
+  :merb_root   => File.expand_path(File.dirname(__FILE__)),
+  :environment => ENV['RACK_ENV']
+)
 
-# Uncomment if your app is mounted at a suburi.
-# if prefix = ::Merb::Config[:path_prefix]
-#   use Merb::Rack::PathPrefix, prefix
-# end
+Merb.environment = Merb::Config[:environment]
+Merb.root        = Merb::Config[:merb_root]
+
+Merb::BootLoader.run 
 
 run Merb::Rack::Application.new

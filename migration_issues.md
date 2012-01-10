@@ -192,3 +192,25 @@ changed to:
     cols = properties.to_a.find_all{ |x| x.class == Date }.map{ |x| x = x.name }
 
 
+validation failures
+-------------------
+
+This one isn't strictly about the migration but a validation that was working before started failing but no `errors.full_messages` was returned (only nil.)
+Traced the problem to `#verified_cannot_be_deleted_if_not_deleted` in Loan. It used to read:
+
+    verified_cannot_be_deleted if self.deleted_at != nil
+
+Meaning that if `deleted_at` was nil, the method returned nil and so failed the validation for no reason and without a message. Replaced with:
+
+    if self.deleted_at != nil
+      verified_cannot_be_deleted
+    else
+      true
+    end
+
+
+issues with `upload.rb`
+-----------------------
+
+I (cies) commented out some code on upload that prevents it from running
+under DM 1.2
