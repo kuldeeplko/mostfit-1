@@ -3,7 +3,7 @@ source :rubygems
 # Dependencies are generated using a strict version. Don't forget to edit the
 # dependency versions when upgrading.
 
-merb_gems_version = '~> 1.1'
+merb_gems_version = '~> 1.3'
 merb_related_gems = '~> 1.1'
 dm_gems_version   = '~> 1.1'
 
