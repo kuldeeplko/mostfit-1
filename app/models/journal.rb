@@ -4,7 +4,11 @@ class Journal
   include DateParser
   
   before :valid?, :parse_dates
- 
+
+  before :destroy do |journal|
+    throw :halt if journal.is_verified?
+  end
+
   property :id,             Serial
   property :comment,        String
   property :transaction_id, String, :index => true  
@@ -20,12 +24,10 @@ class Journal
 
   property :verified_by_user_id, Integer, :required => false, :index => true
   belongs_to :verified_by,  :child_key => [:verified_by_user_id],        :model => 'User'
-  validates_with_method :verified_by_user_id, :method => :verified_cannot_be_deleted, :on => [:destroy]
-  validates_with_method :verified_by_user_id, :method => :verified_cannot_be_deleted, :if => Proc.new{|p| p.deleted_at != nil}
 
-  def verified_cannot_be_deleted
-    return true unless verified_by_user_id
-    [false, "Verified payment. Cannot be deleted"]    
+  # Check whether this journal has been verified, if so we should not allow it to be destroyed
+  def is_verified?
+    !self.verified_by.blank?
   end
 
   def name

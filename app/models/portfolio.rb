@@ -4,11 +4,14 @@ class Portfolio
 
   attr_accessor :centers, :added_on, :branch_id, :disbursed_after, :displayed_centers
 
-  before :destroy, :verified_cannot_be_deleted
   before :valid?,  :parse_dates
   after  :save,    :process_portfolio_details
   after  :save,    :update_portfolio_value
-  
+
+  before :destroy do |portfolio|
+    throw :halt if portfolio.is_verified?
+  end
+
   property :id, Serial
   property :name, String, :index => true, :required => true, :length => 3..20
   property :funder_id, Integer, :index => true, :required => true
@@ -32,7 +35,10 @@ class Portfolio
 
   validates_uniqueness_of :name
   belongs_to :verified_by, :child_key => [:verified_by_user_id], :model => 'User'
-  validates_with_method :verified_by_user_id, :method => :verified_cannot_be_deleted, :when => [:destroy]
+
+  def is_verified?
+    !self.verified_by.blank?
+  end
 
   def loans(hash={})
     hash[:id] = portfolio_loans(:active => true).map{|x| x.id}
@@ -153,8 +159,4 @@ class Portfolio
     end
   end
 
-  def verified_cannot_be_deleted
-    return true unless verified_by_user_id
-    throw :halt
-  end
 end

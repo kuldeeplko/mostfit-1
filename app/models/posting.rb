@@ -38,7 +38,7 @@ class Posting
     accounting_period = AccountingPeriod.all(:end_date.gte => self.journal.date)
     accounting_period.each do |ap|
       account_balance = AccountBalance.first(:account => self.account, :accounting_period => ap)
-      if account_balance and account_balance.verified?
+      if account_balance and account_balance.is_verified?
         account_balance.verified_by = nil
         account_balance.verified_on = nil
         return [false, "Error, Account was not Un-Verfied"] unless account_balance.save

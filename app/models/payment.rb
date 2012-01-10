@@ -50,13 +50,14 @@ class Payment
   validates_with_method :loan_or_client_present?,  :method => :loan_or_client_present?, :when => [:default, :reallocate]
   validates_with_method :only_take_payments_on_disbursed_loans?, :if => Proc.new{|p| (p.type == :principal or p.type == :interest)}
   validates_with_method :created_by,  :method => :created_by_active_user?, :if => Proc.new{|p| p.deleted_at == nil}
+  # TODO: Make specs to test whether this works for the proper contextual save
+  # e.g. @payment.save(:reallocate) should not check whether the staff_member is active
   validates_with_method :received_by, :method => :received_by_active_staff_member?, :when => [:default, :reallocate]
   validates_with_method :deleted_by,  :method => :properly_deleted?
   validates_with_method :deleted_at,  :method => :properly_deleted?
   validates_with_method :not_approved, :method => :not_approved, :on => [:destroy]
 
-  # This is a little strange, we don't want to validate here while in the test environment? Disabling this validation in the test env is causing tests to fail.
-  validates_with_method :received_on, :method => :not_received_in_the_future?, :unless => Proc.new{|t| Merb.env=="test"}
+  validates_with_method :received_on, :method => :not_received_in_the_future?
   validates_with_method :received_on, :method => :not_received_before_loan_is_disbursed?, :if => Proc.new{|p| (p.type == :principal or p.type == :interest)}
   validates_with_method :principal,   :method => :is_positive?
   validates_with_method :verified_by_user_id, :method => :verified_cannot_be_deleted, :on => [:destroy]
@@ -237,7 +238,14 @@ class Payment
   end
 
   def received_by_active_staff_member?
-    return true if self.send(:current_validation_context) == :reallocate
+
+    # This should no longer be necessary in DM1.1
+    # Reallocate means the principal and interest get reallocated if the payment schema has changed.
+    # When we reallocate payments, we don't need to check if the staff_member is active.
+    # The context is set on save, e.g. Payment.save(:reallocate)
+
+    # return true if self.send(:current_validation_context) == :reallocate
+
     return true if deleted_at
     return true if received_by and received_by.active
     [false, "Receiving staff member is currently not active"]

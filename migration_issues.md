@@ -62,6 +62,15 @@ Perhaps it would be wise to override the `destroy` method on these models? Or sh
 
 It seems like this one should have been failing under the old datamapper already but it didn't for some reason.
 
+
+`Enum` properties in DM 1.1 now allow blank!
+--------------------------------------------
+When a dm property is of type `Enum` we have to specify :required => true if we don't want to allow them to be blank.
+
+
+Fixed Issues
+============
+
 validation on delete
 --------------------
 
@@ -73,15 +82,13 @@ A number of models use the `#verified_cannot_be_destroyed` validation method to 
 
 Recommend we rename `#verified_cannot_be_destroyed` to something like `#is_verified?` and use the pattern above.
 
+This fix has been applied to:
 
-
-Fixed Issues
-============
-
-`Enum` properties in DM 1.1 now allow blank!
---------------------------------------------
-
-
+  * AccountBalance
+  * Client
+  * Journal
+  * Portfolio
+  * ... several more pending  
 
 
 `association#lazy?` issues

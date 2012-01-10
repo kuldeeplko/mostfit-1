@@ -9,6 +9,8 @@
 # at validation methods like #closing_done_sequentially it seems to validate against AccountingPeriod.all,
 # without any mention of the related organization.
 #
+# This is not correct, accounting periods should be scoped over organizations
+#
 # Also creating a new accounting period when no others exist seems to be impossible as far as I can tell.
 # The validation done in #closing_done_sequentially seems to always fail if no other records exist, even
 # if we're not trying to close the period.

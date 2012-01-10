@@ -141,6 +141,8 @@ it "should change when loan amount changes" do
     # This test is not returning the correct schedule, it doesn't seem to be taking
     # the 10 extra days into account, simply returning the original scheduled date?
     # Couldn't quite work out the problem
+    #
+    # This test is correct, if it's still failing the model needs to be reviewed
 #    # The disbursal date was moved up by 10 days, if we levy the feels again the date should reflect this
 #    @loan.disbursal_date = @loan.scheduled_disbursal_date + 10
 #    @loan.levy_fees

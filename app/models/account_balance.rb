@@ -4,6 +4,10 @@ class AccountBalance
   before :save, :convert_blank_to_nil
   property :id, Serial
 
+  before :destroy do |account_balance|
+    throw :halt if account_balance.is_verified?
+  end
+
   property :opening_balance, Float
   property :closing_balance, Float
   property :created_at, DateTime
@@ -14,30 +18,30 @@ class AccountBalance
   belongs_to :verified_by, :child_key => [:verified_by_user_id], :model => 'User'
 
   validates_with_method :verified_on, :method => :properly_verified
-  validates_with_method :verified_by_user_id, :method => :verified_cannot_be_deleted, :when => [:destroy]
   validates_with_method :verification_done_sequentially
 
   belongs_to :accounting_period
   belongs_to :account
 
-  def verified?
-    return true if (verified_by and verified_on)
-    return false
+  # Check whether this account_balance has been verified, if so we should not allow it to be destroyed
+  def is_verified?
+    return true if (verified_by && verified_on)
+    false
   end
 
-  def verified_cannot_be_deleted
-    return true unless verified_by_user_id
-    throw :halt
-  end
-
-
+  # If we're setting verified_by, verified_on also has to be set. This method validates that both
+  # or neither of these attributes are set. If we've set one but not the other, validation fails.
+  #
   def properly_verified
-    return true if ((not verified_on) and (not verified_by)) # not verified
-    return true if (verified_on and verified_by)
-    return [false, "Cannot be verified before the accounting period end date #{accounting_period.end_date}"] if verified_on < accounting_period.end_date
-    return [false, "Both verification date and verifying staff member have to be chosen"] if not (verified_on and verified_by)
-  end
+    # If both verified_by and verified_on are set, we are properly verified
+    return true if is_verified?
 
+    # If neither verified_by or verified_on is set, we are not verified, this is ok too
+    return true if verified_by.blank? && verified_on.blank?
+
+    # If neither conditions above are true, we are missing either verified_by or verified_on and validation fails
+    [false, "Both verification date and verifying staff member have to be chosen"]
+  end
 
   def convert_blank_to_nil
     self.attributes.each{|k, v|
