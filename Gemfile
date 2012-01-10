@@ -77,7 +77,7 @@ group :development do
   # gem 'ruby-debug19'
   # So we install it system-wide with extra options as shown in INSTALL.md
 
-  gem 'rspec',                  '~> 1.3'
+  gem 'rspec',                  '~> 2.8'
   gem 'factory_girl',           '~> 2.3'
 end
 
