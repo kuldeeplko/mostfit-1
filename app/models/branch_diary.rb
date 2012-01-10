@@ -1,3 +1,5 @@
+# To record the opening and closing times of a Branch.
+
 class BranchDiary
   include DataMapper::Resource
   before :save, :convert_blank_to_nil
@@ -21,7 +23,7 @@ class BranchDiary
   validates_presence_of       :manager
   validates_with_method   :manager,    :method => :manager_is_an_active_staff_member?
   validates_uniqueness_of     :diary_date, :scope => :branch_id
-  
+
   private
   def manager_is_an_active_staff_member?
     return true if manager and manager.active

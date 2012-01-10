@@ -34,7 +34,7 @@ class Payment
 
   belongs_to :organization, :parent_key => [:org_guid], :child_key => [:parent_org_guid], :required => false
   property   :parent_org_guid, String, :required => false
-  
+
   belongs_to :domain, :parent_key => [:domain_guid], :child_key => [:parent_domain_guid], :required => false
   property   :parent_domain_guid, String, :required => false
 
@@ -63,7 +63,7 @@ class Payment
   validates_with_method :verified_by_user_id, :method => :verified_cannot_be_deleted, :on => [:destroy]
   validates_with_method :verified_by_user_id, :method => :verified_cannot_be_deleted, :if => Proc.new{|p| p.deleted_at != nil and p.deleted_by!=nil}
   # validates_with_method :is_last_payment?, :if => Proc.new{|p| p.deleted_at == nil and p.deleted_by == nil}
-  
+
   def add_center_and_branch
     self.c_center_id = self.client.center.id
     self.c_branch_id = self.client.center.branch.id
@@ -71,15 +71,15 @@ class Payment
 
   def self.from_csv(row, headers, loans)
     if row[headers[:principal]]
-      obj = new(:received_by => StaffMember.first(:name => row[headers[:received_by_staff]]), :loan => loans[row[headers[:loan_serial_number]]], 
-                :amount => row[headers[:principal]], :type => :principal, :received_on => Date.parse(row[headers[:received_on]]), 
+      obj = new(:received_by => StaffMember.first(:name => row[headers[:received_by_staff]]), :loan => loans[row[headers[:loan_serial_number]]],
+                :amount => row[headers[:principal]], :type => :principal, :received_on => Date.parse(row[headers[:received_on]]),
                 :created_by => User.first)
       obj.save
     end
-    
+
     if row[headers[:interest]]
-      obj = new(:received_by => StaffMember.first(:name => row[headers[:received_by_staff]]), :loan => loans[row[headers[:loan_serial_number]]], 
-                :amount => row[headers[:interest]], :type => :interest, :received_on => Date.parse(row[headers[:received_on]]), 
+      obj = new(:received_by => StaffMember.first(:name => row[headers[:received_by_staff]]), :loan => loans[row[headers[:loan_serial_number]]],
+                :amount => row[headers[:interest]], :type => :interest, :received_on => Date.parse(row[headers[:received_on]]),
                 :created_by => User.first)
     end
     [obj.save, obj]
@@ -87,7 +87,7 @@ class Payment
 
   def verified_cannot_be_deleted
     return true unless verified_by_user_id
-    [false, "Verified payment. Cannot be deleted"]    
+    [false, "Verified payment. Cannot be deleted"]
   end
 
   def total
@@ -97,9 +97,9 @@ class Payment
   def self.types
     PAYMENT_TYPES
   end
-  
+
   # returns the amount collected by/under/for various kind of objects like Branch, Center, StaffMember, Area, Region, LoanProduct etc
-  # TODO:  rewrite it using Datamapper
+  # NOTE: This method is DEPRECATED, the Cachers model is superceding it.
   # Something weird is going on here: at the end of this method the amount is cast .to_i. Is this intended behavior?
   def self.collected_for(obj, from_date=Date.min_date, to_date=Date.max_date, types=[1,2], payment_created_type = :created)
     from, where = "", ""
@@ -121,19 +121,19 @@ class Payment
     elsif obj.class==Area
       from  = "areas a, branches b, centers c, clients cl, loans l , payments p"
       where = %Q{
-                  a.id=#{obj.id} and a.id=b.area_id and c.branch_id=b.id and cl.center_id=c.id 
+                  a.id=#{obj.id} and a.id=b.area_id and c.branch_id=b.id and cl.center_id=c.id
                   and l.client_id=cl.id and p.loan_id=l.id and p.type in (#{types.join(',')})
                };
     elsif obj.class==Region
       from  = "regions r, areas a, branches b, centers c, clients cl, loans l , payments p"
       where = %Q{
-                  r.id=#{obj.id} and r.id=a.region_id and a.id=b.area_id and c.branch_id=b.id and cl.center_id=c.id 
+                  r.id=#{obj.id} and r.id=a.region_id and a.id=b.area_id and c.branch_id=b.id and cl.center_id=c.id
                   and l.client_id=cl.id and p.loan_id=l.id and p.type in (#{types.join(',')})
                };
     elsif obj.class==StaffMember
       if payment_created_type == :created
         from  = "payments p"
-        where = %Q{         
+        where = %Q{
                   p.received_by_staff_id=#{obj.id} and p.type in (#{types.join(',')})
                };
       else
@@ -144,22 +144,22 @@ class Payment
       end
     elsif obj.class==LoanProduct
       from  = "loans l, payments p"
-      where = %Q{                  
+      where = %Q{
                   l.id = p.loan_id and l.deleted_at is NULL and l.loan_product_id = #{obj.id} and p.type in (#{types.join(',')})
                };
     elsif obj.class==Loan
       from  = "loans l, payments p"
-      where = %Q{                  
+      where = %Q{
                   l.id = p.loan_id and l.deleted_at is NULL and l.id = #{obj.id} and p.type in (#{types.join(',')})
                };
     elsif obj.class==Client
       from  = "clients cl, payments p"
-      where = %Q{                  
+      where = %Q{
                    p.type in (#{types.join(',')}) and cl.id=p.client_id and cl.id=#{obj.id}
                };
     elsif obj.class==FundingLine
       from  = "loans l, payments p"
-      where = %Q{                  
+      where = %Q{
                   l.id = p.loan_id and l.deleted_at is NULL and l.funding_line_id = #{obj.id} and p.type in (#{types.join(',')})
                };
     end
@@ -185,7 +185,7 @@ class Payment
       info[:item_value] = branch.name
       info_items << info
     end
-    
+
     if loan_product
       info = {}
       info[:item_type] = loan_product.class.to_s
@@ -193,7 +193,7 @@ class Payment
       info[:item_value] = loan_product.name
       info_items << info
     end
-    
+
     if funding_line
       info = {}
       info[:item_type] = funding_line.class.to_s
@@ -211,7 +211,7 @@ class Payment
     return unless loan and loan.loan_product
     # THIS WORKS
 #    clause = eval "Proc.new{|t| t.loan.loan_product.id == 1}"
-    #Payment.add_validator_to_context({:context => :default}, 
+    #Payment.add_validator_to_context({:context => :default},
     #                                 loan.loan_product.payment_validations, DataMapper::Validate::MethodValidator)
     Payment.add_validator_to_context({:context => :default, :if => eval("Proc.new{|t| t.loan.loan_product.id == #{loan.loan_product.id}}")}, loan.loan_product.payment_validations,DataMapper::Validate::MethodValidator)
   end
@@ -285,7 +285,7 @@ class Payment
       eligible_date = Mfi.first.in_operation_since - past_days
     else
       eligible_date = Date.today- past_days
-    end 
+    end
     return true if received_on >= eligible_date
     [false, "Payments cannot be received in past date"]
   end
