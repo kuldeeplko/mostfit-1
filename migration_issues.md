@@ -62,6 +62,18 @@ Perhaps it would be wise to override the `destroy` method on these models? Or sh
 
 It seems like this one should have been failing under the old datamapper already but it didn't for some reason.
 
+validation on delete
+--------------------
+
+A number of models use the `#verified_cannot_be_destroyed` validation method to prevent verified records (clients, loans, etc.) being destroyed. Datamapper 1.1 no longer calls validations on destroy. Instead the following pattern is recommended (http://datamapper.org/docs/callbacks):
+
+    before :destroy do |client|
+      throw :halt if some_condition?
+    end
+
+Recommend we rename `#verified_cannot_be_destroyed` to something like `#is_verified?` and use the pattern above.
+
+
 
 Fixed Issues
 ============
