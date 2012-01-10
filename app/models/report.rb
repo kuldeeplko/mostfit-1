@@ -1,3 +1,5 @@
+# This model is DEPRICATED, please use the Cachers model instead.
+
 class Report
   include DataMapper::Resource
 
