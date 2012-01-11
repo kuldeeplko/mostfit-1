@@ -1,4 +1,4 @@
-require File.join( File.dirname(__FILE__), '..', "spec_helper" )
+require File.join( '.', File.dirname(__FILE__), '..', "spec_helper" )
 
 #
 # Most of these tests are currently meaningless because the validations for

@@ -4,7 +4,7 @@
 # WIP - test that are commented out have been merged into the new spec
 #
 #
-require File.join( File.dirname(__FILE__), '..', "spec_helper" )
+require File.join( '.', File.dirname(__FILE__), '..', "spec_helper" )
 describe Report do
   before(:all) do 
     ParRow = Struct.new(:less_than_30, :between_30_and_60, :between_60_and_90, :more_than_90)

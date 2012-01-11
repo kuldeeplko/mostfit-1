@@ -1,4 +1,4 @@
-require File.join( File.dirname(__FILE__), '..', "spec_helper" )
+require File.join( '.', File.dirname(__FILE__), '..', "spec_helper" )
 
 #
 # This is a rewrite of the old report_spec but it could still use some attention

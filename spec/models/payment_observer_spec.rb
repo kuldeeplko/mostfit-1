@@ -1,4 +1,4 @@
-require File.join( File.dirname(__FILE__), '..', "spec_helper" )
+require File.join( '.', File.dirname(__FILE__), '..', "spec_helper" )
 
 #
 # These tests won't work without proper account_period fixtures, but the current issue

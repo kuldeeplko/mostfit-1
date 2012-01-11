@@ -1,4 +1,4 @@
-require File.join( File.dirname(__FILE__), '..', "spec_helper" )
+require File.join( '.', File.dirname(__FILE__), '..', "spec_helper" )
 
 # Something deep inside Loan#pay_normal is breaking this test because the relevant LoanHistory is nil.
 # I haven't yet been able to figure out why.

@@ -1,4 +1,4 @@
-require File.join( File.dirname(__FILE__), '..', "spec_helper" )
+require File.join( '.', File.dirname(__FILE__), '..', "spec_helper" )
 
 # These tests are failing because Upload is not being initialized properly in the before(:all) block.
 # It's raising an error "The attribute 'test_data.xls' is not accessible in Upload", which seems to
