@@ -33,7 +33,9 @@ task :merb_env do
   Merb.start_environment(:environment => init_env, :adapter => 'runner')
 end
 
-require "rspec/core/rake_task"
+# This was for rspec 2.8
+# require "rspec/core/rake_task"
+require 'spec/rake/spectask'
 require 'merb-core/test/tasks/spectasks'
 
 desc 'Default: run spec examples'
