@@ -20,7 +20,7 @@ module Mostfit
         [interest, principal]
       end
 
-      def pay_normal
+      def pay_normal total, received_on
         
       end
 
