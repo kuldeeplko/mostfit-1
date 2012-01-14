@@ -1510,7 +1510,7 @@ class Loan
 
   def convert_blank_to_nil
     self.attributes.each{|k, v|
-      if v.is_a?(String) and v.empty? and (self.class.send(k).type == Integer or self.class.send(k).type == Float)
+      if v.is_a?(String) and v.empty? and (self.class.send(k).class == Integer or self.class.send(k).class == Float)
         self.send("#{k}=", nil)
       end
     }

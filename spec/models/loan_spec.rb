@@ -51,6 +51,7 @@ describe Loan do
     @loan = Factory(:loan,
       :amount => 1000, :interest_rate => 0.2, :installment_frequency => :weekly, :number_of_installments => 25,
       :scheduled_first_payment_date => "2000-12-06", :applied_on => "2000-02-01", :scheduled_disbursal_date => "2000-06-13",
+      :repayment_style => @equated_weekly,
       :applied_by => @manager, :funding_line => @funding_line, :client => @client, :loan_product => @loan_product)
     @loan.discriminator = Loan
     @loan.should be_valid

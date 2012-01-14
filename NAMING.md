@@ -95,14 +95,6 @@ Other models with similar associations:
 *   Document
 
 
-Nullable
---------
-
-Not so much a naming issue, but in a number of places we use `:nullable => false`, which was deprecated in DM 0.10.2 in favor of :required => true
-
-We also have a bunch of places where `:nullable => false` is set and later `validates_presence`.
-
-
 Constants
 ---------
 
@@ -118,3 +110,14 @@ Not strictly a naming issue but we've got a bunch of cruft littering our views, 
     app/views/browse/_totalinfo_old.html.haml
     app/views/browse/index.html.old
     app/views/browse/index_old.html.haml
+
+
+DataAccessObserver's observed models
+------------------------------------
+
+In DAO's `observe` statement we declare the following:
+
+    observe *(DataMapper::Model.descendants.to_a - [AuditTrail, Cacher, BranchCache, CenterCache] + [Branch, Center, ClientGroup, Client, Loan, Payment, Fee]).uniq # strange bug where observer drops some of the descnedants.
+
+Since this is misbehaving somewhat, perhaps we should consider just listing all the models to be observed instead of cleverly taking Model's descendants? Less chance of logging something undesirable and easier to read too..
+

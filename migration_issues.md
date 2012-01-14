@@ -71,6 +71,27 @@ When a dm property is of type `Enum` we have to specify :required => true if we 
 Fixed Issues
 ============
 
+different original_attributes behavior
+--------------------------------------
+
+DataAccessObserver logs any changes to attributes of an existing record. These were tested in the audit_trail spec as follows:
+
+    trail = AuditTrail.last.changes.reduce({}){|s, x| s+=x}
+    trail.should == {:name=>['Munnar center', 'Kerala center']}
+
+This was working fine, but with the update suddenly its behavior for Clients changed. The following test:
+
+    trail = AuditTrail.last.changes.reduce({}){|s, x| s+=x}
+    trail.should == {:name => ["Ms C.L. Ient", "Mr C.U. Stomer"]}
+
+worked before the migration but the trail now shows:
+
+    {:event_on_id=>[nil, 248], :event_on_name=>[nil, "Mr C.U. Stomer"], :event_on_type=>[nil, :client], :event_accounting_action=>[nil, :allow_posting], :event_change=>[nil, :update], :event_changed_at=>[nil, <Date: 13-01-2012 friday>], :event_guid=>[nil, "0fec7f40-2035-012f-bc7f-000ea648304b"]}
+
+Strangely this only applies to the Client model, all other trails are still as before.. Very strange.
+
+
+
 validation on delete
 --------------------
 
