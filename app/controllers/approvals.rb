@@ -6,7 +6,8 @@ class Approvals < Application
     display "approvals/index"
   end
 
-  def update(id)
+  def update
+    id = params[:id]
     if ["clients", "loans", "payments"].include?(id) and params[id]
       klass = Kernel.const_get(id.singularize.capitalize)
       verifier_id = session.user.id

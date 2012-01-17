@@ -5,7 +5,8 @@ class Rules < Application
     display @rules
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @rule = Rule.get(id)
     raise NotFound unless @rule
     display @rule
@@ -17,14 +18,16 @@ class Rules < Application
     display @rule
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @rule = Rule.get(id)
     raise NotFound unless @rule
     display @rule
   end
 
-  def create(rule)
+  def create
+    rule = params[:rule]
     rule = fix_conditions(rule)
 
     # Rule.new fails if on_action is an empty string; make it nil, so this will
@@ -40,7 +43,8 @@ class Rules < Application
     end
   end
 
-  def toggle_active(id)
+  def toggle_active
+    id = params[:id]
     @rule = Rule.get(id)
     raise NotFound unless @rule
     @rule.active = (not(@rule.active))
@@ -50,7 +54,9 @@ class Rules < Application
 
 
   #TODO has to be fixed
-  def update(id, rule)
+  def update
+    id = params[:id]
+    rule = params[:rule]
     rule = fix_conditions(rule)
     @rule = Rule.get(id)
     raise NotFound unless @rule
@@ -61,7 +67,8 @@ class Rules < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @rule = Rule.get(id)
     raise NotFound unless @rule
     if @rule.destroy
@@ -71,7 +78,8 @@ class Rules < Application
     end
   end
 
-  def keys(model)
+  def keys
+    model = params[:model]
     name, field, choices = Condition.get_field_choices_and_name(model)
     select_id = "select_#{params[:select_id].to_i+1}" if params[:select_id]
 

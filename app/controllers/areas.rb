@@ -12,7 +12,8 @@ class Areas < Application
     end
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @area = Area.get(id)
     raise NotFound unless @area
     display @area
@@ -24,14 +25,16 @@ class Areas < Application
     display @area
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @area = Area.get(id)
     raise NotFound unless @area
     display @area
   end
 
-  def create(area)
+  def create
+    area = params[:area]
     @area = Area.new(area)
     if @area.save
       redirect resource(@area), :message => {:notice => "Area was successfully created"}
@@ -41,7 +44,9 @@ class Areas < Application
     end
   end
 
-  def update(id, area)
+  def update
+    id = params[:id]
+    area = params[:area]
     @area = Area.get(id)
     raise NotFound unless @area
     if @area.update(area)
@@ -51,7 +56,8 @@ class Areas < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @area = Area.get(id)
     raise NotFound unless @area
     if @area.destroy

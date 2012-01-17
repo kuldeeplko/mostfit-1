@@ -11,7 +11,8 @@ class Branches < Application
     display @branches
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @option = params[:option] if params[:option]
     @branch = Branch.get(id)
     raise NotFound unless @branch
@@ -23,7 +24,8 @@ class Branches < Application
     end
   end
   
-  def today(id)
+  def today
+    id = params[:id]
     @date = params[:date] == nil ? Date.today : params[:date]
     @branch = Branch.get(id)
     raise NotFound unless @branch
@@ -37,7 +39,8 @@ class Branches < Application
     display @branch
   end
 
-  def create(branch)
+  def create
+    branch = params[:branch]
     @branch = Branch.new(branch)
     if @branch.save
       redirect(params[:return]||resource(:branches), :message => {:notice => "Branch '#{@branch.name}' (Id:#{@branch.id}) successfully created"})
@@ -47,14 +50,17 @@ class Branches < Application
     end
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @branch = Branch.get(id)
     raise NotFound unless @branch
     display @branch
   end
 
-  def update(id, branch)
+  def update
+    id = params[:id]
+    branch = params[:branch]
     @branch = Branch.get(id)
     raise NotFound unless @branch
     if @branch.update_attributes(branch)
@@ -64,11 +70,12 @@ class Branches < Application
     end
   end
 
-  def delete(id)
-    edit(id)  # so far identical to edit
+  def delete
+    edit
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @branch = Branch.get(id)
     raise NotFound unless @branch
     if @branch.destroy
@@ -124,7 +131,8 @@ class Branches < Application
   end
 
   # this redirects to the proper url, used from the router
-  def redirect_to_show(id)
+  def redirect_to_show
+    id = params[:id]
     raise NotFound unless @branch = Branch.get(id)
     redirect resource(@branch)
   end

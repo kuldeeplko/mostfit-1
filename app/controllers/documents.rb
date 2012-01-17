@@ -7,7 +7,8 @@ class Documents < Application
     display @documents, :layout => layout?
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @document = Document.get(id)
     raise NotFound unless @document
     display @document, :layout => layout?
@@ -19,14 +20,16 @@ class Documents < Application
     display @document, :layout => layout?
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @document = Document.get(id)
     raise NotFound unless @document
     display @document, :layout => layout?
   end
 
-  def create(document)
+  def create
+    document = params[:document]
     @document = Document.new(document)
     @document.parent_model = @parent.class
     @document.parent_id    = @parent.id
@@ -39,7 +42,9 @@ class Documents < Application
     end
   end
 
-  def update(id, document)
+  def update
+    id = params[:id]
+    document = params[:document]
     @document = Document.get(id)
     raise NotFound unless @document
     if @document.update(document)
@@ -50,7 +55,8 @@ class Documents < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @document = Document.get(id)
     raise NotFound unless @document
     if @document.destroy

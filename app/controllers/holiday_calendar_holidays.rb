@@ -6,7 +6,8 @@ class HolidayCalendarHolidays < Application
     display @holiday_calendar_holidays
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @holiday_calendar_holiday = HolidayCalendarHoliday.get(id)
     raise NotFound unless @holiday_calendar_holiday
     display @holiday_calendar_holiday
@@ -18,14 +19,16 @@ class HolidayCalendarHolidays < Application
     display @holiday_calendar_holiday
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @holiday_calendar_holiday = HolidayCalendarHoliday.get(id)
     raise NotFound unless @holiday_calendar_holiday
     display @holiday_calendar_holiday
   end
 
-  def create(holiday_calendar_holiday)
+  def create
+    holiday_calendar_holiday = params[:holiday_calendar_holiday]
     @holiday_calendar_holiday = HolidayCalendarHoliday.new(holiday_calendar_holiday)
     if @holiday_calendar_holiday.save
       redirect resource(@holiday_calendar_holiday), :message => {:notice => "HolidayCalendarHoliday was successfully created"}
@@ -35,7 +38,9 @@ class HolidayCalendarHolidays < Application
     end
   end
 
-  def update(id, holiday_calendar_holiday)
+  def update
+    id = params[:id]
+    holiday_calendar_holiday = params[:holiday_calendar_holiday]
     @holiday_calendar_holiday = HolidayCalendarHoliday.get(id)
     raise NotFound unless @holiday_calendar_holiday
     if @holiday_calendar_holiday.update(holiday_calendar_holiday)
@@ -45,7 +50,8 @@ class HolidayCalendarHolidays < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @holiday_calendar_holiday = HolidayCalendarHoliday.get(id)
     raise NotFound unless @holiday_calendar_holiday
     if @holiday_calendar_holiday.destroy

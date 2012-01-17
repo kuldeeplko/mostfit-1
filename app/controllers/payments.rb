@@ -18,17 +18,21 @@ class Payments < Application
     display @payment
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     display @payment
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     @payment = Payment.get(id)
     raise NotFound unless @payment
     display @payment
   end
 
-  def update(id, payment)
+  def update
+    id = params[:id]
+    payment = params[:payment]
     @payment = Payment.get(id)
     raise NotFound unless @payment
     disallow_updation_of_verified_payments
@@ -48,7 +52,8 @@ class Payments < Application
     end
   end
 
-  def create(payment)
+  def create
+    payment = params[:payment]
     raise NotFound unless (@loan or @client)
     success = do_payment(payment)
     if success  # true if saved
@@ -66,7 +71,8 @@ class Payments < Application
     end
   end
 
-  def delete(id)
+  def delete
+    id = params[:id]
     only_provides :html
     @payment = Payment.get(id)
     raise NotFound unless @payment
@@ -90,7 +96,8 @@ class Payments < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @payment = Payment.get(id)
     raise NotFound unless @payment
     disallow_updation_of_verified_payments

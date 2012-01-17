@@ -8,7 +8,8 @@ class Grts < Application
     display @grts
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @grt = Grt.get(id)
     raise NotFound unless @grt
     display @grt
@@ -20,14 +21,16 @@ class Grts < Application
     display @grt
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @grt = Grt.get(id)
     raise NotFound unless @grt
     display @grt
   end
 
-  def create(grt)
+  def create
+    grt = params[:grt]
     @grt = Grt.new(grt)
     @grt.client_group = @client_group
     if @grt.save
@@ -48,7 +51,9 @@ class Grts < Application
     end
   end
 
-  def update(id, grt)
+  def update
+    id = params[:id]
+    grt = params[:grt]
     @grt = Grt.get(id)
     @grt.client_group = @client_group
     raise NotFound unless @grt
@@ -69,7 +74,8 @@ class Grts < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @grt = Grt.get(id)
     raise NotFound unless @grt
     if @grt.destroy

@@ -9,7 +9,8 @@ class Portfolios < Application
     redirect resource(@funder)
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @portfolio = Portfolio.get(id)
     @portfolio.update_portfolio_value
     raise NotFound unless @portfolio
@@ -28,7 +29,8 @@ class Portfolios < Application
     display @portfolio
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @portfolio = Portfolio.get(id)
     raise NotFound unless @portfolio
@@ -41,7 +43,8 @@ class Portfolios < Application
     display @portfolio
   end
 
-  def create(portfolio)
+  def create
+    portfolio = params[:portfolio]
     @portfolio = Portfolio.new(portfolio)
     @portfolio.funder = @funder
     @portfolio.created_by = session.user
@@ -56,7 +59,9 @@ class Portfolios < Application
     end
   end
 
-  def update(id, portfolio)
+  def update
+    id = params[:id]
+    portfolio = params[:portfolio]
     @portfolio = Portfolio.get(id)
     raise NotFound unless @portfolio
     @portfolio.attributes = portfolio
@@ -68,7 +73,8 @@ class Portfolios < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @portfolio = Portfolio.get(id)
     raise NotFound unless @portfolio
     if @portfolio.destroy

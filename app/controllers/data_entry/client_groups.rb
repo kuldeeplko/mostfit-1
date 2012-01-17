@@ -29,7 +29,10 @@ module DataEntry
       end
     end
 
-    def create_grt_date(id, grt_date, clients)
+    def create_grt_date
+      id = params[:id]
+      grt_date = params[:grt_date]
+      clients = params[:clients]
       only_provides :html
       @client_group = ClientGroup.get(id)
       raise NotFound unless @client_group

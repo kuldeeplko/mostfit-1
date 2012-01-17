@@ -102,7 +102,8 @@ module DataEntry
       end
     end
 
-    def create(payment)
+    def create
+      payment = params[:payment]
       @loan = Loan.get(payment[:loan_id])
       @client = @loan.client
       raise NotFound unless (@loan or @client)

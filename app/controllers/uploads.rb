@@ -32,13 +32,15 @@ class Uploads < Application
     redirect resource(:uploads)
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @upload = Upload.get(id)
     raise NotFound unless @upload
     display @upload
   end
 
-  def continue(id)
+  def continue
+    id = params[:id]
     @upload = Upload.get(id)
     raise NotFound unless @upload
     Merb.run_later do
@@ -47,7 +49,8 @@ class Uploads < Application
     redirect resource(@upload), :message => {:notice => "Started processing"}
   end
   
-  def stop(id)
+  def stop
+    id = params[:id]
     # stops an upload that is processing
     @upload = Upload.get(id)
     raise NotFound unless @upload
@@ -55,7 +58,8 @@ class Uploads < Application
     redirect resource(@upload)
   end
 
-  def reload(id)
+  def reload
+    id = params[:id]
     # reloads a single model
     @upload = Upload.get(id)
     raise NotFound unless @upload
@@ -68,7 +72,8 @@ class Uploads < Application
 
 
 
-  def reset(id)
+  def reset
+    id = params[:id]
     @upload = Upload.get(id)
     raise NotFound unless @upload
     options = params[:delete] ? {:erase => true} : {}
@@ -82,13 +87,16 @@ class Uploads < Application
     "<pre>" + File.read(File.join("uploads", @upload.directory, "#{params[:model]}_errors.csv")) + "</pre>"
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     @upload = Upload.get(id)
     raise NotFound unless @upload
     display @upload
   end
 
-  def update(id, upload)
+  def update
+    id = params[:id]
+    upload = params[:upload]
     @upload = Upload.get(id)
     FileUtils.rm(File.join("uploads",@upload.directory,@upload.filename))
     @upload.reset # does not delete data. only removes the files
@@ -101,7 +109,8 @@ class Uploads < Application
     end
   end
 
-  def show_csv(id)
+  def show_csv
+    id = params[:id]
     @upload = Upload.get(id)
     raise NotFound unless @upload
     "<pre>" + File.read(File.join(Merb.root, "uploads",@upload.directory, params[:filename])) + "</pre>"

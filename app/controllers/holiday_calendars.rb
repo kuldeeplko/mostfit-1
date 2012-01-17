@@ -6,7 +6,8 @@ class HolidayCalendars < Application
     display @holiday_calendars
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @holiday_calendar = HolidayCalendar.get(id)
     raise NotFound unless @holiday_calendar
     display @holiday_calendar
@@ -18,14 +19,16 @@ class HolidayCalendars < Application
     display @holiday_calendar
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @holiday_calendar = HolidayCalendar.get(id)
     raise NotFound unless @holiday_calendar
     display @holiday_calendar
   end
 
-  def create(holiday_calendar)
+  def create
+    holiday_calendar = params[:holiday_calendar]
     @holiday_calendar = HolidayCalendar.new(holiday_calendar)
     if @holiday_calendar.save
       redirect resource(@holiday_calendar), :message => {:notice => "HolidayCalendar was successfully created"}
@@ -35,7 +38,9 @@ class HolidayCalendars < Application
     end
   end
 
-  def update(id, holiday_calendar)
+  def update
+    id = params[:id]
+    holiday_calendar = params[:holiday_calendar]
     @holiday_calendar = HolidayCalendar.get(id)
     raise NotFound unless @holiday_calendar
     if holiday_calendar.has_key?(:holiday) # just adding a holiday
@@ -57,7 +62,8 @@ class HolidayCalendars < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @holiday_calendar = HolidayCalendar.get(id)
     raise NotFound unless @holiday_calendar
     if @holiday_calendar.destroy
@@ -67,7 +73,9 @@ class HolidayCalendars < Application
     end
   end
 
-  def delete_holiday(id, holiday_id)
+  def delete_holiday
+    id = params[:id]
+    holiday_id = params[:holiday_id]
     @holiday_calendar = HolidayCalendar.get(id)
     raise NotFound unless @holiday_calendar
     @holiday_calendar.remove_holiday(holiday_id)

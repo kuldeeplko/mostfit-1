@@ -7,12 +7,14 @@ class Targets < Application
     display @targets
   end
   
-  def all(id)
+  def all
+    id = params[:id]
     @objects = Kernel.const_get(id.camelcase).all(:order => [:name])
     display @objects
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @target = Target.get(id)
     raise NotFound unless @target
     display @target
@@ -59,7 +61,8 @@ class Targets < Application
     end
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @target = Target.get(id)
     raise NotFound unless @target
@@ -67,7 +70,8 @@ class Targets < Application
     display @target
   end
 
-  def create(target)
+  def create
+    target = params[:target]
     @target = Target.new(target)
     if @target.save
       redirect resource(:targets), :message => {:notice => "Target was successfully created"}
@@ -78,7 +82,9 @@ class Targets < Application
     end
   end
 
-  def update(id, target)
+  def update
+    id = params[:id]
+    target = params[:target]
     @target = Target.get(id)
     raise NotFound unless @target
     if @target.update(target)
@@ -89,7 +95,8 @@ class Targets < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @target = Target.get(id)
     raise NotFound unless @target
     if @target.destroy

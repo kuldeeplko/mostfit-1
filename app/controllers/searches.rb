@@ -128,7 +128,7 @@ class Searches < Application
   end
   
   private
-  def get_values(model, property, counter, value = nil)
+  def get_values( model, property, counter, value = nil )
     value = value.to_s if value
     if property.type==Date or property.type==DateTime
       return date_select("value[#{counter}][#{property.name}]", value||Date.today, :id => "value_#{counter}")
@@ -149,7 +149,7 @@ class Searches < Application
     end
   end
 
-  def get_properties_for(model)
+  def get_properties_for model
     model.properties.collect{|x| 
       if relation = model.relationships.find{|rel| rel[1].child_key.map{|ck| ck.name}.include?(x.name)}
         relation[0]
@@ -159,7 +159,7 @@ class Searches < Application
     }
   end
 
-  def get_all_properties(params)
+  def get_all_properties( params )
     hash  = params.deep_clone
     hash.delete(:controller)
     hash.delete(:action)

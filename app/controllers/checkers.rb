@@ -15,7 +15,8 @@ class Checkers < Application
     redirect resource(@upload, :checkers), :message => {:notice => "Started checking #{params[:limit] ? params[:limit] : 'all'} loans"}
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @checker = Checker.get(id)
     raise NotFound unless @checker
     display @checker
@@ -27,14 +28,16 @@ class Checkers < Application
     display @checker
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @checker = Checker.get(id)
     raise NotFound unless @checker
     display @checker
   end
 
-  def create(checker)
+  def create
+    checker = params[:checker]
     @checker = Checker.new(checker)
     if @checker.save
       redirect resource(@checker), :message => {:notice => "Checker was successfully created"}
@@ -44,7 +47,9 @@ class Checkers < Application
     end
   end
 
-  def update(id, checker)
+  def update
+    id = params[:id]
+    checker = params[:checker]
     @checker = Checker.get(id)
     raise NotFound unless @checker
     if @checker.update(checker)
@@ -54,7 +59,8 @@ class Checkers < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @checker = Checker.get(id)
     raise NotFound unless @checker
     if @checker.destroy

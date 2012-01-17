@@ -7,7 +7,8 @@ class Regions < Application
     display @regions
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @option = params[:option] if params[:option]
     @region = Region.get(id)
     raise NotFound unless @region
@@ -20,14 +21,16 @@ class Regions < Application
     display @region
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @region = Region.get(id)
     raise NotFound unless @region
     display @region
   end
 
-  def create(region)
+  def create
+    region = params[:region]
     @region = Region.new(region)
     if @region.save
       redirect resource(:regions), :message => {:notice => I18n.t("region.message.notice", :default => "Region was successfully created")}
@@ -37,7 +40,9 @@ class Regions < Application
     end
   end
 
-  def update(id, region)
+  def update
+    id = params[:id]
+    region = params[:region]
     @region = Region.get(id)
     raise NotFound unless @region
     if @region.update(region)

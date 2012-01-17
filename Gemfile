@@ -9,7 +9,6 @@ dm_gems_version   = '~> 1.2'
 
 # Merb
 gem 'merb-core',                merb_gems_version
-# gem 'merb-action-args',         merb_gems_version, require: 'merb-action-args'
 gem 'merb-assets',              merb_gems_version
 gem 'merb-helpers',             merb_gems_version
 gem 'merb-mailer',              merb_gems_version
@@ -48,7 +47,6 @@ gem 'dm-is-tree',               dm_gems_version
 # gem 'dm-validations-ext'
 
 # Other gems
-# gem 'methopara'   # Needed for merb-action-args
 gem 'i18n',                     '~> 0.6'
 gem 'i18n-translators-tools',   '~> 0.2', :require => 'i18n-translate'
 gem 'htmldoc'

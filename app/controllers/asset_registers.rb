@@ -13,7 +13,8 @@ class AssetRegisters < Application
     end
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @asset_register = AssetRegister.get(id)
     raise NotFound unless @asset_register
     display @asset_register, :layout => layout?
@@ -26,7 +27,8 @@ class AssetRegisters < Application
     display @asset_register, :layout => layout?
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @asset_register = AssetRegister.get(id)
     raise NotFound unless @asset_register
@@ -34,7 +36,8 @@ class AssetRegisters < Application
     display @asset_register, :layout => layout?
   end
 
-  def create(asset_register)
+  def create
+    asset_register = params[:asset_register]
     @asset_register = AssetRegister.new(asset_register)
     if @asset_register.save
       redirect(params[:return] ||resource(@asset_register.branch), :message => {:notice => "Asset entry was successfully entered"})
@@ -44,7 +47,9 @@ class AssetRegisters < Application
     end
   end
 
-  def update(id, asset_register)
+  def update
+    id = params[:id]
+    asset_register = params[:asset_register]
     @asset_register = AssetRegister.get(id)
     raise NotFound unless @asset_register
     if @asset_register.update(asset_register)
@@ -54,7 +59,8 @@ class AssetRegisters < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @asset_register = AssetRegister.get(id)
     raise NotFound unless @asset_register
     if @asset_register.destroy
@@ -64,11 +70,12 @@ class AssetRegisters < Application
     end
   end
 
-  def delete(id)
-    edit(id)
+  def delete
+    edit
   end
 
-  def redirect_to_show(id) 
+  def redirect_to_show 
+    id = params[:id]
     raise NotFound unless @asset_register = AssetRegister.get(id)
     redirect resource(@asset_register)
   end

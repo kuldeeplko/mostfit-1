@@ -19,7 +19,8 @@ class Journals < Application
     display @journal, :layout => layout?
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @journal = Journal.get(id)
     raise NotFound unless @journal
     display @journal
@@ -30,7 +31,8 @@ class Journals < Application
     partial :account_amount, :layout => layout?, :last_account => true, :account_type => (params[:account_type]||"credit_account").to_sym, :account => {}
   end
 
-  def create(journal)
+  def create
+    journal = params[:journal]
     @branch  = Branch.get(params[:branch_id]) if params[:branch_id]
 
     if params[:debit_account] and params[:credit_account]
@@ -65,7 +67,8 @@ class Journals < Application
     end
   end
 
-  def reverse(id)
+  def reverse
+    id = params[:id]
     journal = Journal.get(id)
     raise NotFound unless journal
     @journal = journal.reverse_transaction
@@ -77,14 +80,17 @@ class Journals < Application
     end
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @journal = Journal.get(id)
     raise NotFound unless @journal
     display @journal, :layout => layout?
   end
 
-  def update(id, journal)
+  def update
+    id = params[:id]
+    journal = params[:journal]
     @journal = Journal.get(id)
     raise NotFound unless @journal
     if @journal.update_attributes(journal)
@@ -106,7 +112,8 @@ class Journals < Application
   end
 
   # Action for creatng EOD voucher entry
-  def create_eod(journal)
+  def create_eod
+    journal = params[:journal]
     @branch  = Branch.get(params[:branch_id]) if params[:branch_id]
     raise BadRequest unless @branch
 

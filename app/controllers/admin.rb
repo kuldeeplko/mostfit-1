@@ -11,7 +11,8 @@ class Admin < Application
     render
   end
   
-  def update(mfi)
+  def update
+    mfi = params[:mfi]
     @mfi  = Mfi.new(mfi)
     if @mfi.valid?
       @mfi.save
@@ -31,7 +32,8 @@ class Admin < Application
     render
   end
 
-  def download_dump(file)
+  def download_dump
+    file = params[:file]
     if file and File.exists?(File.join(Merb.root, DUMP_FOLDER, file))
       send_data(File.open(File.join(Merb.root, DUMP_FOLDER, file)), :filename => file, :type => "gzip")
     end

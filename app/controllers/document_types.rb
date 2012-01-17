@@ -6,7 +6,8 @@ class DocumentTypes < Application
     display @document_types
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @document_type = DocumentType.get(id)
     raise NotFound unless @document_type
     display @document_type
@@ -18,14 +19,16 @@ class DocumentTypes < Application
     display @document_type
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @document_type = DocumentType.get(id)
     raise NotFound unless @document_type
     display @document_type
   end
 
-  def create(document_type)
+  def create
+    document_type = params[:document_type]
     @document_type = DocumentType.new(document_type)
     if @document_type.save
       redirect resource(:document_types), :message => {:notice => "DocumentType was successfully created"}
@@ -35,7 +38,9 @@ class DocumentTypes < Application
     end
   end
 
-  def update(id, document_type)
+  def update
+    id = params[:id]
+    document_type = params[:document_type]
     @document_type = DocumentType.get(id)
     raise NotFound unless @document_type
     if @document_type.update(document_type)

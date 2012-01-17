@@ -6,7 +6,8 @@ class Occupations < Application
     display @occupations
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @occupation = Occupation.get(id)
     raise NotFound unless @occupation
     display @occupation
@@ -18,14 +19,16 @@ class Occupations < Application
     display @occupation
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @occupation = Occupation.get(id)
     raise NotFound unless @occupation
     display @occupation
   end
 
-  def create(occupation)
+  def create
+    occupation = params[:occupation]
     @occupation = Occupation.new(occupation)
     if @occupation.save
       redirect resource(:occupations), :message => {:notice => "Occupation was successfully created"}
@@ -35,7 +38,9 @@ class Occupations < Application
     end
   end
 
-  def update(id, occupation)
+  def update
+    id = params[:id]
+    occupation = params[:occupation]
     @occupation = Occupation.get(id)
     raise NotFound unless @occupation
     if @occupation.update(occupation)
@@ -45,7 +50,8 @@ class Occupations < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @occupation = Occupation.get(id)
     raise NotFound unless @occupation
     if @occupation.destroy

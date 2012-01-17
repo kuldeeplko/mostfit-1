@@ -11,7 +11,8 @@ class RuleBooks < Application
     display @rule_books, :layout => layout?
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @rule_book = RuleBook.get(id)
     raise NotFound unless @rule_book
     display @rule_book, :layout => layout?
@@ -25,7 +26,8 @@ class RuleBooks < Application
     display @rule_book, :layout => layout?
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @rule_book = RuleBook.get(id)
     raise NotFound unless @rule_book
@@ -33,7 +35,8 @@ class RuleBooks < Application
     display @rule_book, :layout => layout?
   end
 
-  def create(rule_book)
+  def create
+    rule_book = params[:rule_book]
     rule_book, credit_accounts, debit_accounts = get_credit_and_debit_accounts(rule_book)
     @rule_book = RuleBook.new(rule_book)
     @rule_book.created_by_user_id = session.user.id
@@ -49,7 +52,9 @@ class RuleBooks < Application
     end
   end
 
-  def update(id, rule_book)
+  def update
+    id = params[:id]
+    rule_book = params[:rule_book]
     rule_book, credit_accounts, debit_accounts = get_credit_and_debit_accounts(rule_book)
 
     @rule_book = RuleBook.get(id)
@@ -91,7 +96,8 @@ class RuleBooks < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @rule_book = RuleBook.get(id)
     raise NotFound unless @rule_book
     if @rule_book.destroy

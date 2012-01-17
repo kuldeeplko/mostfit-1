@@ -6,7 +6,8 @@ class ClientTypes < Application
     display @client_types
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @client_type = ClientType.get(id)
     raise NotFound unless @client_type
     display @client_type
@@ -18,14 +19,16 @@ class ClientTypes < Application
     display @client_type
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @client_type = ClientType.get(id)
     raise NotFound unless @client_type
     display @client_type
   end
 
-  def create(client_type)
+  def create
+    client_type = params[:client_type]
     @client_type = ClientType.new(client_type)
     @client_type.fees = Fee.all(:id => params[:fees].keys) if params[:fees]
     if @client_type.save
@@ -36,7 +39,9 @@ class ClientTypes < Application
     end
   end
 
-  def update(id, client_type)
+  def update
+    id = params[:id]
+    client_type = params[:client_type]
     @client_type = ClientType.get(id)
     @client_type.fees = Fee.all(:id => params[:fees].keys) if params[:fees]
     raise NotFound unless @client_type
@@ -47,7 +52,8 @@ class ClientTypes < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @client_type = ClientType.get(id)
     raise NotFound unless @client_type
     if @client_type.destroy

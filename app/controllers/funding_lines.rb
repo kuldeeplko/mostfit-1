@@ -8,7 +8,8 @@ class FundingLines < Application
     display @funding_lines
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @funding_line = FundingLine.get(id)    
     raise NotFound unless @funding_line
     display @funding_line
@@ -20,7 +21,8 @@ class FundingLines < Application
     display @funding_line
   end
 
-  def create(funding_line)
+  def create
+    funding_line = params[:funding_line]
     funding_line[:interest_rate] = funding_line[:interest_rate].to_f / 100
     @funding_line = FundingLine.new(funding_line)
     @funding_line.funder = @funder
@@ -31,7 +33,8 @@ class FundingLines < Application
     end
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @funding_line = FundingLine.get(id)
     @funding_line.funder = @funder
@@ -39,7 +42,9 @@ class FundingLines < Application
     display @funding_line
   end
 
-  def update(id, funding_line)
+  def update
+    id = params[:id]
+    funding_line = params[:funding_line]
     funding_line[:interest_rate] = funding_line[:interest_rate].to_f / 100
     @funding_line = FundingLine.get(id)
     raise NotFound unless @funding_line
@@ -50,8 +55,8 @@ class FundingLines < Application
     end
   end
 
-#   def destroy(id)
-#     @funding_line = FundingLine.get(id)
+#   def destroy
+#     @funding_line = FundingLine.get(params[:id])
 #     raise NotFound unless @funding_line
 #     if @funding_line.destroy
 #       redirect resource(:funding_lines)
@@ -61,7 +66,8 @@ class FundingLines < Application
 #   end
 
   # used from the router to redirect to a resourceful url
-  def redirect_to_show(id)
+  def redirect_to_show
+    id = params[:id]
     raise NotFound unless @funding_line = FundingLine.get(id)
     redirect resource(@funding_line.funder, @funding_line)
   end

@@ -6,7 +6,8 @@ class LedgerEntries < Application
     display @ledger_entries
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @ledger_entry = LedgerEntry.get(id)
     raise NotFound unless @ledger_entry
     display @ledger_entry
@@ -18,14 +19,16 @@ class LedgerEntries < Application
     display @ledger_entry
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @ledger_entry = LedgerEntry.get(id)
     raise NotFound unless @ledger_entry
     display @ledger_entry
   end
 
-  def create(ledger_entry)
+  def create
+    ledger_entry = params[:ledger_entry]
     @ledger_entry = LedgerEntry.new(ledger_entry)
     if @ledger_entry.save
       redirect resource(@ledger_entry), :message => {:notice => "LedgerEntry was successfully created"}
@@ -35,7 +38,9 @@ class LedgerEntries < Application
     end
   end
 
-  def update(id, ledger_entry)
+  def update
+    id = params[:id]
+    ledger_entry = params[:ledger_entry]
     @ledger_entry = LedgerEntry.get(id)
     raise NotFound unless @ledger_entry
     if @ledger_entry.update(ledger_entry)
@@ -45,7 +50,8 @@ class LedgerEntries < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @ledger_entry = LedgerEntry.get(id)
     raise NotFound unless @ledger_entry
     if @ledger_entry.destroy

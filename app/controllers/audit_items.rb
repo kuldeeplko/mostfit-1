@@ -18,7 +18,8 @@ class AuditItems < Application
     end
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @audit_item = AuditItem.get(id)
     raise NotFound unless @audit_item
     display @audit_item
@@ -30,14 +31,16 @@ class AuditItems < Application
     display @audit_item
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @audit_item = AuditItem.get(id)
     raise NotFound unless @audit_item
     display @audit_item
   end
 
-  def create(audit_item)
+  def create
+    audit_item = params[:audit_item]
     @audit_item = AuditItem.new(audit_item)
     if @audit_item.save
       redirect resource(@audit_item), :message => {:notice => "AuditItem was successfully created"}
@@ -47,7 +50,9 @@ class AuditItems < Application
     end
   end
 
-  def update(id, audit_item)
+  def update
+    id = params[:id]
+    audit_item = params[:audit_item]
     @audit_item = AuditItem.get(id)
     raise NotFound unless @audit_item
     if @audit_item.update(audit_item)
@@ -57,7 +62,8 @@ class AuditItems < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @audit_item = AuditItem.get(id)
     raise NotFound unless @audit_item
     if @audit_item.destroy

@@ -24,7 +24,8 @@ class AuditTrails < Application
     partial "audit_trails/list", :layout => false
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     from_date = params[:from_date] ? Date.parse(params[:from_date]) : Date.today
     to_date = params[:to_date] ? Date.parse(params[:to_date]) : Date.today
 

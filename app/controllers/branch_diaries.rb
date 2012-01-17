@@ -13,7 +13,8 @@ class BranchDiaries < Application
     end
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @branch_diary = BranchDiary.get(id)
     raise NotFound unless @branch_diary
     display @branch_diary , :layout => layout?
@@ -26,7 +27,8 @@ class BranchDiaries < Application
     display @branch_diary, :layout => layout?
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @branch_diary = BranchDiary.get(id)
     raise NotFound unless @branch_diary
@@ -34,7 +36,8 @@ class BranchDiaries < Application
     display @branch_diary, :layout => layout?
   end
 
-  def create(branch_diary)
+  def create
+    branch_diary = params[:branch_diary]
     @branch_diary = BranchDiary.new(branch_diary)
     if @branch_diary.save
       redirect(params[:return] ||resource(@branch_diary.branch), :message => {:notice => "Diary entry was successfully entered"})
@@ -44,7 +47,9 @@ class BranchDiaries < Application
     end
   end
 
-  def update(id, branch_diary)
+  def update
+    id = params[:id]
+    branch_diary = params[:branch_diary]
     @branch_diary = BranchDiary.get(id)
     raise NotFound unless @branch_diary
     if @branch_diary.update(branch_diary)
@@ -59,7 +64,8 @@ class BranchDiaries < Application
     render :layout => layout?
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @branch_diary = BranchDiary.get(id)
     raise NotFound unless @branch_diary
     if @branch_diary.destroy
@@ -69,11 +75,12 @@ class BranchDiaries < Application
     end
   end
 
-  def delete(id)
-    edit(id)
+  def delete
+    edit
   end
 
-  def redirect_to_show(id)
+  def redirect_to_show
+    id = params[:id]
     raise NotFound unless @branch_diary = BranchDiary.get(id)
     redirect resource(@branch_diary)
   end

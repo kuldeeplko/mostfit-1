@@ -6,7 +6,8 @@ class AccountTypes < Application
     display @account_types, :layout => layout?
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @account_type = AccountType.get(id)
     raise NotFound unless @account_type
     display @account_type
@@ -18,14 +19,16 @@ class AccountTypes < Application
     display @account_type, :layout => layout?
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @account_type = AccountType.get(id)
     raise NotFound unless @account_type
     display @account_type
   end
 
-  def create(account_type)
+  def create
+    account_type = params[:account_type]
     @account_type = AccountType.new(account_type)
     if @account_type.save
       redirect resource(:accounts), :message => {:notice => "AccountType was successfully created"}
@@ -35,7 +38,9 @@ class AccountTypes < Application
     end
   end
 
-  def update(id, account_type)
+  def update
+    id = params[:id]
+    account_type = params[:account_type]
     @account_type = AccountType.get(id)
     raise NotFound unless @account_type
     if @account_type.update(account_type)
@@ -45,7 +50,8 @@ class AccountTypes < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @account_type = AccountType.get(id)
     raise NotFound unless @account_type
     if @account_type.destroy

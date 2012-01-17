@@ -12,7 +12,8 @@ class AccountBalances < Application
     display @account_balances, :layout => layout?
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     display @account_balance
   end
 
@@ -22,13 +23,15 @@ class AccountBalances < Application
     display @account_balance, :layout => layout?
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     raise NotFound unless @account_balance
     display @account_balance
   end
 
-  def create(account_balance)
+  def create
+    account_balance = params[:account_balance]
     @account_balance = AccountBalance.new(account_balance)
     @account_balance.account = @account
     @account_balance.accounting_period = @accounting_period
@@ -40,7 +43,9 @@ class AccountBalances < Application
     end
   end
 
-  def update(id, account_balance)
+  def update
+    id = params[:id]
+    account_balance = params[:account_balance]
     raise NotFound unless @account_balance
     raise NotPrivileged if (@account_balance.verified_by and (not session.user.role == :admin))
     account_balance.delete(:account_id)
@@ -55,7 +60,8 @@ class AccountBalances < Application
     end
   end
 
-  def verify(id)
+  def verify
+    id = params[:id]
     raise NotPrivileged unless  session.user.role == :admin
     raise NotFound unless @account_balance
     if request.method == :get
@@ -71,7 +77,8 @@ class AccountBalances < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @account_balance = AccountBalance.get(id)
     raise NotFound unless @account_balance
     if @account_balance.destroy

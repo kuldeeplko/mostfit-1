@@ -6,7 +6,8 @@ class CenterMeetingDays < Application
     display @center_meeting_days
   end
   
-  def edit(id)
+  def edit
+    id = params[:id]
     @cmd = CenterMeetingDay.get(params[:id])
     raise NotFound unless @cmd
     display @cmd
@@ -18,7 +19,8 @@ class CenterMeetingDays < Application
     render
   end
   
-  def create(center_meeting_day)
+  def create
+    center_meeting_day = params[:center_meeting_day]
     @center = Center.get(params[:center_id])
     @cmd = CenterMeetingDay.new(center_meeting_day)
     @cmd.center = @center
@@ -34,7 +36,9 @@ class CenterMeetingDays < Application
   end
   
   
-  def update(id, center_meeting_day)
+  def update
+    id = params[:id]
+    center_meeting_day = params[:center_meeting_day]
     debugger
     center_meeting_day[:valid_from] = Date.parse(center_meeting_day[:valid_from])
     center_meeting_day[:valid_upto] = Date.parse(center_meeting_day[:valid_upto])

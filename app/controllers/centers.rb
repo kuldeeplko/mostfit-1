@@ -17,7 +17,8 @@ class Centers < Application
     partial "centers/list", :layout => layout?
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @option = params[:option] if params[:option]
     @center = Center.get(id)
     raise NotFound unless @center
@@ -30,7 +31,8 @@ class Centers < Application
     end
   end
 
-  def today(id)
+  def today
+    id = params[:id]
     @center = Center.get(id)
     raise NotFound unless @center
     @clients = @center.clients
@@ -38,7 +40,8 @@ class Centers < Application
     display [@center, @clients, @loans], 'clients/today'
   end
 
-  def bulk_data_entry(id)
+  def bulk_data_entry
+    id = params[:id]
     only_provides :html
     @center = Center.get(id)
     raise NotFound unless @center
@@ -91,7 +94,8 @@ class Centers < Application
     display @center
   end
 
-  def create(center)
+  def create
+    center = params[:center]
     debugger
     @center_meeting_day = CenterMeetingDay.new(center.delete(:center_meeting_day))
     @center_meeting_day.valid_from = center[:creation_date]
@@ -119,14 +123,17 @@ class Centers < Application
     end
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @center = Center.get(id)
     raise NotFound unless @center
     display @center
   end
 
-  def update(id, center)
+  def update
+    id = params[:id]
+    center = params[:center]
     @center = Center.get(id)
     raise NotFound unless @center
     @center.attributes = center
@@ -138,11 +145,12 @@ class Centers < Application
     end
   end
 
-  def delete(id)
-    edit(id)  # so far these are the same
+  def delete
+    edit
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @center_meeting_day = CenterMeetingDay.new(center.delete(:center_meeting_day))
     @center_meeting_day.valid_from = center[:creation_date]
     @center_meeting_day.valid_upto = Date.new(2100,12,31)
@@ -156,7 +164,8 @@ class Centers < Application
   end
 
   # this redirects to the proper url, used from the router
-  def redirect_to_show(id)
+  def redirect_to_show
+    id = params[:id]
     raise NotFound unless @center = Center.get(id)
     redirect resource(@center.branch, @center)
   end

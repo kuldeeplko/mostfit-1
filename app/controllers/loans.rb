@@ -14,7 +14,8 @@ class Loans < Application
     display @loans
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @option = params[:option] if params[:option]
     @loan = Loan.get(id)
     raise NotFound unless @loan
@@ -98,18 +99,21 @@ class Loans < Application
   end
 
 
-  def levy_fees(id)
+  def levy_fees
+    id = params[:id]
     @loan = Loan.get(id)
     raise NotFound unless @loan
     @loan.levy_fees(false)
     redirect url_for_loan(@loan) + "#misc", :message => {:notice => 'Fees levied'}
   end
 
-  def bulk_restore_payments(id)
+  def bulk_restore_payments
+    id = params[:id]
   end
 
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @loan = Loan.get(id)
     @loan_product =  @loan.loan_product
@@ -121,7 +125,8 @@ class Loans < Application
     display @loan
   end
 
-  def update(id)
+  def update
+    id = params[:id]
     klass, attrs = get_loan_and_attrs
     attrs[:interest_rate] = attrs[:interest_rate].to_f / 100 if attrs[:interest_rate].to_f > 0
     attrs[:occupation_id] = nil if attrs[:occupation_id] == ''
@@ -151,11 +156,12 @@ class Loans < Application
     end
   end
 
-  def delete(id)
-    edit(id)  # so far these are the same
+  def delete
+    edit
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @loan = Loan.get(id)
     disallow_updation_of_verified_loans
     raise NotFound unless @loan
@@ -167,7 +173,8 @@ class Loans < Application
   end
 
   # this redirects to the proper url, used from the router
-  def redirect_to_show(id)
+  def redirect_to_show
+    id = params[:id]
     raise NotFound unless @loan = Loan.get(id)
     @branch, @center, @client = @loan.client.center.branch, @loan.client.center, @loan.client
     redirect url_for_loan(@loan)
@@ -290,7 +297,8 @@ class Loans < Application
     end
   end
 
-  def write_off(id)
+  def write_off
+    id = params[:id]
     if request.method == :post 
       @loan = Loan.get(id)
       raise NotFound unless @loan
@@ -305,7 +313,8 @@ class Loans < Application
     end
   end
 
-  def reverse_write_off(id)
+  def reverse_write_off
+    id = params[:id]
     @loan = Loan.get(id)
     raise NotFound unless @loan
     @loan.written_off_by = @loan.suggested_written_off_by_staff_id = @loan.write_off_rejected_by_staff_id = nil
@@ -353,7 +362,8 @@ class Loans < Application
     end
   end
     
-  def suggest_write_off(id)
+  def suggest_write_off
+    id = params[:id]
     if request.method == :post
       @loan = Loan.get(id)
       raise NotFound unless @loan
@@ -371,13 +381,15 @@ class Loans < Application
     end
   end
   
-  def misc(id)
+  def misc
+    id = params[:id]
     @loan = Loan.get(id)
     @applicable_fee = ApplicableFee.new(:applicable_type => 'Loan', :applicable_id => @loan.id)
     request.xhr? ? render(:layout => false) : render
   end
   
-  def update_utilization(id)
+  def update_utilization
+    id = params[:id]
     @loan =  Loan.get(id)    
     @loan.history_disabled = true
     if params[:loan] and params[:loan][:loan_utilization_id] and not params[:loan][:loan_utilization_id].blank?
@@ -393,14 +405,16 @@ class Loans < Application
     end
   end
 
-  def repair(id)
+  def repair
+    id = params[:id]
     loan = Loan.get(id)
     raise NotFound unless loan
     loan.update_history_bulk_insert
     redirect url_for_loan(loan), :message => {:notice => "LoanHistory updated!"}
   end
 
-  def reallocate(id)
+  def reallocate
+    id = params[:id]
     @loan = Loan.get(id)
     raise NotFound unless @loan
     status, @payments = @loan.reallocate(params[:style].to_sym, session.user)
@@ -411,13 +425,15 @@ class Loans < Application
     end
   end
     
-  def diagnose(id)
+  def diagnose
+    id = params[:id]
     @loan = Loan.get(id)
     raise NotFound unless @loan
     display [@loan], :layout => false
   end
 
-  def repayment_sheet(id)
+  def repayment_sheet
+    id = params[:id]
     @loan = Loan.get(id)
     raise NotFound unless @loan
     file = @loan.generate_loan_schedule
@@ -428,7 +444,8 @@ class Loans < Application
     end
   end
 
-  def prepay(id)
+  def prepay
+    id = params[:id]
     @loan = Loan.get(id)
     raise NotFound unless @loan
     if request.method == :get
@@ -536,7 +553,7 @@ class Loans < Application
   end
   
   # set the loans which are accessible by the user
-  def get_loans(hash, paginate = true)
+  def get_loans( hash, paginate = true )
     if staff = session.user.staff_member
       hash["client.center.branch_id"] = [staff.branches, staff.areas.branches, staff.regions.areas.branches].flatten.map{|x| x.id}
       Loan.all(hash)
@@ -545,7 +562,7 @@ class Loans < Application
     end
   end
 
-  def set_insurance_policy(loan_product)
+  def set_insurance_policy loan_product
     if @loan_product.linked_to_insurance
       @insurance_policy = @loan.insurance_policy || InsurancePolicy.new
       @insurance_policy.client = @client

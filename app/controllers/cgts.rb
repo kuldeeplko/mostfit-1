@@ -8,7 +8,8 @@ class Cgts < Application
     display @cgts
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @cgt = Cgt.get(id)
     raise NotFound unless @cgt
     display @cgt
@@ -20,14 +21,16 @@ class Cgts < Application
     display @cgt
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @cgt = Cgt.get(id)
     raise NotFound unless @cgt
     display @cgt
   end
 
-  def create(cgt)
+  def create
+    cgt = params[:cgt]
     @cgt = Cgt.new(cgt)
     if @cgt.save
       if params[:return] and not params[:return].blank?
@@ -46,7 +49,9 @@ class Cgts < Application
     end
   end
 
-  def update(id, cgt)
+  def update
+    id = params[:id]
+    cgt = params[:cgt]
     @cgt = Cgt.get(id)
     raise NotFound unless @cgt
     if @cgt.update(cgt)
@@ -64,7 +69,8 @@ class Cgts < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @cgt = Cgt.get(id)
     raise NotFound unless @cgt
     if @cgt.destroy

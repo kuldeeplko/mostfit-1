@@ -6,7 +6,8 @@ class InsuranceProducts < Application
     display @insurance_products
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @insurance_product = InsuranceProduct.get(id)
     raise NotFound unless @insurance_product
     display @insurance_product
@@ -18,14 +19,16 @@ class InsuranceProducts < Application
     display @insurance_product, :layout => (request.xhr? ? false : layout?)
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @insurance_product = InsuranceProduct.get(id)
     raise NotFound unless @insurance_product
     display @insurance_product
   end
 
-  def create(insurance_product)
+  def create
+    insurance_product = params[:insurance_product]
     @insurance_product = InsuranceProduct.new(insurance_product)
     @insurance_product.fees = []
     params[:fees] = params[:fees] || {}
@@ -41,7 +44,9 @@ class InsuranceProducts < Application
     end
   end
 
-  def update(id, insurance_product)
+  def update
+    id = params[:id]
+    insurance_product = params[:insurance_product]
     @insurance_product = InsuranceProduct.get(id)
     raise NotFound unless @insurance_product
     fees = []
@@ -59,7 +64,8 @@ class InsuranceProducts < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @insurance_product = InsuranceProduct.get(id)
     raise NotFound unless @insurance_product
     if @insurance_product.destroy

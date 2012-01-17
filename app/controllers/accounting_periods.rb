@@ -6,13 +6,15 @@ class AccountingPeriods < Application
     display @accounting_periods, :layout => layout?
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @accounting_period = AccountingPeriod.get(id)
     raise NotFound unless @accounting_period
     display @accounting_period
   end
 
-  def period_balances(id)
+  def period_balances
+    id = params[:id]
     @accounting_period = AccountingPeriod.get(id)
     raise NotFound unless @accounting_period
     display @accounting_period
@@ -24,14 +26,16 @@ class AccountingPeriods < Application
     display @accounting_period, :layout => layout?
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @accounting_period = AccountingPeriod.get(id)
     raise NotFound unless @accounting_period
     display @accounting_period
   end
 
-  def create(accounting_period)
+  def create
+    accounting_period = params[:accounting_period]
     @accounting_period = AccountingPeriod.new(accounting_period)
     if @accounting_period.save
       redirect resource(:accounts), :message => {:notice => "AccountingPeriod was successfully created"}
@@ -41,7 +45,9 @@ class AccountingPeriods < Application
     end
   end
 
-  def update(id, accounting_period)
+  def update
+    id = params[:id]
+    accounting_period = params[:accounting_period]
     @accounting_period = AccountingPeriod.get(id)
     raise NotFound unless @accounting_period
     if @accounting_period.update(accounting_period)
@@ -51,7 +57,8 @@ class AccountingPeriods < Application
     end
   end
 
-  def close(id)
+  def close
+    id = params[:id]
     raise NotPrivileged unless  session.user.role == :admin
     @accounting_period = AccountingPeriod.get params[:id]
     raise NotFound unless @accounting_period

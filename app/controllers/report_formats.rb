@@ -6,7 +6,8 @@ class ReportFormats < Application
     display @report_formats
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @report_format = ReportFormat.get(id)
     raise NotFound unless @report_format
     display @report_format
@@ -18,14 +19,16 @@ class ReportFormats < Application
     display @report_format
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @report_format = ReportFormat.get(id)
     raise NotFound unless @report_format
     display @report_format
   end
 
-  def create(report_format)
+  def create
+    report_format = params[:report_format]
     @report_format = ReportFormat.new(report_format)
     if @report_format.save
       redirect resource(@report_format), :message => {:notice => "ReportFormat was successfully created"}
@@ -35,7 +38,9 @@ class ReportFormats < Application
     end
   end
 
-  def update(id, report_format)
+  def update
+    id = params[:id]
+    report_format = params[:report_format]
     @report_format = ReportFormat.get(id)
     raise NotFound unless @report_format
     if @report_format.update(report_format)
@@ -45,7 +50,8 @@ class ReportFormats < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @report_format = ReportFormat.get(id)
     raise NotFound unless @report_format
     if @report_format.destroy

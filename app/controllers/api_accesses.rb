@@ -6,7 +6,8 @@ class ApiAccesses < Application
     display @api_accesses
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @api_access = ApiAccess.get(id)
     raise NotFound unless @api_access
     display @api_access
@@ -18,14 +19,16 @@ class ApiAccesses < Application
     display @api_access
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @api_access = ApiAccess.get(id)
     raise NotFound unless @api_access
     display @api_access
   end
 
-  def create(api_access)
+  def create
+    api_access = params[:api_access]
     @api_access = ApiAccess.new(api_access)
     @api_access.origin = UUID.generate
     if @api_access.save
@@ -36,7 +39,9 @@ class ApiAccesses < Application
     end
   end
 
-  def update(id, api_access)
+  def update
+    id = params[:id]
+    api_access = params[:api_access]
     @api_access = ApiAccess.get(id)
     raise NotFound unless @api_access
     if @api_access.update(api_access)
@@ -46,7 +51,8 @@ class ApiAccesses < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @api_access = ApiAccess.get(id)
     raise NotFound unless @api_access
     if @api_access.destroy

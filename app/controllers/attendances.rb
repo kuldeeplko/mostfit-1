@@ -11,7 +11,8 @@ class Attendances < Application
     end
   end
   
-  def create(attendance)
+  def create
+    attendance = params[:attendance]
     @attendance = Attendance.new(attendance)
     @attendance.save
     display @attendance

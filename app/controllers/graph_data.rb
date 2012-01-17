@@ -34,7 +34,8 @@ class GraphData < Application
     {'treemap' => treemap, 'pmts_barchart' => barchart}.to_json
   end
 
-  def loan(id)
+  def loan
+    id = params[:id]
     @loan      = Loan.get(id)
     raise NotFound unless @loan.disbursal_date
     max_amount = @loan.total_to_be_received
@@ -80,7 +81,8 @@ class GraphData < Application
   end
 
 
-  def client(id)
+  def client
+    id = params[:id]
     @client    = Client.get(id)
     start_date = @client.loans.min(:scheduled_disbursal_date)
     end_date   = (@client.loans.map{|l| l.last_loan_history_date}.reject{|x| x.blank?}).max
@@ -88,7 +90,8 @@ class GraphData < Application
     common_aggregate_loan_graph(loan_ids, start_date, end_date)
   end
 
-  def center(id)
+  def center
+    id = params[:id]
     @center    = Center.get(id)
     end_date   = Date.today
     if @center.clients.count>0
@@ -101,7 +104,8 @@ class GraphData < Application
     common_aggregate_loan_graph(loan_ids, start_date, end_date)
   end
 
-  def branch(id)
+  def branch
+    id = params[:id]
     @branch    = Branch.get(id)
     start_date = repository.adapter.query("select MIN(l.scheduled_disbursal_date) start_date FROM loans l, clients cl, centers c, branches b WHERE l.client_id=cl.id AND cl.center_id=c.id AND b.id=c.branch_id AND b.id=#{id.to_i} AND l.deleted_at is NULL")[0]
     end_date   = Date.today
@@ -124,7 +128,10 @@ class GraphData < Application
     return graph.generate    
   end
 
-  def aggregate_loan_graph(loan_ids, start_date, end_date)
+  def aggregate_loan_graph
+    loan_ids = params[:loan_ids]
+    start_date = params[:start_date]
+    end_date = params[:end_date]
     days = (end_date - start_date).to_i
     step_size = 1; i = 0   # make a nice round step size, not more than 20 steps
     while days/step_size > 50
@@ -166,7 +173,10 @@ class GraphData < Application
     render_loan_graph('aggregate loan graph', @stacks, @labels, step_size, max_amount)
   end
 
-  def common_aggregate_loan_graph(loan_ids, start_date, end_date) # __DEPRECATED__
+  def common_aggregate_loan_graph # __DEPRECATED__
+    loan_ids = params[:loan_ids]
+    start_date = params[:start_date]
+    end_date = params[:end_date]
     return "{\"title\":{\"text\": \"No data to display\", \"style\": \"{font-size: 20px;color:##{COLORS[0]}; text-align: center;}\"}}" unless (start_date and end_date)
     days = (end_date - start_date).to_i
     step_size = 1; i = 0   # make a nice round step size, not more than 20 steps
@@ -202,7 +212,10 @@ class GraphData < Application
     render_loan_graph('aggregate loan graph', @stacks, @labels, step_size, max_amount)
   end
 
-  def weekly_aggregate_loan_graph(loan_ids, start_date, end_date)
+  def weekly_aggregate_loan_graph
+    loan_ids = params[:loan_ids]
+    start_date = params[:start_date]
+    end_date = params[:end_date]
     return "{\"title\":{\"text\": \"No data to display\", \"style\": \"{font-size: 20px; color:#0000ff; text-align: center;}\"}}" unless (start_date and end_date)
     t0 =Time.now
     step_size = 12

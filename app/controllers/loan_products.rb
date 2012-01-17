@@ -6,7 +6,8 @@ class LoanProducts < Application
     display @loan_products
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @loan_product = LoanProduct.get(id)
     raise NotFound unless @loan_product
     display @loan_product
@@ -18,14 +19,16 @@ class LoanProducts < Application
     display @loan_product
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @loan_product = LoanProduct.get(id)
     raise NotFound unless @loan_product
     display @loan_product
   end
 
-  def create(loan_product)
+  def create
+    loan_product = params[:loan_product]
     loan_product[:payment_validation_methods] = params[:payment_validations] ? params[:payment_validations].keys.join(",") : ""
     loan_product[:loan_validation_methods] = params[:loan_validations] ? params[:loan_validations].keys.join(",") : ""
     @loan_product = LoanProduct.new(loan_product)
@@ -43,7 +46,9 @@ class LoanProducts < Application
     end
   end
 
-  def update(id, loan_product)
+  def update
+    id = params[:id]
+    loan_product = params[:loan_product]
     @loan_product = LoanProduct.get(id)
     raise NotFound unless @loan_product
     fees = []
@@ -61,7 +66,8 @@ class LoanProducts < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @loan_product = LoanProduct.get(id)
     raise NotFound unless @loan_product
     if @loan_product.destroy

@@ -7,7 +7,8 @@ class InsurancePolicies < Application
     display @insurance_policies, :layout => layout?
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @insurance_policy ||= InsurancePolicy.get(id)
     raise NotFound unless @insurance_policy
     display @insurance_policy, :layout => layout?
@@ -19,14 +20,16 @@ class InsurancePolicies < Application
     display @insurance_policy
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @insurance_policy ||= InsurancePolicy.get(id)
     raise NotFound unless @insurance_policy
     display @insurance_policy
   end
 
-  def create(insurance_policy)
+  def create
+    insurance_policy = params[:insurance_policy]
     @insurance_policy = InsurancePolicy.new(insurance_policy)
     @insurance_policy.client = @client
     @insurance_policy.status = Date.today > @insurance_policy.date_to ? :expired : :active
@@ -38,7 +41,9 @@ class InsurancePolicies < Application
     end
   end
 
-  def update(id, insurance_policy)
+  def update
+    id = params[:id]
+    insurance_policy = params[:insurance_policy]
     @insurance_policy ||= InsurancePolicy.get(id)
     raise NotFound unless @insurance_policy
     if @insurance_policy.update(insurance_policy)
@@ -48,7 +53,8 @@ class InsurancePolicies < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @insurance_policy ||= InsurancePolicy.get(id)
     raise NotFound unless @insurance_policy
     if @insurance_policy.destroy

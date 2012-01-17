@@ -14,7 +14,8 @@ class Bookmarks < Application
     display @bookmarks, :layout => layout?
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @bookmark = Bookmark.get(id)
     raise NotFound unless @bookmark
     redirect url(YAML::load(@bookmark.route)[1])
@@ -26,14 +27,16 @@ class Bookmarks < Application
     display @bookmark, :layout => layout?
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @bookmark = Bookmark.get(id)
     raise NotFound unless @bookmark
     display @bookmark, :layout => layout?
   end
 
-  def create(bookmark)
+  def create
+    bookmark = params[:bookmark]
     @bookmark = Bookmark.new(bookmark)
     @bookmark.user =  session.user
     if @bookmark.save
@@ -45,7 +48,9 @@ class Bookmarks < Application
     end
   end
 
-  def update(id, bookmark)
+  def update
+    id = params[:id]
+    bookmark = params[:bookmark]
     @bookmark = Bookmark.get(id)
     raise NotFound unless @bookmark
     if @bookmark.update(bookmark)
@@ -56,7 +61,8 @@ class Bookmarks < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @bookmark = Bookmark.get(id)
     raise NotFound unless @bookmark
     if @bookmark.destroy

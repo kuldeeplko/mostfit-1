@@ -2,7 +2,8 @@ class Users < Application
   before :ensure_admin, :only => [:edit, :new, :create, :update, :delete, :destroy, :amind_change_password]
   provides :xml
 
-  def show(id)
+  def show
+    id = params[:id]
     @user = User.get(id)
     raise NotFound unless @user
     if session.user.role == :admin or session.user.id == @user.id
@@ -25,7 +26,8 @@ class Users < Application
     display @user
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @user = User.get(id)
     @user_password = @user
@@ -33,7 +35,8 @@ class Users < Application
     display @user
   end
 
-  def create(user)
+  def create
+    user = params[:user]
     params[:user][:staff_member] = StaffMember.get(params[:user][:staff_member]) if params[:user][:staff_member]
     params[:user][:funder]       = Funder.get(params[:user][:funder]) if params[:user][:funder]
     params[:user][:password_changed_at] = Time.now
@@ -47,7 +50,9 @@ class Users < Application
     end
   end
 
-  def update(id, user)
+  def update
+    id = params[:id]
+    user = params[:user]
     @user = User.get(id)
     params[:user][:staff_member] = StaffMember.get(params[:user][:staff_member]) if params[:user][:staff_member]
     params[:user][:funder]       = Funder.get(params[:user][:funder]) if params[:user][:funder]
@@ -60,14 +65,16 @@ class Users < Application
     end
   end
 
-  def delete(id)
+  def delete
+    id = params[:id]
     only_provides :html
     @user = User.get(id)
     raise NotFound unless @user
     display @user
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @user = User.get(id)
     raise NotFound unless @user
     if @user.destroy

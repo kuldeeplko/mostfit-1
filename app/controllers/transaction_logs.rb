@@ -5,7 +5,8 @@ class TransactionLogs < Application
     render
   end
   
-  def show(id)
+  def show
+    id = params[:id]
     @transaction_log = TransactionLog.get(id)
     raise NotFound unless @transaction_log
     display @transaction_log

@@ -5,7 +5,8 @@ class Fees < Application
     display @fees
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @fee = Fee.get(id)
     raise NotFound unless @fee
     @trails = AuditTrail.all(:auditable_id => @fee.id, :auditable_type => "Fee", :order => [:created_at.desc])
@@ -19,7 +20,8 @@ class Fees < Application
     display @fee
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @fee = Fee.get(id)
     @fee[:percentage] = @fee[:percentage].to_f * 100
@@ -27,7 +29,8 @@ class Fees < Application
      display @fee
   end
 
-  def create(fee)
+  def create
+    fee = params[:fee]
     Fee.properties.select{|p| p.type == Integer or p.type == Float }.each{|f| fee[f.name] = nil if fee[f.name] == ""}
     fee[:percentage] = fee[:percentage].to_f/100 
     
@@ -40,7 +43,9 @@ class Fees < Application
     end
   end
 
-  def update(id, fee)
+  def update
+    id = params[:id]
+    fee = params[:fee]
     @fee = Fee.get(id)
     raise NotFound unless @fee
     fee[:percentage] = fee[:percentage].to_f/100
@@ -52,7 +57,8 @@ class Fees < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @fee = Fee.get(id)
     raise NotFound unless @fee
     if @fee.destroy

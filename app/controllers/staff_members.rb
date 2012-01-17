@@ -20,7 +20,8 @@ class StaffMembers < Application
   end
 
   #serves info tab for staff member
-  def moreinfo(id)
+  def moreinfo
+    id = params[:id]
     @render_form = true
     @render_form = false if params[:_target_]
     @from_date   = params[:from_date] ? parse_date(params[:from_date]) : Date.min_date
@@ -44,35 +45,40 @@ class StaffMembers < Application
     @defaulted     = LoanHistory.defaulted_loan_info_for(@center, @to_date)
     render :file => 'branches/moreinfo', :layout => false
   end
-  def show_branches(id)
+  def show_branches
+    id = params[:id]
     @staff_member = StaffMember.get(id)
     raise NotFound unless @staff_member
     @branches = @staff_member.branches
     display @branches
   end
 
-  def show_centers(id)
+  def show_centers
+    id = params[:id]
     @staff_member = StaffMember.get(id)
     raise NotFound unless @staff_member
     @centers = @staff_member.centers
     display @centers
   end
 
-  def show_clients(id)
+  def show_clients
+    id = params[:id]
     @staff_member = StaffMember.get(id)
     raise NotFound unless @staff_member
     @clients = @staff_member.centers.clients
     display @clients
   end
 
-  def show_disbursed(id)
+  def show_disbursed
+    id = params[:id]
     @staff_member = StaffMember.get(id)
     raise NotFound unless @staff_member
     @loans = @staff_member.disbursed_loans
     display @loans
   end
 
-  def day_sheet(id)
+  def day_sheet
+    id = params[:id]
     @staff_member = StaffMember.get(id)
     raise NotFound unless @staff_member
     @date      = params[:date] ? parse_date(params[:date]) : Date.today
@@ -92,7 +98,8 @@ class StaffMembers < Application
     end
   end
 
-  def disbursement_sheet(id)
+  def disbursement_sheet
+    id = params[:id]
     @staff_member = StaffMember.get(id)
     raise NotFound unless @staff_member
     @date = params[:date] ? parse_date(params[:date]): Date.today
@@ -112,7 +119,8 @@ class StaffMembers < Application
     end
   end
   
-  def show(id)
+  def show
+    id = params[:id]
     @staff_member = StaffMember.get(id)
     @date = params[:date] ? Date.parse(params[:date]) : Date.today
     @option = params[:option]
@@ -127,14 +135,16 @@ class StaffMembers < Application
     display @staff_member
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @staff_member = StaffMember.get(id)
     raise NotFound unless @staff_member
     display @staff_member
   end
 
-  def create(staff_member)
+  def create
+    staff_member = params[:staff_member]
     @staff_member = StaffMember.new(staff_member)
     if @staff_member.save
       redirect resource(:staff_members), :message => {:notice => "StaffMember '#{@staff_member.name}' (Id:#{@staff_member.id}) was successfully created"}
@@ -144,7 +154,9 @@ class StaffMembers < Application
     end
   end
 
-  def update(id, staff_member)
+  def update
+    id = params[:id]
+    staff_member = params[:staff_member]
     @staff_member = StaffMember.get(id)
     raise NotFound unless @staff_member
     if @staff_member.update_attributes(staff_member)
@@ -154,7 +166,8 @@ class StaffMembers < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @staff_member = StaffMember.get(id)
     raise NotFound unless @staff_member
     if @staff_member.destroy
@@ -164,7 +177,8 @@ class StaffMembers < Application
     end
   end
   
-  def display_sheets(id)
+  def display_sheets
+    id = params[:id]
     @staff_member = StaffMember.get(id)
     raise NotFound unless @staff_member
     date =  (Date.strptime(params[:date], Mfi.first.date_format)).strftime('%Y_%m_%d')   
@@ -174,12 +188,14 @@ class StaffMembers < Application
     display @files, :layout => false
   end
 
-  def send_sheet(filename)
+  def send_sheet
+    filename = params[:filename]
     send_data(File.read(filename), :filename => filename, :type => "application/pdf")
   end
 
   # this redirects to the proper url, used from the router
-  def redirect_to_show(id)
+  def redirect_to_show
+    id = params[:id]
     raise NotFound unless @staff_member = StaffMember.get(id)
     redirect resource(@staff_member)
   end

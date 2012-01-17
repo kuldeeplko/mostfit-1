@@ -13,7 +13,8 @@ class ClientGroups < Application
     display @client_groups
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @client_group = ClientGroup.get(id)
     raise NotFound unless @client_group
     @cgts = Cgt.all(:client_group => @client_group)
@@ -32,7 +33,8 @@ class ClientGroups < Application
     request.xhr? ? display([@client_group], "client_groups/new", :layout => false) : display([@client_group], "client_groups/new")
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @client_group = ClientGroup.get(id)
     raise NotFound unless @client_group
@@ -43,7 +45,8 @@ class ClientGroups < Application
     display @client_group
   end
 
-  def create(client_group)
+  def create
+    client_group = params[:client_group]
     only_provides :html, :json, :xml
     @client_group = ClientGroup.new(client_group)
     if @client_group.save
@@ -62,7 +65,9 @@ class ClientGroups < Application
     end
   end
 
-  def update(id, client_group)
+  def update
+    id = params[:id]
+    client_group = params[:client_group]
     @client_group = ClientGroup.get(id)
     raise NotFound unless @client_group
     @client_group.attributes = client_group
@@ -79,7 +84,8 @@ class ClientGroups < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @client_group = ClientGroup.get(id)
     raise NotFound unless @client_group
     if @client_group.destroy

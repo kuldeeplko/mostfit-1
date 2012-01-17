@@ -13,7 +13,8 @@ class StockRegisters < Application
     end
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @stock_register = StockRegister.get(id)
     raise NotFound unless @stock_register
     display @stock_register, :layout => layout?
@@ -26,7 +27,8 @@ class StockRegisters < Application
     display @stock_register, :layout => layout?
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @stock_register = StockRegister.get(id)
     raise NotFound unless @stock_register
@@ -34,7 +36,8 @@ class StockRegisters < Application
     display @stock_register, :layout => layout?
   end
 
-  def create(stock_register)
+  def create
+    stock_register = params[:stock_register]
     @stock_register = StockRegister.new(stock_register)
     if @stock_register.save
       redirect(params[:return] ||resource(@stock_register.branch), :message => {:notice => "Stock entry was successfully entered"})
@@ -44,7 +47,9 @@ class StockRegisters < Application
     end
   end
 
-  def update(id, stock_register)
+  def update
+    id = params[:id]
+    stock_register = params[:stock_register]
     @stock_register = StockRegister.get(id)
     raise NotFound unless @stock_register
     if @stock_register.update(stock_register)
@@ -54,7 +59,8 @@ class StockRegisters < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @stock_register = StockRegister.get(id)
     raise NotFound unless @stock_register
     if @stock_register.destroy
@@ -64,11 +70,12 @@ class StockRegisters < Application
     end
   end
 
-  def delete(id)
-    edit(id)
+  def delete
+    edit
   end
 
-  def redirect_to_show(id)
+  def redirect_to_show
+    id = params[:id]
     raise NotFound unless @stock_register = StockRegister.get(id)
     redirect resource(@stock_register)
   end

@@ -6,7 +6,8 @@ class InsuranceCompanies < Application
     display @insurance_companies
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @insurance_company = InsuranceCompany.get(id)
     raise NotFound unless @insurance_company
     display @insurance_company
@@ -18,14 +19,16 @@ class InsuranceCompanies < Application
     display @insurance_company, :layout => layout?
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @insurance_company = InsuranceCompany.get(id)
     raise NotFound unless @insurance_company
     display @insurance_company
   end
 
-  def create(insurance_company)
+  def create
+    insurance_company = params[:insurance_company]
     @insurance_company = InsuranceCompany.new(insurance_company)
     if @insurance_company.save
       redirect(params[:return]||resource(:insurance_companies), :message => {:notice => "InsuranceCompany was successfully created"})
@@ -35,7 +38,9 @@ class InsuranceCompanies < Application
     end
   end
 
-  def update(id, insurance_company)
+  def update
+    id = params[:id]
+    insurance_company = params[:insurance_company]
     @insurance_company = InsuranceCompany.get(id)
     raise NotFound unless @insurance_company
     if @insurance_company.update(insurance_company)
@@ -45,7 +50,8 @@ class InsuranceCompanies < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @insurance_company = InsuranceCompany.get(id)
     raise NotFound unless @insurance_company
     if @insurance_company.destroy

@@ -64,8 +64,8 @@ class Application < Merb::Controller
     return params[:layout] if params[:layout] and not params[:layout].blank?
   end
 
-  def render_to_pdf(options = nil)
-    data = render_to_string(options)
+  def render_to_pdf
+    data = render_to_string(params[:options])
     pdf = PDF::HTMLDoc.new
     pdf.set_option :bodycolor, :white
     pdf.set_option :toc, false

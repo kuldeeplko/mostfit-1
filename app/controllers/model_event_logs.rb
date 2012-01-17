@@ -5,7 +5,8 @@ class ModelEventLogs < Application
     render
   end
   
-  def show(id)
+  def show
+    id = params[:id]
     @model_event_log = ModelEventLog.get(id)
     raise NotFound unless @model_event_log
     display @model_event_log

@@ -6,7 +6,8 @@ class LoanUtilizations < Application
     display @loan_utilizations
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @loan_utilization = LoanUtilization.get(id)
     raise NotFound unless @loan_utilization
     display @loan_utilization
@@ -18,14 +19,16 @@ class LoanUtilizations < Application
     display @loan_utilization
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @loan_utilization = LoanUtilization.get(id)
     raise NotFound unless @loan_utilization
     display @loan_utilization
   end
 
-  def create(loan_utilization)
+  def create
+    loan_utilization = params[:loan_utilization]
     @loan_utilization = LoanUtilization.new(loan_utilization)
     if @loan_utilization.save
       redirect resource(:loan_utilizations), :message => {:notice => "LoanUtilization was successfully created"}
@@ -35,7 +38,9 @@ class LoanUtilizations < Application
     end
   end
 
-  def update(id, loan_utilization)
+  def update
+    id = params[:id]
+    loan_utilization = params[:loan_utilization]
     @loan_utilization = LoanUtilization.get(id)
     raise NotFound unless @loan_utilization
     if @loan_utilization.update(loan_utilization)

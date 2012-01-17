@@ -1,7 +1,8 @@
 class Info < Application
   include DateParser
   # serves info tab for branch
-  def moreinfo(id)
+  def moreinfo
+    id = params[:id]
     new_date_hash, upto_date_hash  = set_info_form_params
 
     klass      = Kernel.const_get(params[:for].camelcase)
@@ -146,7 +147,8 @@ class Info < Application
     render :file => 'info/moreinfo', :layout => false
   end
 
-  def exceptions(id)
+  def exceptions
+    id = params[:id]
     klass      = Kernel.const_get(params[:for].camelcase)
     @obj       = klass.get(id)
     raise NotFound unless @obj
@@ -189,7 +191,7 @@ private
     end
   end
 
-  def client_hash(type)
+  def client_hash( type )
     if params[:from_date] and type == :new
       return {:date_joined.lte => @to_date, :date_joined.gte => @from_date}
     elsif params[:from_date] and type == :upto
@@ -199,7 +201,7 @@ private
     end
   end
 
-  def set_more_info(obj, child_type = :managed)
+  def set_more_info( obj, child_type = :managed )
     @centers_new_count  = @centers.key?(:new) ? @centers[:new].count : 0
     @centers_upto_count = @centers.key?(:upto) ? @centers[:upto].count : 0
 

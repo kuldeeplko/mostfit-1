@@ -21,7 +21,8 @@ class Accounts < Application
     display @accounts, template, :layout => layout?
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @account = Account.get(id)
     raise NotFound unless @account
     display @account, :layout => layout?
@@ -34,7 +35,8 @@ class Accounts < Application
     display @account, :layout => layout?
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @account = Account.get(id)
     raise NotFound unless @account
@@ -46,7 +48,8 @@ class Accounts < Application
     display @account, :layout => layout?
   end
 
-  def create(account)
+  def create
+    account = params[:account]
     if account.is_a?(Hash)
       @account = Account.new(account)
       @account.opening_balance = -params['account']['opening_balance'].to_f if params['txn_type'] == 'debit'  
@@ -85,7 +88,9 @@ class Accounts < Application
     end
   end
 
-  def update(id, account)
+  def update
+    id = params[:id]
+    account = params[:account]
     @account = Account.get(id)
     raise NotFound unless @account
 
@@ -105,7 +110,8 @@ class Accounts < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @account = Account.get(id)
     raise NotFound unless @account
     if @account.destroy

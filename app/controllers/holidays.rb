@@ -6,7 +6,8 @@ class Holidays < Application
     display @holidays
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @holiday = Holiday.get(id)
     raise NotFound unless @holiday
     display @holiday
@@ -18,14 +19,16 @@ class Holidays < Application
     display @holiday
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @holiday = Holiday.get(id)
     raise NotFound unless @holiday
     display @holiday
   end
 
-  def create(holiday)
+  def create
+    holiday = params[:holiday]
     @holiday = Holiday.new(holiday)
     if @holiday.save
       redirect resource(@holiday), :message => {:notice => "Holiday was successfully created"}
@@ -35,7 +38,9 @@ class Holidays < Application
     end
   end
 
-  def update(id, holiday)
+  def update
+    id = params[:id]
+    holiday = params[:holiday]
     @holiday = Holiday.get(id)
     raise NotFound unless @holiday
     if @holiday.update(holiday)
@@ -45,7 +50,8 @@ class Holidays < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @holiday = Holiday.get(id)
     raise NotFound unless @holiday
     if @holiday.destroy

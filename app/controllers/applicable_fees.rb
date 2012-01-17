@@ -6,7 +6,8 @@ class ApplicableFees < Application
     display @applicable_fees
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @applicable_fee = ApplicableFee.get(id)
     raise NotFound unless @applicable_fee
     display @applicable_fee
@@ -18,7 +19,8 @@ class ApplicableFees < Application
     display @applicable_fee
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     raise NotPrivileged unless [:admin, :mis_manager].include?(session.user.role)
     only_provides :html
     @applicable_fee = ApplicableFee.get(id)
@@ -26,7 +28,8 @@ class ApplicableFees < Application
     display @applicable_fee
   end
 
-  def create(applicable_fee)
+  def create
+    applicable_fee = params[:applicable_fee]
     @applicable_fee = ApplicableFee.new(applicable_fee)
     if @applicable_fee.save
       url = (@applicable_fee.parent.is_a?(Loan) ? url_for_loan(@applicable_fee.parent) : resource(@applicable_fee.parent))  + "#misc"
@@ -41,7 +44,9 @@ class ApplicableFees < Application
     end
   end
 
-  def update(id, applicable_fee)
+  def update
+    id = params[:id]
+    applicable_fee = params[:applicable_fee]
     @applicable_fee = ApplicableFee.get(id)
     if @applicable_fee.update(applicable_fee)
       url = (@applicable_fee.parent.is_a?(Loan) ? "/loans/#{@applicable_fee.applicable_id}" : resource(@applicable_fee.parent))

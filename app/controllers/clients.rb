@@ -14,7 +14,8 @@ class Clients < Application
     end
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @option = params[:option] if params[:option]    
     @client = Client.get(id)
     raise NotFound unless @client
@@ -42,7 +43,8 @@ class Clients < Application
     end
   end
 
-  def create(client)
+  def create
+    client = params[:client]
     model_name = (params[:client_type])
     model = Kernel.const_get(model_name)
     client = params[:client].merge(params[model_name.snake_case])
@@ -64,7 +66,8 @@ class Clients < Application
     end
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @client = Client.get(id)
     raise NotFound unless @client
@@ -72,7 +75,9 @@ class Clients < Application
     display @client, :template => "clients/edit"
   end
 
-  def update(id, client)
+  def update
+    id = params[:id]
+    client = params[:client]
     @client = Client.get(id)
     raise NotFound unless @client
     disallow_updation_of_verified_clients
@@ -114,11 +119,12 @@ class Clients < Application
     end
   end
 
-  def delete(id)
-    edit(id)  # so far these are the same
+  def delete
+    edit
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @client = Client.get(id)
     raise NotFound unless @client
     disallow_updation_of_verified_clients
@@ -129,14 +135,16 @@ class Clients < Application
     end
   end
 
-  def levy_fees(id)
+  def levy_fees
+    id = params[:id]
     @client = Client.get(id)
     raise NotFound unless @client
     @client.levy_fees(false)
     redirect resource(@client) + "#misc", :message => {:notice => 'Fees levied'}
   end
   
-  def make_center_leader(id)
+  def make_center_leader
+    id = params[:id]
     @client = Client.get(id)
     raise NotFound unless @client
     if @client.make_center_leader

@@ -33,7 +33,8 @@ class Verifications < Application
     display "verifications/index"
   end
 
-  def update(id)
+  def update
+    id = params[:id]
     if ["clients", "loans", "payments", "portfolios", "journals"].include?(id) and params[id]
       klass = Kernel.const_get(id.singularize.capitalize)
       verifier_id = session.user.id
@@ -52,7 +53,7 @@ class Verifications < Application
     Client.all(hash)
   end
   
-  def loans(type = :objects)
+  def loans( type = :objects )
     hash = {:verified_by_user_id => nil}
     hash[:client_id] = Client.all(:center_id => @centers.map{|x| x.id}, :fields => [:id]).map{|x| x.id} if @centers
     hash[:created_at] = @from_date..@to_date
@@ -60,7 +61,7 @@ class Verifications < Application
     Loan.all(hash)
   end
   
-  def payments(centers = nil, type = :objects)
+  def payments( centers = nil, type = :objects )
     hash = {:verified_by_user_id => nil}
     if @centers and not session.user.role==:admin
       hash[:loan_id]   = Loan.all(:client_id => Client.all(:center_id => @centers.map{|x| x.id}, :fields => [:id]).map{|x| x.id}).map{|x| x.id}

@@ -19,7 +19,9 @@ class Reports < Application
     display @reports
   end
 
-  def show(report_type, id)
+  def show
+    report_type = params[:report_type]
+    id = params[:id]
     provides :pdf
     report_type = params[:report_type] if report_type == "show" and params.key?(:report_type)
     klass = Kernel.const_get(report_type)
@@ -67,14 +69,16 @@ class Reports < Application
     display @report
   end
   
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @report = Report.get(id)
     raise NotFound unless @report
     display @report
   end
 
-  def create(report)
+  def create
+    report = params[:report]
     @report = Report.new(report)
     if @report.save
       redirect resource(:reports), :message => {:notice => "Report was successfully created"}
@@ -84,7 +88,9 @@ class Reports < Application
     end
   end
 
-  def update(id, report)
+  def update
+    id = params[:id]
+    report = params[:report]
     @report = Report.get(id)
     raise NotFound unless @report
     if @report.update_attributes(report)
@@ -94,7 +100,8 @@ class Reports < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @report = Report.get(id)
     raise NotFound unless @report
     if @report.destroy
@@ -115,7 +122,8 @@ class Reports < Application
     dates
   end
 
-  def get_date(params, col)
+  def get_date(class_key)
+    col = params[:col]
     if params and params.key?(col) and params[col] and not params[col].blank?
       date_hash = params[col]
       return Date.strptime(date_hash, Mfi.first.date_format || ('%Y-%m-%d'))

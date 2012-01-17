@@ -6,7 +6,8 @@ class RepaymentStyles < Application
     display @repayment_styles
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @repayment_style = RepaymentStyle.get(id)
     raise NotFound unless @repayment_style
     display @repayment_style
@@ -18,14 +19,16 @@ class RepaymentStyles < Application
     display @repayment_style
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @repayment_style = RepaymentStyle.get(id)
     raise NotFound unless @repayment_style
     display @repayment_style
   end
 
-  def create(repayment_style)
+  def create
+    repayment_style = params[:repayment_style]
     @repayment_style = RepaymentStyle.new(repayment_style)
     if @repayment_style.save
       redirect resource(:repayment_styles), :message => {:notice => "RepaymentStyle was successfully created"}
@@ -35,7 +38,9 @@ class RepaymentStyles < Application
     end
   end
 
-  def update(id, repayment_style)
+  def update
+    id = params[:id]
+    repayment_style = params[:repayment_style]
     @repayment_style = RepaymentStyle.get(id)
     raise NotFound unless @repayment_style
     if @repayment_style.update(repayment_style) || @repayment_style.errors.blank?
@@ -45,7 +50,8 @@ class RepaymentStyles < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @repayment_style = RepaymentStyle.get(id)
     raise NotFound unless @repayment_style
     if @repayment_style.destroy

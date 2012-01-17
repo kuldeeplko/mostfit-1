@@ -6,7 +6,8 @@ class Funders < Application
     display @funders
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @funder ||= Funder.get(id)
     raise NotFound unless @funder
     @funding_lines = @funder.funding_lines
@@ -20,7 +21,8 @@ class Funders < Application
     display @funder
   end
 
-  def create(funder)
+  def create
+    funder = params[:funder]
     @funder = Funder.new(funder)
     if @funder.save
       redirect resource(:funders), :message => {:notice => "Funder #{@funder.name} was successfully created"}
@@ -29,14 +31,17 @@ class Funders < Application
     end
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @funder = Funder.get(id)
     raise NotFound unless @funder
     display @funder
   end
 
-  def update(id, funder)
+  def update
+    id = params[:id]
+    funder = params[:funder]
     @funder = Funder.get(id)
     raise NotFound unless @funder
     if @funder.update_attributes(funder)
@@ -58,8 +63,8 @@ class Funders < Application
     end
   end
 
-#   def destroy(id)
-#     @funder = Funder.get(id)
+#   def destroy
+#     @funder = Funder.get(params[:id])
 #     raise NotFound unless @funder
 #     if @funder.destroy
 #       redirect resource(:funders)

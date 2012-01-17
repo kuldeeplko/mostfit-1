@@ -7,7 +7,8 @@ class Claims < Application
     display @claims
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @claim = Claim.get(id)
     raise NotFound unless @claim
     display @claim
@@ -21,14 +22,16 @@ class Claims < Application
     display @claim
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @claim = Claim.get(id)
     raise NotFound unless @claim
     display @claim
   end
 
-  def create(claim)
+  def create
+    claim = params[:claim]
     claim[:documents] = claim[:documents].keys if claim[:documents]
     @claim = Claim.new(claim)
     @claim.client = @client
@@ -41,7 +44,9 @@ class Claims < Application
     end
   end
 
-  def update(id, claim)
+  def update
+    id = params[:id]
+    claim = params[:claim]
     claim[:documents] = claim[:documents].keys if claim[:documents]
     @claim = Claim.get(id)
     raise NotFound unless @claim
@@ -52,7 +57,8 @@ class Claims < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @claim = Claim.get(id)
     raise NotFound unless @claim
     if @claim.destroy

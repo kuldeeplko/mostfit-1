@@ -6,7 +6,8 @@ class Organizations < Application
     display @organizations
   end
   
-  def show(id)
+  def show
+    id = params[:id]
     @organization = Organization.get(id)
     raise NotFound unless @organization
     @domains = @organization.domains

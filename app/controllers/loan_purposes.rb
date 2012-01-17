@@ -7,7 +7,8 @@ class LoanPurposes < Application
     display @loan_purposes
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @loan_purpose = LoanPurpose.get(id)
     raise NotFound unless @loan_purpose
     display @loan_purpose
@@ -19,7 +20,8 @@ class LoanPurposes < Application
     display @loan_purpose
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @loan_purpose = LoanPurpose.get(id)
     @parents = LoanPurpose.all(:conditions => ['id != ?', id])
@@ -27,7 +29,8 @@ class LoanPurposes < Application
     display @loan_purpose
   end
 
-  def create(loan_purpose)
+  def create
+    loan_purpose = params[:loan_purpose]
     @loan_purpose = LoanPurpose.new(loan_purpose)
     @loan_purpose.parent_id = 0 if @loan_purpose.parent_id.blank?
     if @loan_purpose.save
@@ -38,7 +41,9 @@ class LoanPurposes < Application
     end
   end
 
-  def update(id, loan_purpose)
+  def update
+    id = params[:id]
+    loan_purpose = params[:loan_purpose]
     @loan_purpose = LoanPurpose.get(id)
     loan_purpose['parent_id'] = 0 if loan_purpose['parent_id'].blank?
     raise NotFound unless @loan_purpose
@@ -49,7 +54,8 @@ class LoanPurposes < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @loan_purpose = LoanPurpose.get(id)
     raise NotFound unless @loan_purpose
     if @loan_purpose.destroy

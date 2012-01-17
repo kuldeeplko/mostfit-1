@@ -6,7 +6,8 @@ class MonthlyTargets < Application
     display @monthly_targets
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @monthly_target = MonthlyTarget.get(id)
     raise NotFound unless @monthly_target
     display @monthly_target
@@ -19,14 +20,16 @@ class MonthlyTargets < Application
     display @monthly_target
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @monthly_target = MonthlyTarget.get(id)
     raise NotFound unless @monthly_target
     display @monthly_target
   end
 
-  def create(monthly_target)
+  def create
+    monthly_target = params[:monthly_target]
     @monthly_target = MonthlyTarget.new(monthly_target)
     if @monthly_target.save
       redirect resource(@monthly_target), :message => {:notice => "Monthly Target was successfully set"}
@@ -36,7 +39,9 @@ class MonthlyTargets < Application
     end
   end
 
-  def update(id, monthly_target)
+  def update
+    id = params[:id]
+    monthly_target = params[:monthly_target]
     @monthly_target = MonthlyTarget.get(id)
     raise NotFound unless @monthly_target
     if @monthly_target.update(monthly_target)
@@ -46,7 +51,8 @@ class MonthlyTargets < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @monthly_target = MonthlyTarget.get(id)
     raise NotFound unless @monthly_target
     if @monthly_target.destroy

@@ -11,7 +11,8 @@ class Comments < Application
     end
   end
 
-  def show(id)
+  def show
+    id = params[:id]
     @comment = Comment.get(id)
     raise NotFound unless @comment
     display @comment
@@ -23,14 +24,16 @@ class Comments < Application
     display @comment
   end
 
-  def edit(id)
+  def edit
+    id = params[:id]
     only_provides :html
     @comment = Comment.get(id)
     raise NotFound unless @comment
     display @comment
   end
 
-  def create(comment)
+  def create
+    comment = params[:comment]
     @comment = Comment.new(comment)
     if @comment.save
       if request.xhr?
@@ -44,7 +47,9 @@ class Comments < Application
     end
   end
 
-  def update(id, comment)
+  def update
+    id = params[:id]
+    comment = params[:comment]
     @comment = Comment.get(id)
     raise NotFound unless @comment
     if @comment.update(comment)
@@ -54,7 +59,8 @@ class Comments < Application
     end
   end
 
-  def destroy(id)
+  def destroy
+    id = params[:id]
     @comment = Comment.get(id)
     raise NotFound unless @comment
     if @comment.destroy

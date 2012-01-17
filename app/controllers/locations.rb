@@ -25,7 +25,8 @@ class Locations < Application
     partial "locations/multi_map"
   end
   
-  def show(id)
+  def show
+    id = params[:id]
     @location = Location.get(id)
     raise NotFound unless @location
     display @location
@@ -37,7 +38,8 @@ class Locations < Application
     display @location
   end
 
-  def create(location)
+  def create
+    location = params[:location]
     if (location[:parent_id] and location[:parent_type] and @location = Location.first(:parent_id => location[:parent_id], :parent_type => location[:parent_type]))
       @location.latitude  = location[:latitude]
       @location.longitude = location[:longitude]
