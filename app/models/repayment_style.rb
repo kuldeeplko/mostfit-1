@@ -36,6 +36,9 @@ class RepaymentStyle
     }
   end
 
+  # It's unclear what this method does exactly. It takes as its argument :principal or :interest and returns either
+  # a hash or array representing a 'schedule'? What do the custom_principal_schedule and custom_interest_schedule strings look like?
+  # What does the question mark we're splitting on mean? (In relation to the line break?)
   def return_schedule(type)
     raise ArgumentError.new("type must be :principal or :interest") unless [:principal, :interest].include? type
     s = self.send("custom_#{type}_schedule")

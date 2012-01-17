@@ -117,7 +117,7 @@ class Cacher
     0
   end
 
-  def method_missing(name, args)
+  def method_missing(name, *args)
     "N/A"
   end
 

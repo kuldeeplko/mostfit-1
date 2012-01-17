@@ -103,7 +103,8 @@ class User
     end
   end
 
-  def method_missing(name, params)
+  def method_missing(name, *params)
+    Merb.logger.debug ">> m_m: #{name.inspect}, #{params.inspect}"
     if x = /can_\w+\?/.match(name.to_s)
       return true if role == :admin
       function = x[0].split("_")[1].gsub("?","").to_sym # wtf happened to $1?!?!?

@@ -42,7 +42,9 @@ LoanProduct.new
     @loan.disbursed_by = @manager
     @loan.save
     @loan.history_disabled = false
+    p LoanHistory.count
     @loan.update_history
+    p LoanHistory.count
     @loan.valid?
     @loan.errors.each {|e| puts e}
     @loan.should be_valid

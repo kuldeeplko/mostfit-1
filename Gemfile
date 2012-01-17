@@ -9,7 +9,7 @@ dm_gems_version   = '~> 1.2'
 
 # Merb
 gem 'merb-core',                merb_gems_version
-# gem 'merb-action-args',         merb_gems_version
+# gem 'merb-action-args',         merb_gems_version, require: 'merb-action-args'
 gem 'merb-assets',              merb_gems_version
 gem 'merb-helpers',             merb_gems_version
 gem 'merb-mailer',              merb_gems_version
@@ -21,8 +21,7 @@ gem 'merb-gen',                 merb_gems_version
 # Merb authentication
 gem 'merb-auth-core',           merb_related_gems
 gem 'merb-auth-more',           merb_related_gems
-# Breaks with rspec 2.8, hasn't been updated since 2008, solution pending
-# gem 'merb-auth-slice-password', merb_related_gems
+gem 'merb-auth-slice-password', merb_related_gems
 
 # Other Merb plugins
 gem 'merb-haml',                merb_gems_version
@@ -49,6 +48,7 @@ gem 'dm-is-tree',               dm_gems_version
 # gem 'dm-validations-ext'
 
 # Other gems
+# gem 'methopara'   # Needed for merb-action-args
 gem 'i18n',                     '~> 0.6'
 gem 'i18n-translators-tools',   '~> 0.2', :require => 'i18n-translate'
 gem 'htmldoc'

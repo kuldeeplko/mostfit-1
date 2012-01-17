@@ -8,7 +8,7 @@ class MerbAuthSlicePassword::Sessions < MerbAuthSlicePassword::Application
   # redirect from an after filter for max flexibility
   # We can then put it into a slice and ppl can easily 
   # customize the action
-  after :redirect_after_login,  :only => :update, :if => lambda{ !(300..399).include?(status) }
+  after :redirect_after_login,  :only => :update
   after :redirect_after_logout, :only => :destroy
   
   def update
@@ -24,16 +24,18 @@ class MerbAuthSlicePassword::Sessions < MerbAuthSlicePassword::Application
   private   
   # @overwritable
   def redirect_after_login
-    message[:notice] = "Authenticated Successfully"
-    case session.user.role
-    when :data_entry
-      redirect url(:data_entry)
-    when :staff_member
-      redirect(url(:browse))
-    when :maintainer
-      redirect("/maintain#deployment")
-    else
-      redirect_back_or(url(:browse), :message => message, :ignore => [slice_url(:login), slice_url(:logout)])
+    unless (300..399).include?(status)
+      message[:notice] = "Authenticated Successfully"
+      case session.user.role
+      when :data_entry
+        redirect url(:data_entry)
+      when :staff_member
+        redirect(url(:browse))
+      when :maintainer
+        redirect("/maintain#deployment")
+      else
+        redirect_back_or(url(:browse), :message => message, :ignore => [slice_url(:login), slice_url(:logout)])
+      end
     end
   end
 
