@@ -189,7 +189,7 @@ class Application < Merb::Controller
   end
   
   def get_cached_filename
-    hash = params.deep_clone
+    hash = params.clone # Used to be: deep_clone
     dir = File.join(Merb.root, "public", hash.delete(:controller).to_s, hash.delete(:action).to_s)
     unless File.exists?(dir)
       FileUtils.mkdir_p(dir)

@@ -397,7 +397,7 @@ class Dashboard < Application
   end
   
   def get_cached_filename
-    hash = params.deep_clone
+    hash = params.clone # Used to be: deep_clone
     controller = hash.delete(:controller).to_s
     action     = hash.delete(:action).to_s
     [:format, :submit].each{|x| hash.delete(x)}

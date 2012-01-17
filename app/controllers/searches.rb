@@ -48,7 +48,7 @@ class Searches < Application
   def advanced
     if params[:model] and [:branch, :center, :client, :loan, :client_group].include?(params[:model].to_sym)
       model = Kernel.const_get(params[:model].capitalize)
-      hash  = params.deep_clone
+      hash  = params.clone # deep_clone
       hash.delete(:controller)
       hash.delete(:action)
       hash.delete(:model)      
@@ -160,7 +160,7 @@ class Searches < Application
   end
 
   def get_all_properties( params )
-    hash  = params.deep_clone
+    hash  = params.clone # Used to be: deep_clone
     hash.delete(:controller)
     hash.delete(:action)
     properties = {}
