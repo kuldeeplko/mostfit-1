@@ -87,7 +87,7 @@ GEM
       data_objects (= 0.10.7)
     erubis (2.7.0)
     extlib (0.9.15)
-    factory_girl (2.3.2)
+    factory_girl (2.4.0)
       activesupport
     fastercsv (1.5.4)
     gem_plugin (0.2.3)
@@ -103,8 +103,8 @@ GEM
     i18n-translators-tools (0.2.4)
       i18n (>= 0.5.0)
       ya2yaml
-    json (1.6.4)
-    json_pure (1.6.4)
+    json (1.6.5)
+    json_pure (1.6.5)
     linecache19 (0.5.13)
       ruby_core_source (>= 0.1.4)
     locale (2.0.5)
@@ -187,20 +187,20 @@ DEPENDENCIES
   builder
   colored
   cronedit
-  dm-aggregates (~> 1.1)
-  dm-core (~> 1.1)
-  dm-is-tree (~> 1.1)
-  dm-migrations (~> 1.1)
-  dm-mysql-adapter (~> 1.1)
-  dm-observer (~> 1.1)
+  dm-aggregates (~> 1.2)
+  dm-core (~> 1.2)
+  dm-is-tree (~> 1.2)
+  dm-migrations (~> 1.2)
+  dm-mysql-adapter (~> 1.2)
+  dm-observer (~> 1.2)
   dm-pagination
   dm-paperclip
-  dm-serializer (~> 1.1)
-  dm-sqlite-adapter (~> 1.1)
-  dm-timestamps (~> 1.1)
-  dm-transactions (~> 1.1)
-  dm-types (~> 1.1)
-  dm-validations (~> 1.1)
+  dm-serializer (~> 1.2)
+  dm-sqlite-adapter (~> 1.2)
+  dm-timestamps (~> 1.2)
+  dm-transactions (~> 1.2)
+  dm-types (~> 1.2)
+  dm-validations (~> 1.2)
   factory_girl (~> 2.3)
   gettext
   git (~> 1.2)

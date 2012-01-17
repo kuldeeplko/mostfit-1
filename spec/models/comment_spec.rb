@@ -3,6 +3,7 @@ require File.join( '.', File.dirname(__FILE__), '..', "spec_helper" )
 describe Comment do
 
   before(:each) do
+    Comment.all.destroy!
     @comment = Factory(:comment)
   end
 

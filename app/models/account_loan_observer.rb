@@ -4,7 +4,7 @@ class AccountLoanObserver
   
   def self.get_state(obj)
     #needed for deep copy!
-    @old_obj = obj.original_attributes.map{|k,v| {k.name => (k.lazy? ? obj.send(k.name) : v)}}.inject({}){|s,x| s+=x}
+    @old_obj = obj.original_attributes.map{|k,v| {k.name => (k.is_a?(DataMapper::Property) && k.lazy? ? obj.send(k.name) : v)}}.inject({}){|s,x| s+=x}
     @is_new = obj.new?
   end
 

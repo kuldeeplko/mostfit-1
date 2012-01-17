@@ -36,7 +36,7 @@ describe Journal do
     Posting.count.should == old_posting_count+2
   end
 
-  it "should create double entry transactions for multipl credit and debit accounts" do
+  it "should create double entry transactions for multiple credit and debit accounts" do
     journal = {:date => Time.now, :transaction_id => "1100110", :currency => @currency, :journal_type_id => @journal_type.id, :comment => "some transaction"}
 
     old_journal_count = Journal.count

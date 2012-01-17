@@ -173,7 +173,7 @@ FactoryGirl.define do
   factory :branch_diary do
     opening_time_hours    8
     opening_time_minutes  0
-    branch_key            { self.branch.id }
+    branch_key            { Factory.next( :name ) }
     association           :manager, :factory => :staff_member
     association           :branch
   end
@@ -238,10 +238,11 @@ FactoryGirl.define do
     interest_rate                 0.20
     installment_frequency         :weekly
     number_of_installments        25
-    applied_on                    { Date.new(2000,02,01) }
-    scheduled_disbursal_date      { Date.new(2000,06,13) }
-    scheduled_first_payment_date  { Date.new(2000,12,06) }
+    applied_on                    { Date.today - 365 }
     history_disabled              true
+
+    scheduled_disbursal_date      { Date.today - 10 }
+    scheduled_first_payment_date  { Date.today + 10 }
 
     association                   :applied_by, :factory => :staff_member
     association                   :funding_line
@@ -255,15 +256,16 @@ FactoryGirl.define do
     c_branch_id                   { self.client.center.branch.id }
   end
 
+  factory :approved_loan, :parent => :loan do
+    approved_by                   { self.applied_by }
+    approved_on                   { Date.today - 20 }
+  end
+
   # This is a variation of the minimal :loan factory, representing a recently disbursed loan.
   # It includes disbursal dates and other attributes necessary to make
   # the loan work with the :payment factory and others.
-  factory :disbursed_loan, :parent => :loan do
-    approved_by                   { self.applied_by }
-    approved_on                   { Date.today - 20 }
-    scheduled_disbursal_date      { Date.today - 10 }
+  factory :disbursed_loan, :parent => :approved_loan do
     disbursal_date                { Date.today - 10 }
-    scheduled_first_payment_date  { Date.today + 10 }
     disbursed_by                  { self.applied_by }
   end
 
@@ -362,11 +364,11 @@ FactoryGirl.define do
   end
 
   factory :repayment_style do
-    style               { Factory.next(:repayment_style) }
-    name                { self.style }
-    rounding_style      'round' # Took me forever to figure this one out but if we don't specify a rounding style loans will bork badly
-    round_total_to      1
-    round_interest_to   1
+    style                       { Factory.next(:repayment_style) }
+    name                        { self.style }
+    rounding_style              'round' # Took me forever to figure this one out but if we don't specify a rounding style loans will bork badly
+    round_total_to              1
+    round_interest_to           1
   end
 
   factory :funding_line do

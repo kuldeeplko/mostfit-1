@@ -71,6 +71,12 @@ When a dm property is of type `Enum` we have to specify :required => true if we 
 Fixed Issues
 ============
 
+validations
+-----------
+
+
+
+
 different original_attributes behavior
 --------------------------------------
 
@@ -133,6 +139,7 @@ After some more digging, perhaps `lazy?` wasn't deprecated but `original_attribu
 
 This precludes associations from being logged, but I believe that's also how it worked before(?)
 
+This one also appeared in `app/models/rule_book.rb`, `app/models/account_loan_observer.rb` and `app/models/accounting_period.rb`
 
 `DataMapper::Observer` callbacks no longer alllow `return`
 ----------------------------------------------------------

@@ -1,14 +1,11 @@
 require File.join( '.', File.dirname(__FILE__), '..', "spec_helper" )
 
 describe DirtyLoan do
-  before(:each) do
+  before(:all) do
     @loan = Factory(:loan)
     @loan.should be_valid
   end
 
-  # Very strange, this works fine on the commandline (merb -i) but in the spec it fails...
-  # After checking the DirtyLoan created by #add won't save, returning false but it does
-  # not show any validation errors..
   it "should dirty the loan when added" do
     DirtyLoan.pending.length.should == 0
     DirtyLoan.add(@loan)

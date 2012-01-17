@@ -12,7 +12,7 @@ describe Target do
 
     @target = Factory(:target,
       :target_value => 100, :start_value => 50, :present_value => 20, :target_of => :center_creation,
-      :target_type => :relative, :start_date => Date.new(2010, 01, 01), :deadline => Date.new(2012, 01, 01),
+      :target_type => :relative, :start_date => Date.new(2010, 01, 01), :deadline => Date.new(2100, 01, 01),
       :attached_to => :staff_member, :attached_id => @manager.id)
     @target.should be_valid
   end

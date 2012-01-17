@@ -176,7 +176,7 @@ class RuleBook
 
   def cannot_overlap
     unless self.new?
-      @changed_attr_with_original_val = self.original_attributes.map{|k,v| {k.name => (k.lazy? ? obj.send(k.name) : v)}}.inject({}){|s,x| s+=x}
+      @changed_attr_with_original_val = self.original_attributes.map{|k,v| {k.name => (k.is_a?(DataMapper::Property) && k.lazy? ? obj.send(k.name) : v)}}.inject({}){|s,x| s+=x}
       return true unless @changed_attr_with_original_val.keys.include?(:from_date) or @changed_attr_with_original_val.keys.include?(:to_date)
     end
     

@@ -2,51 +2,38 @@ require File.join( '.', File.dirname(__FILE__), '..', "spec_helper" )
 
 describe LoanHistory do
   before(:all) do
-    load_fixtures :users, :staff_members, :branches, :funders, :funding_lines
     $holidays = {}
-    Center.all.destroy
-    CenterMeetingDay.all.destroy
-    @user = User.first
-    @manager = StaffMember.first
-    @funder = Funder.first
-    @funding_line = FundingLine.first
-    @branch = Branch.first
+    @user = Factory(:user)
+    @manager = Factory(:staff_member)
+    @funder = Factory(:funder)
+    @funding_line = Factory(:funding_line)
+    @branch = Factory(:branch)
 
     @center = Center.new(:name => "Munnar hill center", :id => 1, :manager => @manager, :branch => @branch, :code => "cen", :meeting_day => :wednesday)
     @center.save
     @center.should be_valid
     ClientType.create(:type => "Standard")
-    @client_group =ClientGroup.create(:center => @center, :code => "01", :name => "group 01")
 
-    @client = Client.new(:name => 'Ms C.L. Ient', :reference => 'XW000-2009.01.05', :date_joined => Date.parse('2000-01-01'), :client_group => @client_group,
-                         :client_type => ClientType.first, :created_by => @user, :center => @center)
-    @client.save
-    @client.errors.each{|e| puts e}
-    @client.should be_valid
-
-    @loan_product = LoanProduct.new
-    @loan_product.name = "LP1"
-    @loan_product.max_amount = 1000
-    @loan_product.min_amount = 1000
-    @loan_product.max_interest_rate = 100
-    @loan_product.min_interest_rate = 0.1
-    @loan_product.installment_frequency = :weekly
-    @loan_product.max_number_of_installments = 25
-    @loan_product.min_number_of_installments = 25
-    @loan_product.loan_type = "DefaultLoan"
-    @loan_product.valid_from = Date.parse('2000-01-01')
-    @loan_product.valid_upto = Date.parse('2012-01-01')
-    @loan_product.save
+    @loan_product = Factory(:loan_product,
+      :name => 'LP1', :max_amount => 1000, :min_amount => 1000, :max_interest_rate => 100, :min_interest_rate => 0.1,
+      :installment_frequency => :weekly, :max_number_of_installments => 25, :min_number_of_installments => 25,
+      :valid_from => Date.new( 2000, 01, 01 ), :valid_upto => Date.new( 2100, 01, 01 ))
+LoanProduct.new
+    @loan_product.valid?
     @loan_product.errors.each {|e| puts e}
     @loan_product.should be_valid
 
 
-    @loan = Loan.new(:amount => 1000, :interest_rate => 0.2, :installment_frequency => :weekly, :number_of_installments => 25, 
-                     :scheduled_first_payment_date => "2000-12-06", :applied_on => "2000-02-01", :scheduled_disbursal_date => "2000-06-13")
-    @loan.applied_by       = @manager
-    @loan.funding_line     = @funding_line
-    @loan.client           = @client
-    @loan.loan_product     = @loan_product
+    @loan = Factory.build(:loan,
+      :amount => 1000, :interest_rate => 0.2, :installment_frequency => :weekly, :number_of_installments => 25, 
+      :scheduled_first_payment_date => "2000-12-06", :applied_on => "2000-02-01", :scheduled_disbursal_date => "2000-06-13",
+      :applied_by => @manager, :funding_line => @funding_line, :loan_product => @loan_product)
+    @client = @loan.client
+
+    @loan.valid?
+    @loan.errors.each {|e| puts e}
+    p @loan.client.valid?
+    p @loan.client.errors.full_messages
     @loan.should be_valid
     
     @loan.approved_on = "2000-02-03"
@@ -56,6 +43,8 @@ describe LoanHistory do
     @loan.save
     @loan.history_disabled = false
     @loan.update_history
+    @loan.valid?
+    @loan.errors.each {|e| puts e}
     @loan.should be_valid
     @history = LoanHistory.all(:loan_id => @loan.id)
     @history.should_not be_blank

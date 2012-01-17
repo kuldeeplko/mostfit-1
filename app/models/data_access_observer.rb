@@ -23,6 +23,9 @@ class DataAccessObserver
     begin
       if obj
         attributes = obj.attributes
+
+        Merb.logger.debug ">> Generating diff between original: #{@ributes.inspect} and new: #{attributes.inspect}"
+
         if @ributes
           diff = @ributes.diff(attributes).reject{|x| x.to_s.match(/^c_/)} # reject the caching properties, defined by c_xxxx
           diff = diff.map{|k| 
@@ -37,12 +40,16 @@ class DataAccessObserver
           diff[index][:discriminator] = diff[index][:discriminator].map{|x| x.to_s if x}
         end
         return if diff.length==0
+
+        # We'll log all different classes of loans as type "Loan"
         model = (/Loan$/.match(obj.class.to_s) ? "Loan" : obj.class.to_s)
+
         log = AuditTrail.new(:auditable_id => obj.id, :action => @action, :changes => diff.to_yaml, :type => :log,
                              :auditable_type => model, :user => @_user, :created_at => DateTime.now)
         debugger
         Merb.logger.debug ">> Logging to AuditTrail: #{log.inspect}: #{log.valid?} (#{log.errors.full_messages.join(', ')})"
         log.save
+        Merb.logger.debug ">> After save: #{log.inspect}"
       end
     rescue Exception => e
       Merb.logger.info("Error creating AuditTrail: #{e.to_s}, diff: #{diff.inspect}")

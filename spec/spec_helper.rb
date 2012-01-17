@@ -47,7 +47,8 @@ Spec::Runner.configure do |config|
   # The following is run before each individual spec (but not between tests within a spec)
   #
   config.before(:all) do
-    [AccountType, Account, Currency, JournalType, CreditAccountRule, DebitAccountRule, RuleBook, StaffMember, User, Funder, FundingLine, Branch, Center, ClientType, Client, LoanProduct, LoanHistory, Region, Area, Portfolio, RepaymentStyle].each do |model|
+    [AccountType, Account, Currency, JournalType, CreditAccountRule, DebitAccountRule, RuleBook, StaffMember, User, Funder, FundingLine, Branch, Center, ClientType, Client, Loan, DirtyLoan, LoanProduct, LoanHistory, LoanPurpose, Region, Area, Portfolio, RepaymentStyle, InsuranceCompany].each do |model|
+      puts ">> Deleting all existing #{model.name} records..."
       model.all.destroy!
     end
   end

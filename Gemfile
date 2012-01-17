@@ -5,7 +5,7 @@ source :rubygems
 
 merb_gems_version = '~> 1.1'
 merb_related_gems = '~> 1.1'
-dm_gems_version   = '~> 1.1'
+dm_gems_version   = '~> 1.2'
 
 # Merb
 gem 'merb-core',                merb_gems_version
@@ -44,6 +44,9 @@ gem 'dm-paperclip'
 gem 'dm-pagination'
 gem 'dm-observer',              dm_gems_version
 gem 'dm-is-tree',               dm_gems_version
+
+# DataMapper plugin providing access to validation errors of associated parent and children objects. See the example below to get an idea on how it works.
+# gem 'dm-validations-ext'
 
 # Other gems
 gem 'i18n',                     '~> 0.6'
