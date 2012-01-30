@@ -1,26 +1,30 @@
 require 'factory_girl'
 
-FACTORY_NAMES       = %w[Smith Anderson Rodriguez Gonzalez Campbell Parker Moore Helen Donald Richard Dick Deborah].freeze
-FACTORY_PLACES      = %w[Mumbai Hyderabad Pune Bangalore Cochin Chennai Kolkata].freeze
-FACTORY_HOLIDAYS    = %w[Diwali Holi Pongal Dussehra].freeze
-FACTORY_OCCUPATIONS = %w[Carpenter Astrologer Engineer Teller Cook Butcher Actuary Executive Artist].freeze
-FACTORY_PROVINCES   = ['Maharashtra', 'Andra Pradesh', 'Madhya Pradesh', 'Kerala', 'Tamil Nadu'].freeze
-FACTORY_PURPOSES    = ['Buying a boat', 'Christmas presents', 'Wife\'s birthday'].freeze
-FACTORY_ASSETS      = ['Laptop charger', 'Laser printer', 'Mobile phone', 'Airconditioner'].freeze
-FACTORY_REPAYMENTS  = %w[Flat EquatedWeekly BulletLoan BulletLoanWithPeriodicInterest CustomPrincipal CustomPrincipalAndInterest].freeze
+FACTORY_FIRST_NAMES   = %w[Helen Donald Alejandro Homer Richard Dick Jose Deborah Meryl Fred John].freeze
+FACTORY_NAMES         = %w[Smith Anderson Rodriguez Gonzalez Campbell Parker Moore].freeze
+FACTORY_HOLIDAYS      = %w[Diwali Holi Pongal Dussehra].freeze
+FACTORY_OCCUPATIONS   = %w[Carpenter Astrologer Engineer Teller Cook Butcher Actuary Executive Artist].freeze
+FACTORY_PLACES        = ['Agartala', 'Aizawi', 'Baleshwar', 'Bangalore', 'Bhopal', 'Bhubaneshwar', 'Bihar', 'Chandigarh', 'Chennai', 'Cochin', 'Dehradun', 'Dispur', 'Gandhinagar', 'Gangtok', 'Goa', 'Hanamkonda', 'Hubli', 'Hyderabad', 'Imphal', 'Itangar', 'Jaipur', 'Kanpur', 'Kochi', 'Kohima', 'Kolkata', 'Lucknow', 'Mumbai', 'Panaji', 'Patna', 'Pune', 'Raipur', 'Ranchi', 'Shillong', 'Shimla', 'Solapur', 'Srinagar and Jammu', 'Surat', 'Thiruvananthapuram'].freeze
+FACTORY_STATES        = ['Andra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jammu and Kashmir', 'Jharkhand', 'Karnataka', 'Kerala', 'Madhya Pradesh', 'Madya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Orissa', 'Paschim Banga', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Tripura', 'Uttar Pradesh', 'Uttaranchal'].freeze
+FACTORY_PURPOSES      = ['Buying a boat', 'Christmas presents', 'Wife\'s birthday'].freeze
+FACTORY_ASSETS        = ['Laptop charger', 'Laser printer', 'Mobile phone', 'Airconditioner'].freeze
+FACTORY_REPAYMENTS    = %w[Flat EquatedWeekly BulletLoan BulletLoanWithPeriodicInterest CustomPrincipal CustomPrincipalAndInterest].freeze
+FACTORY_JOURNAL_TYPES = %w[Payment Receipt Journal].freeze
+
 
 FactoryGirl.define do
 
   # General sequences
-  sequence(:name)               { |n| [FACTORY_NAMES[n%FACTORY_NAMES.length], n.to_s].join(' ') }
+  sequence(:name)               { |n| [FACTORY_FIRST_NAMES[n%FACTORY_FIRST_NAMES.length], FACTORY_NAMES[n%FACTORY_NAMES.length], n.to_s].join(' ') }
   sequence(:email)              { |n| [FACTORY_NAMES[n%FACTORY_NAMES.length], n.to_s, '@', FACTORY_PLACES[n%FACTORY_PLACES.length], '.in'].join.downcase }
-  sequence(:city)               { |n| [FACTORY_PLACES[n%FACTORY_PLACES.length], "center", n.to_s].join(' ') }
-  sequence(:province)           { |n| [FACTORY_PROVINCES[n%FACTORY_PROVINCES.length], n.to_s].join(' ') }
+  sequence(:city)               { |n| [FACTORY_PLACES[n%FACTORY_PLACES.length], n.to_s].join(' ') }
+  sequence(:province)           { |n| [FACTORY_STATES[n%FACTORY_STATES.length], n.to_s].join(' ') }
   # User related sequences
   sequence(:user_login)         { |n| "user_#{n}" }
   # Branch sequences
   sequence(:branch_code)        { |n| "BR#{n}" }
   # Center sequences
+  sequence(:center_names)       { |n| "Center #{n}" }
   sequence(:center_code)        { |n| "CEN#{n}" }
   # ClientGroup sequences
   sequence(:group_name)         { |n| "Group #{n}" }
@@ -44,6 +48,8 @@ FactoryGirl.define do
   sequence(:occupation_code)    { |n| "OCC#{n}" }
   # Assets
   sequence(:asset_type)         { |n| [FACTORY_ASSETS[n%FACTORY_ASSETS.length], n.to_s].join(' ') }
+  # JournalTypes
+  sequence(:journal_type)       { |n| [FACTORY_JOURNAL_TYPES[n%FACTORY_JOURNAL_TYPES.length], n.to_s].join(' ') }
 
   #
   # Organizations, Domains, MFIs
@@ -179,7 +185,7 @@ FactoryGirl.define do
   end
 
   factory :center do
-    name            { Factory.next(:province) }
+    name            { Factory.next(:center_names) }
     code            { Factory.next(:center_code) }
     meeting_day     :wednesday
     creation_date   { Date.new( 2000, 01, 01 ) }
@@ -428,6 +434,7 @@ FactoryGirl.define do
     name                { Factory.next(:account_name) }
     gl_code             { Factory.next(:account_gl_code) }
     association         :account_type
+    association         :branch
   end
 
   factory :account_balance do
@@ -523,6 +530,7 @@ FactoryGirl.define do
   end
 
   factory :journal_type do
+    name                { Factory.next(:journal_type) }
   end
 
   #
