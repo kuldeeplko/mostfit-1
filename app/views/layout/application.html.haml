@@ -33,9 +33,9 @@
             -if mfi.name
               = mfi.name
             -else
-              MOSTFIT
+              Mostfit
         -else
-          MOSTFIT
+          Mostfit
       #green-header
         #navigation
           - if session.authenticated?
@@ -68,7 +68,7 @@
       .container
         %p
         - if message
-          #flash-messages.span-17.prefix-5.suffix-5.last            
+          #flash-messages.span-17.prefix-5.suffix-5.last
             - message.each do |key, value|
               .flash{ :class => key.to_s }
                 %p= value.gsub("\n", "<br/>")

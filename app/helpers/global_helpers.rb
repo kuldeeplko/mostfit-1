@@ -3,18 +3,18 @@ module Merb
     CRUD_ACTIONS = ["list", "index", "show", "edit", "new"]
     MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
     TRANSACTION_MODELS = [Branch, Center, ClientGroup, Cgt, Grt, Client, Loan, Payment]
-    
+
     def page_title
       begin
         generate_page_title(params)
       rescue
-        return "MostFit" rescue Exception
+        return "Mostfit" rescue Exception
       end
     end
 
     def current_user_info
       staff_or_funder = ""
-      staff_or_funder = "#{session.user.staff_member.name}" if session.user.staff_member 
+      staff_or_funder = "#{session.user.staff_member.name}" if session.user.staff_member
       f = Funder.first(:user_id => session.user.id)
       staff_or_funder += " #{f.name}" if f
       "#{staff_or_funder} logged in as <b>#{link_to session.user.login, resource(session.user)}</b> (#{session.user.role.to_s.humanize}) | #{link_to 'log out', url(:logout)}"
@@ -58,7 +58,7 @@ module Merb
         staff = StaffMember.get(selected)
         allow_inactive = true unless staff.active
       end
-      
+
       select(col,
              :collection   => staff_members_collection(allow_unassigned, allow_inactive),
              :name         => "#{obj.class.to_s.snake_case}[#{id_col}]",
@@ -77,7 +77,7 @@ module Merb
 
       selected_id = (obj.send(id_col) ? obj.send(id_col).to_s : nil)
       selected_id = session[:center_id].to_s if not selected_id and session.key?(:center_id)
-      
+
       html = select col,
         :collection   => collection,
         :name         => "#{obj.class.to_s.snake_case}[#{id_col}]",
@@ -116,9 +116,9 @@ module Merb
       attrs.merge!(:min_date => opts[:min_date]||Date.min_date)
       attrs.merge!(:max_date => opts[:max_date]||Date.max_date)
       attrs.merge!(:nullable => opts[:nullable]) if opts.key?(:nullable)
-      date_select_html(attrs) 
+      date_select_html(attrs)
     end
- 
+
     def date_select_for(obj, col = nil, attrs = {})
       klass = obj.class
       attrs.merge!(:name => "#{klass.to_s.snake_case}[#{col.to_s}]")
@@ -139,7 +139,7 @@ module Merb
 #       errorify_field(attrs, col)
     end
 
-    def date_select_html (attrs, obj = nil, col = nil)      
+    def date_select_html (attrs, obj = nil, col = nil)
       str = %Q{
         <input type='text' name="#{attrs[:name]}" id="#{attrs[:id]}" value="#{attrs[:date]}" size="#{attrs[:size]}" #{attrs[:nullable] ? "" : "readonly='true'"}>
         <script type="text/javascript">
@@ -191,7 +191,7 @@ module Merb
         :class      => (obj and col) ? (obj.errors[col] ? 'error' : '') : nil,
         :collection =>  (nullable ? [['', '-']] : []) + (1..31).to_a.map{ |x| x = [x.to_s, x.to_s] }
       )
-      
+
       count = 0
       month_attrs = attrs.merge(
         :name       => attrs[:name] + '[month]',
@@ -308,7 +308,7 @@ module Merb
     def chart(url, width=430, height=200, id=nil)
       id||= (rand()*100000).to_i + 100
       "<div id='flashcontent_#{id}'></div>
-      <script type='text/javascript'> 
+      <script type='text/javascript'>
       swfobject.embedSWF('/open-flash-chart.swf', \"flashcontent_#{id}\", #{width}, #{height}, '9.0.0', 'expressInstall.swf',
                          {\"data-file\": \"#{url}\",
                           \"loading\": \"Waiting for data... (reload page when it takes too long)\"
@@ -330,7 +330,7 @@ module Merb
       "/audit_trails?"+params.to_a.map{|x| "audit_for[#{x[0]}]=#{x[1]}"}.join("&")
     end
 
-    def diff_display(arr, obj, action)      
+    def diff_display(arr, obj, action)
       relations = {}
       if obj.class == String
         model = Kernel.const_get(obj)
@@ -375,7 +375,7 @@ module Merb
             str="<tr><td>#{k.humanize}</td><td>"
             str+=if action==:update and v.class==Array
                    if model.properties.find{|x| x.name == k}.type.respond_to?(:flag_map)
-                     "changed from #{model.properties.find{|x| x.name == k}.type.flag_map[v.first]}</td><td>to #{v.last}"                     
+                     "changed from #{model.properties.find{|x| x.name == k}.type.flag_map[v.first]}</td><td>to #{v.last}"
                    else
                      "changed from #{v.first}</td><td>to #{v.last}"
                    end
@@ -394,18 +394,18 @@ module Merb
       hash[:controller] = "search"
       hash[:action]     = "advanced"
       hash[:model]      = model.to_s.downcase
-      hash              = hash.map{|x| 
+      hash              = hash.map{|x|
         [(x[0].class==DataMapper::Query::Operator ? "#{x[0].target}.#{x[0].operator}" : x[0]), x[1]]
       }.to_hash
       url(hash)
     end
 
     def use_tinymce
-      @content_for_tinymce = "" 
+      @content_for_tinymce = ""
       content_for :tinymce do
         js_include_tag "tiny_mce/tiny_mce"
       end
-      @content_for_tinymce_init = "" 
+      @content_for_tinymce_init = ""
       content_for :tinymce_init do
         js_include_tag "mce_editor"
       end
@@ -429,15 +429,15 @@ module Merb
         Branch.all(:order => [:name])
       end
     end
-    
+
     def get_accessible_centers(branch_id, staff=nil)
       centers = if staff or session.user.staff_member
                   Center.all(:branch => get_accessible_branches, :order => [:name])
                 elsif branch_id and not branch_id.blank?
                   Center.all(:branch_id => branch_id, :order => [:name])
-                else 
+                else
                   []
-                end      
+                end
       centers.map{|x| [x.id, "#{x.name}"]}
     end
 
@@ -452,7 +452,7 @@ module Merb
                            end
                          else
                            StaffMember.all(:order => [:name])
-                         end      
+                         end
       staff_members.map{|x| [x.id, x.name]}
     end
 
@@ -505,7 +505,7 @@ module Merb
             end
       acc.map{|x| [x.id, "#{x.name}"]}
     end
-    
+
     def get_accessible_accounts(branch_id)
       accounts = if branch_id and not branch_id.blank?
                    Account.all(:branch_id => @branch_id, :order => [:name])
@@ -528,7 +528,7 @@ module Merb
              :prompt       => (attrs[:prompt] or "&lt;select a field&gt;")).gsub("!!!", "&nbsp;")
     end
 
-    def paginate_on_weekdays(branch, selected=Date.today.weekday)      
+    def paginate_on_weekdays(branch, selected=Date.today.weekday)
       Center::DAYS.map{|wday|
         weekday = (wday==:none ? "Not defined" : wday.to_s)
         if selected==wday
@@ -556,7 +556,7 @@ module Merb
         :prompt       => (attrs[:prompt] or "&lt;select a account&gt;"))
       html.gsub('!!!', '&nbsp;')  # otherwise the &nbsp; entities get escaped
     end
-    
+
     def approx_address(obj)
       if obj.class == Center
         str  =  obj.name
@@ -569,7 +569,7 @@ module Merb
         obj.address.blank? ? obj.name : obj.address
       end
     end
-    
+
     def get_status_class(idx)
       case idx
       when 0
@@ -582,14 +582,14 @@ module Merb
         'grey'
       end
     end
-    
+
 
     private
     def staff_members_collection(allow_unassigned=false, allow_inactive=false)
       hash = allow_inactive ? {} : {:active => true}
       if staff = session.user.staff_member
         bms  = staff.branches.collect{|x| x.manager}
-        cms  = staff.branches.centers.collect{|x| x.manager}               
+        cms  = staff.branches.centers.collect{|x| x.manager}
         managers = [bms, cms, staff].flatten.uniq
         managers+= (StaffMember.all(hash.merge(:order => [:name])) - Branch.all.managers - Center.all.managers - Region.all.managers - Area.all.managers) if allow_unassigned
         [["0", "Select a staff member"]] + managers.map{|x| [x.id, x.name]}
@@ -597,7 +597,7 @@ module Merb
         [["0", "Select a staff member"]] + StaffMember.all(hash.merge(:order => [:name])).map{|x| [x.id, x.name]}
       end
     end
-    
+
     def join_segments(*args)
       args.map{|x| x.class==Array ? x.uniq : x}.flatten.reject{|x| not x or x.blank?}.join(' - ').capitalize
     end
@@ -610,7 +610,7 @@ module Merb
       prefix  << params[:namespace].join_snake(' ') if params[:namespace]
       postfix << params[:action].join_snake(' ') if params[:action] and not CRUD_ACTIONS.include?(params[:action])
       prefix  << params[:action].join_snake(' ') if CRUD_ACTIONS[3..-1].include?(params[:action])
-      
+
       return "Loan for #{@loan.client.name}" if controller=="payments" and @loan
       return I18n.t("page.title.login", :default => "Mostfit - Login") if (controller == "exceptions" and params[:action] == "unauthenticated") or (controller == "sessions" and params[:action] == "update")
       return params[:report_type] if controller=="reports" and params[:report_type]
@@ -627,7 +627,7 @@ module Merb
       return join_segments(prefix, controller_name, obj.name, postfix) if obj.respond_to?(:name) and not obj.new?
       #catch all
       return join_segments(prefix, controller_name, postfix)
-    end    
+    end
 
     def self.pretty_name_of_comparator(comparator)
       if comparator == "less_than" then return "<"
