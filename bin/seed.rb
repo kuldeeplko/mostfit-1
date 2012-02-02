@@ -1,7 +1,7 @@
+#!/usr/bin/env ruby
+
 #
-# !!WARNING!! Running this fill WILL destroy your existing development database.
-#
-# This seed file is intended to facilitate (browser) testing of the application 
+# This seed file is intended to facilitate (browser) testing of the application
 #
 # Running this file will first clear the database and then replace it with 'seed'
 # data. This data should provide a basic database that will let you test any and
@@ -25,17 +25,29 @@ rescue LoadError
   Bundler.setup
 end
 
-require 'rake/rdoctask'
+init_env = ENV['MERB_ENV'] || 'development'
+
+puts "\n!!WARNING!! Running this fill WILL destroy your existing #{init_env} database."
+print "Are you sure you want to procede? [Yn]: "
+$stdout.flush
+c = gets
+if ['y', 'Y', "\n"].include? c[0]
+  puts "Proceding...\n\nThis creates an admin priviledged user with login 'admin' and password 'secret'.\n\n"
+else
+  puts "Aborting...\n"
+  exit
+end
+
+require 'rdoc/task'
 
 require 'merb-core'
 require 'merb-core/tasks/merb'
 
 # Load the basic runtime dependencies; this will include
 # any plugins and therefore plugin rake tasks.
-init_env = ENV['MERB_ENV'] || 'development'
 Merb.load_dependencies(:environment => init_env)
-
 Merb.start_environment(:environment => init_env, :adapter => 'runner')
+
 
 #
 # Load the registered factories as a basis for our seeds
@@ -55,41 +67,43 @@ puts "**   Merb.env: #{Merb.env.ljust(21)}     **"
 puts "**                                       **"
 puts "*******************************************"
 puts
-puts "Deleting all existing"
-[
-  Account,
-  AccountType,
-  Area,
-  Branch,
-  Center,
-  Client,
-  ClientType,
-  CreditAccountRule,
-  Currency,
-  DebitAccountRule,
-  DirtyLoan,
-  Domain,
-  Fee,
-  Funder,
-  FundingLine,
-  InsuranceCompany,
-  JournalType,
-  Loan,
-  LoanHistory,
-  LoanProduct,
-  LoanPurpose,
-  Organization,
-  Portfolio,
-  Region,
-  RepaymentStyle,
-  RuleBook,
-  StaffMember,
-  User,
-].each do |model|
-  puts ".. #{model.name} records"
-  model.destroy!
-end
+puts "Creating a pristine database schema..."
+# [
+#   Account,
+#   AccountType,
+#   Area,
+#   Branch,
+#   Center,
+#   Client,
+#   ClientType,
+#   CreditAccountRule,
+#   Currency,
+#   DebitAccountRule,
+#   DirtyLoan,
+#   Domain,
+#   Fee,
+#   Funder,
+#   FundingLine,
+#   InsuranceCompany,
+#   JournalType,
+#   Loan,
+#   LoanHistory,
+#   LoanProduct,
+#   LoanPurpose,
+#   Organization,
+#   Portfolio,
+#   Region,
+#   RepaymentStyle,
+#   RuleBook,
+#   StaffMember,
+#   User,
+# ].each do |model|
+#   puts ".. #{model.name} records"
+#   model.destroy!
+# end
 puts
+
+DataMapper.auto_migrate!
 
 #
 # Organizations and associated
@@ -114,7 +128,7 @@ puts
 #
 # Set up an admin user to test with
 #
-user = Factory.build(:user, login: 'test_user', role: 'admin')
+user = Factory.build(:user, login: 'admin', role: 'admin')
 user.save
 
 #
