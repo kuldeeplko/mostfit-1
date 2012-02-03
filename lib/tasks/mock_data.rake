@@ -19,7 +19,6 @@ namespace :mostfit do
       puts "starting"
       t0 = Time.now
       Merb.logger.info! "Start mock:all_payments rake task at #{t0}"
-      busy_user = User.get(1)
       count = 0
       if Payment.all.empty?
         loan_ids = repository.adapter.query("SELECT id from loans WHERE deleted_at IS NULL")

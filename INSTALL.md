@@ -23,9 +23,9 @@ least I warned you :)
     # NOTE: You may be asked for a MySQL (database) root user password.
 
     sudo apt-get install \
-        build-essential git libreadline6-dev ncurses5-dev libssl-dev \
-        mysql-server-5.1 mysql-client-5.1 libmysqlclient-dev \
-        libsqlite3 libsqlite3-dev
+      build-essential git libreadline6-dev ncurses5-dev libssl-dev \
+      mysql-server-5.1 mysql-client-5.1 libmysqlclient-dev \
+      libsqlite3 libsqlite3-dev
 
 
     # 2. Install RVM (the Ruby Version Manager)
@@ -73,14 +73,15 @@ least I warned you :)
 
     # 4. Setup MySQL (the database)
 
-    # Create db 'mostfit_dev', and add user 'mostfit' (password: 'secret') to it.
+    # Create 2 databases 'mostfit_dev' and 'mostfit_test', grant all priviledges
+    # to user 'mostfit' (password: 'secret') on both.
     # Later we copy these credentials into Mostfit's database configuration.
-    # NOTE: You will be asked for the MySQL root user password.
+    # NOTE: You will be asked twice for the MySQL root user password.
 
-    mysql -u root -p -e " \
-      CREATE DATABASE IF NOT EXISTS 'mostfit_dev'; \
-      GRANT ALL ON mostfit_dev.* TO 'mostfit'@'localhost' IDENTIFIED BY 'secret'; \
-      FLUSH PRIVILEGES;"
+    for db in mostfit_dev mostfit_test; do mysql -u root -p -e " \
+      CREATE DATABASE IF NOT EXISTS ${db}; \
+      GRANT ALL ON ${db}.* TO mostfit@'localhost' IDENTIFIED BY 'secret'; \
+      FLUSH PRIVILEGES;"; done
 
 
     # 5. Download and install Mostfit (soo easy!)
@@ -102,14 +103,18 @@ least I warned you :)
     # 6. Now take it out for a spin...
 
     # Seed the database with some test data (something to look at):
-    bundle exec bin/seed.rb
+    bin/seed.rb
 
-    # By default the web-application binds to port 4000 which is good enough
-    # for testing and development purposes.
-    # A browser on the same machine should find it on: http://0.0.0.0:4000
-    bundle exec merb  # starts the web-app
+    # Start the web-application (uses Passenger and binds to port 3000)...
+    # A browser on the same machine should find it on: http://0.0.0.0:3000
+    # NOTE: The Passenger webserver installs itself the first time it is run.
+    passenger start
 
-    # Or use the console interface:
-    bundle exec merb -i
+    # Hit the internal using the console interface by invoking:
+    merb -i
+
+    # Mostfit comes with many scripts, known as 'tasks'...
+    bundle exec rake -T      # list all tasks
+    bundle exec rake routes  # invokes `routes` task (lists all known routes)
 
 

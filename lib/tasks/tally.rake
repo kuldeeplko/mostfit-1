@@ -14,7 +14,7 @@ namespace :mostfit do
   namespace :tally do
 
     def get_account_type(name)
-      if name.include?("assets") or name.include?("investment") or name.include?("capital account") 
+      if name.include?("assets") or name.include?("investment") or name.include?("capital account")
         AccountType.first(:name => "Assets")
       elsif name.include?("expense") or name.include?("purchase") or name.include?("expenditure") or name.include?("salary")
         AccountType.first(:name => "Expenditure")
@@ -26,14 +26,13 @@ namespace :mostfit do
         AccountType.first(:name => "Others")
       end
     end
-    desc "Create accounts from tally XML dump"    
+    desc "Create accounts from tally XML dump"
     task :coa_import do
       require 'iconv'
       require 'nokogiri'
       str  = Iconv.iconv("LATIN1", "UTF-16", File.read(ARGV[1]))[0].downcase
       doc = Nokogiri(str)
-      accounts = {}
-      (doc.xpath("envelope/body/importdata/requestdata/tallymessage/group")).each{|x| 
+      (doc.xpath("envelope/body/importdata/requestdata/tallymessage/group")).each{|x|
         a = x.attributes["name"].value
         if (x.xpath("parent")).inner_text.length==0
           Account.create(:name => a, :gl_code => a, :account_type => get_account_type(a))
@@ -43,8 +42,8 @@ namespace :mostfit do
           Account.create(:name => a, :gl_code => a, :parent => parent, :account_type => parent.account_type)
         end
       }
-      
-      (doc.xpath("envelope/body/importdata/requestdata/tallymessage/ledger")).each{|x| 
+
+      (doc.xpath("envelope/body/importdata/requestdata/tallymessage/ledger")).each{|x|
         if (x.xpath("parent")).inner_text.length==0
           name  = x.attributes["name"].value
           Account.create(:name => name, :gl_code => name, :account_type => get_account_type(name))
@@ -59,12 +58,12 @@ namespace :mostfit do
           Account.create(:parent => parent, :name => name, :gl_code => name,
                          :account_type => parent.account_type)
         end
-      }      
+      }
     end
 
-    desc "Create Voucher XML dump for Tally"    
+    desc "Create Voucher XML dump for Tally"
     task :voucher_download do
-     
+
       Journal.xml_tally({})
     end
   end

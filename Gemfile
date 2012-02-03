@@ -63,23 +63,27 @@ gem 'rake',                     '~> 0.9'
 # We use this fork because it contains fixes for ruby 1.9
 gem 'pdf-writer',               :git => "git://github.com/tundal45/pdf-writer.git"
 
-# Mostfit Maintainer slice
+# Additional dependencies of the Mostfit Maintainer slice:
 gem 'dm-sqlite-adapter',        dm_gems_version
 gem 'git',                      '~> 1.2'
 
-# These should be pre-installed as detailed in INSTALL.md
+# We use Phusion's Passenger by default, both for development and deployment.
+# NOTE: When running `passenger start` for the first time it installs itself.
+#       More info on this is found in `INSTALL.md`.
+gem 'passenger',                '~> 3.0'
+
+# The following gems do not currently (jan'12) work with ruby-1.9.3-head.
+# They should be pre-installed as detailed in `INSTALL.md`.
 gem 'linecache19'
 gem 'ruby-debug-base19'
 gem 'ruby-debug19'
 
 group :development do
-  gem 'mongrel',                '1.2.0.pre2'  # needed for ruby-1.9 (jan'12)
-
-  # This currently gives problems:
-  # gem 'ruby-debug19'
-  # So we install it system-wide with extra options as shown in INSTALL.md
-
   gem 'rspec',                  '~> 1.3'
   gem 'factory_girl',           '~> 2.3'
+
+  # Vlad is our deployment agent, only required by rake.
+  gem 'vlad',                   :require => false
+  gem 'vlad-git',               :require => false
 end
 

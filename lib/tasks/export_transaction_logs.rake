@@ -21,7 +21,7 @@ namespace :mostfit do
         puts
         puts "USAGE: rake mostfit:regenerate:transaction_logs[<from_date>,<to_date>]"
         puts
-        puts "NOTE: Make sure there are no spaces after and before the comma separating the two arguments." 
+        puts "NOTE: Make sure there are no spaces after and before the comma separating the two arguments."
         puts "      The from_date has to be supplied. If the to_date is not supplied it is assumed to be today."
         puts "      The format for the date is DD-MM-YYYY. The date has to be enclosed in single quotes. For 6th August 2011 it shall be '06-08-2011'."
         puts
@@ -32,7 +32,7 @@ namespace :mostfit do
         flag = 1
         begin_date = Date.parse(args[:begin_date])
       end
-      
+
       if args[:end_date].nil?
         end_date = Date.today
       else
@@ -44,10 +44,8 @@ namespace :mostfit do
           puts
           puts "ERROR: Please give the arguments in the proper format. For 6th August 2011 it shall be '06-08-2011' "
         end
-      elsif begin_date <= end_date 
+      elsif begin_date <= end_date
         org_guid = Organization.get_organization(end_date).org_guid
-        begin_date_time = DateTime.new(begin_date.year, begin_date.month, begin_date.day)
-        end_date_time = DateTime.new(end_date.year, end_date.month, end_date.day, 23, 59, 59)
         folder = File.join(Merb.root, "doc", "transaction_event_logs")
         FileUtils.mkdir_p(folder)
         transaction_logs = TransactionLog.all(:effective_date.gte => begin_date, :effective_date.lte => end_date)
