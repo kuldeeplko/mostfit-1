@@ -47,28 +47,17 @@ least I warned you :)
     type rvm | head -1
 
 
-    # 3. Install Ruby and essential tools using RVM
+    # 3. Install Ruby using RVM
 
     # We develop on Ruby version '1.9.3-head' as it loads libraries (gems) much
     # faster, so that's what we install below.  Any '1.9.x' should work fine.
-    # NOTE: Errors will mostly be caused by a missing dependency.
 
-    rvm install 1.9.3-head
-    rvm gemset create mostfit_gems
-    rvm use 1.9.3-head@mostfit_gems
-    rvm rubygems 1.8.15  # most current at time of writing
-    gem install bundler -v 1.0
-    # Or install v1.1.rc with `gem install bundler --pre` for bundling speedups.
+    rvm install 1.9.3-head  # that's all!
 
-    # This gets debugging to work on recent versions of Ruby.
-    # More info at: http://blog.wyeworks.com/2011/11/1/ruby-1-9-3-and-ruby-debug
-    (cd /tmp; \
-      BASE_URL="http://rubyforge.org/frs/download.php"; \
-      INCLUDE="--with-ruby-include=$rvm_path/src/ruby-1.9.3-head"; \
-      wget $BASE_URL/75414/linecache19-0.5.13.gem; \
-      wget $BASE_URL/75415/ruby-debug-base19-0.11.26.gem; \
-      gem install linecache19-0.5.13.gem --no-ri --no-rdoc -- $INCLUDE; \
-      gem install ruby-debug-base19-0.11.26.gem --no-ri --no-rdoc -- $INCLUDE; )
+    # RVM uses `.rvmrc` in the root of the application to switch to a particular
+    # Ruby version and gemset when entering the project directory.
+    # The gemset is by default `mostfit-$VERSION` where $VERSION is the first
+    # two numbers of Mostfit's version string as specified in `./VERSION`.
 
 
     # 4. Setup MySQL (the database)
@@ -91,9 +80,18 @@ least I warned you :)
     # to upgrade to newer versions of Mostfit while preserving modifications.
 
     git clone https://github.com/Mostfit/mostfit.git
-    cd mostfit
+    cd mostfit  # if RVM works you should some output after this command
     # When installing a git branch other then master do `git co $BRANCH_NAME`.
-    bundle install  # installs application dependencies
+
+    # This gets debugging to work on recent versions of Ruby.
+    # More info at: http://blog.wyeworks.com/2011/11/1/ruby-1-9-3-and-ruby-debug
+    INCLUDE="--with-ruby-include=$rvm_path/src/ruby-1.9.3-head"; \
+      for f in gems/*.gem; do gem install $f --no-ri --no-rdoc -- $INCLUDE; done
+
+    # Use bundler to install application dependencies
+    gem install bundler -v 1.0  # get bundler
+    # ...or v1.1.rc with `gem install bundler --pre` for bundling speedups.
+    bundle install  # might take a while
 
     # Set database credentials (as configured in step 4):
     cp config/example.database.yml config/database.yml
@@ -106,11 +104,11 @@ least I warned you :)
     bin/seed.rb
 
     # Start the web-application (uses Passenger and binds to port 3000)...
-    # A browser on the same machine should find it on: http://0.0.0.0:3000
-    # NOTE: The Passenger webserver installs itself the first time it is run.
+    # And point a browser on the same machine to: http://0.0.0.0:3000
+    # NOTE: The 1st time it is run Passenger installs all it needs from source.
     passenger start
 
-    # Hit the internal using the console interface by invoking:
+    # Explore Mostfit's internals using the console interface by invoking:
     merb -i
 
     # Mostfit comes with many scripts, known as 'tasks'...

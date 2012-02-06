@@ -1,7 +1,7 @@
 # Go to http://wiki.merbivore.com/pages/init-rb
 # require 'lib/irb.rb'
 require 'yaml'
-require Merb.root / 'version'
+require Merb.root / 'lib/version.rb'
 
 use_orm :datamapper
 use_test :rspec

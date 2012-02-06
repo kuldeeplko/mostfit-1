@@ -10,11 +10,34 @@
 # RVM and vlad can bite (see js.hu post), but i've probably fixed this
 # by having puppet to setup /etc/bash.bashrc on our ubuntu app servers.
 
+# TROUBLE SHOOTING
+# ================
+#
+# Usually the error message is clear and visible on the stdout.
+# A few common errors that are a bit harder to crack are explain below:
+
+# This hints that ssh key forwarding is not setup properly
+#   Host key verification failed.
+#   Initialized empty Git repository in [...]
+
+
 # set :user,        "mostfit"
-set :domain,      "update.mostfit.org"
+set :domain,      "detroit.emfiniti.com"
 set :deploy_to,   "/var/www/mostfit/update"
 set :repository,  "git@git.mostfit.in:mostfit.git"
 set :revision,    "origin/update"
+
+
+# refactor into:
+# task :demo do
+#   set :domain,    "detroit.emfiniti.com"
+#   set :deploy_to, "/var/www/mostfit/update"
+# end
+
+# task :staging do
+#   set :domain,    "staging.emfiniti.com"
+#   set :deploy_to, "/var/www/mostfit/staging"
+# end
 
 namespace :vlad do
   desc "Symlinks the configuration files"
