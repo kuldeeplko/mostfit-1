@@ -35,15 +35,17 @@ else
   fi
 fi
 
+gem_list="$(gem list --no-versions)"
+
 # If bundler is not installed, then install it...
-if ! (gem list bundler|grep -q bundler); then
+if ! (echo $gem_list|grep -q bundler); then
   printf "The gem 'bundler' gem is not installed.  Installing it now...\n"
-  gem install bundler --no-ri --no-rdoc
+  gem install bundler -v '~> 1.0' --no-ri --no-rdoc
 fi
 
 # Install work-around gems, when not yet installed...
 for f in linecache19 ruby-debug-base19; do
-  if ! (gem list $f|grep -q $f); then
+  if ! (echo $gem_list|grep -q $f); then
     echo Installing ruby-1.9.3 compatible \'$f\' gem.
     gem install gems/$f*.gem --no-ri --no-rdoc -- --with-ruby-include=$rvm_path/src/$ruby_string
   fi

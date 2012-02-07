@@ -23,16 +23,18 @@ least I warned you :)
     # NOTE: You may be asked for a MySQL (database) root user password.
 
     sudo apt-get install \
-      build-essential git libreadline6-dev ncurses5-dev libssl-dev \
+      build-essential git-core libreadline6-dev ncurses5-dev libssl-dev \
       mysql-server-5.1 mysql-client-5.1 libmysqlclient-dev \
-      libsqlite3 libsqlite3-dev
+      libsqlite3 libsqlite3-dev bison libyaml-dev autoconf libxml2-dev\
+      libxslt1-dev
 
 
     # 2. Install RVM (the Ruby Version Manager)
 
     # We love RVM because it...
-    #   1. allows us to run different versions of Ruby side-by-side, and
-    #   2. manages 'gemsets' (sets of Ruby libraries).
+    #   1. allows us to run different versions of Ruby side-by-side,
+    #   2. manages 'gemsets' (sets of Ruby libraries), and
+    #   3. automate these two by executing `.rvmrc` per project.
     # For production use read: http://beginrescueend.com/rvm/install
     # Also read this if you encounter any problems with RVM.
     # Below we install RVM for the user who runs it.
@@ -78,20 +80,14 @@ least I warned you :)
     # We use 'git' (a source code management tool) to download Mostfit.  The
     # developers of Mostfit use this tool to collaborate, but it is also useful
     # to upgrade to newer versions of Mostfit while preserving modifications.
+    # NOTE: `-b $BRANCH_NAME` may be omitted when installing the master branch.
+    git clone https://github.com/Mostfit/mostfit.git -b $BRANCH_NAME
 
-    git clone https://github.com/Mostfit/mostfit.git
-    cd mostfit  # if RVM works you should some output after this command
-    # When installing a git branch other then master do `git co $BRANCH_NAME`.
+    # Move to the 'application root', this triggers the `.rvmrc` script:
+    cd mostfit  # if RVM works you should see some output on this command
 
-    # This gets debugging to work on recent versions of Ruby.
-    # More info at: http://blog.wyeworks.com/2011/11/1/ruby-1-9-3-and-ruby-debug
-    for f in gems/*.gem; do gem install $f --no-ri --no-rdoc -- \
-      --with-ruby-include=$rvm_path/src/ruby-1.9.3-head; done
-
-    # Use bundler to install application dependencies
-    gem install bundler -v 1.0  # get bundler
-    # ...or v1.1.rc with `gem install bundler --pre` for bundling speedups.
-    bundle install  # might take a while
+    # Download all application dependencies with:
+    bundle install
 
     # Set database credentials (as configured in step 4):
     cp config/example.database.yml config/database.yml
