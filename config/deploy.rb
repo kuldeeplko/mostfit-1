@@ -65,6 +65,9 @@ namespace :vlad do
     # ex. /var/www/my_app/releases/12345
     cmds << "cd #{release_path}"
 
+    # Explicitly source the rvmrc
+    cmds << "\. ./.rvmrc"
+
     # run bundle install with explicit path and without test dependencies
     cmds << "bundle install --without test"
 
