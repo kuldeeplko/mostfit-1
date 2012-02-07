@@ -85,8 +85,8 @@ least I warned you :)
 
     # This gets debugging to work on recent versions of Ruby.
     # More info at: http://blog.wyeworks.com/2011/11/1/ruby-1-9-3-and-ruby-debug
-    INCLUDE="--with-ruby-include=$rvm_path/src/ruby-1.9.3-head"; \
-      for f in gems/*.gem; do gem install $f --no-ri --no-rdoc -- $INCLUDE; done
+    for f in gems/*.gem; do gem install $f --no-ri --no-rdoc -- \
+      --with-ruby-include=$rvm_path/src/ruby-1.9.3-head; done
 
     # Use bundler to install application dependencies
     gem install bundler -v 1.0  # get bundler
@@ -112,7 +112,7 @@ least I warned you :)
     merb -i
 
     # Mostfit comes with many scripts, known as 'tasks'...
-    bundle exec rake -T      # list all tasks
-    bundle exec rake routes  # invokes `routes` task (lists all known routes)
+    bin/rake -T      # list all tasks
+    bin/rake routes  # invokes `routes` task (lists all known routes)
 
 

@@ -3,15 +3,17 @@
 # This is an RVM Project .rvmrc file, used to automatically load the ruby
 # development environment upon cd'ing into the directory
 
-# First we specify our desired <ruby>[@<gemset>], the @gemset name is optional.
-mostfit_version=`cat VERSION|cut -d. -f1-2`
-environment_id="ruby-1.9.3-head@mostfit-$mostfit_version"
+# First we specify our desired <ruby>@<gemset> as $environment_id.
+mostfit_version_short=`cat VERSION|cut -d. -f1-2`
+ruby_string="ruby-1.9.3-head"
+gemset_string="mostfit-$mostfit_version_short"
+environment_id="$ruby_string@$gemset_string"
 
 #
 # First we attempt to load the desired environment directly from the environment
 # file. This is very fast and efficicent compared to running through the entire
 # CLI and selector. If you want feedback on which environment was used then
-# insert the word 'use' instead of --create as this triggers verbose mode.
+# insert the word 'use' after --create as this triggers verbose mode.
 #
 if [[ -d "${rvm_path:-$HOME/.rvm}/environments" \
   && -s "${rvm_path:-$HOME/.rvm}/environments/$environment_id" ]]
@@ -21,21 +23,31 @@ then
 
   if [[ -s ".rvm/hooks/after_use" ]]
   then
-    . ".rvm/hooks/after_use"
+    \. ".rvm/hooks/after_use"
   fi
 else
   # If the environment file has not yet been created, use the RVM CLI to select.
-  if ! rvm use "$environment_id"
+  if rvm --create use "$environment_id"
   then
-    echo "Failed to create RVM environment ''."
+    echo rvmrc: Using $environment_id
+  else
+    echo "Failed to create RVM environment '$environment_id'."
   fi
 fi
 
-# # Ensure that Bundler is installed. Install it if it is not.
-# if ! command -v bundle >/dev/null; then
-#   printf "The gem 'bundler' gem is not installed.  Installing it now...\n"
-#   gem install bundler
-# fi
+# If bundler is not installed, then install it...
+if ! (gem list bundler|grep -q bundler); then
+  printf "The gem 'bundler' gem is not installed.  Installing it now...\n"
+  gem install bundler --no-ri --no-rdoc
+fi
+
+# Install work-around gems, when not yet installed...
+for f in linecache19 ruby-debug-base19; do
+  if ! (gem list $f|grep -q $f); then
+    echo Installing ruby-1.9.3 compatible \'$f\' gem.
+    gem install gems/$f*.gem --no-ri --no-rdoc -- --with-ruby-include=$rvm_path/src/$ruby_string
+  fi
+done
 
 # # Bundle while reducing excess noise.
 # printf "Bundling your gems.  This may take a few minutes on a fresh clone.\n"
