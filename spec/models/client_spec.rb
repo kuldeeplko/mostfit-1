@@ -3,27 +3,13 @@ require File.join( '.', File.dirname(__FILE__), '..', "spec_helper" )
 describe Client do
 
   before(:all) do
-#    @manager = Factory(:staff_member)
-#    @manager.save
-    
-#    @branch = Factory(:branch, :manager => @manager)
-#    @branch.should be_valid
-
-#    @center = Factory(:center, :manager => @manager, :branch => @branch)
-#    @center.should be_valid
-
-#    @user = Factory(:user)
-#    @user.should be_valid
-
-#    @loan_product = Factory(:loan_product)
-#    @loan_product.should be_valid
-
-#    @client_type = Factory(:client_type)
+    Client.all.destroy!
+    Loan.all.destroy!
+    RepaymentStyle.all.destroy!
+    Center.all.destroy!
   end
 
   before(:each) do
-    Client.all.destroy!
-    Loan.all.destroy!
     @client = Factory(:client)
     @client.should be_valid
   end
@@ -53,7 +39,7 @@ describe Client do
     @client.should_not be_valid
   end
 
-  it "should be able to 'have' loans" do
+  it "should be able to 'have' loans", :focus => true do
     # Make sure we test against #count at the end, #size only looks at the @client object in memory, #count checks the actual database.
     lambda {
       loan = Factory(:approved_loan, :client => @client )

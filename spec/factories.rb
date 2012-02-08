@@ -1,16 +1,18 @@
 require 'factory_girl'
 
-FACTORY_FIRST_NAMES   = %w[Helen Donald Alejandro Homer Richard Dick Jose Deborah Meryl Fred John].freeze
-FACTORY_NAMES         = %w[Smith Anderson Rodriguez Gonzalez Campbell Parker Moore].freeze
-FACTORY_HOLIDAYS      = %w[Diwali Holi Pongal Dussehra].freeze
-FACTORY_OCCUPATIONS   = %w[Carpenter Astrologer Engineer Teller Cook Butcher Actuary Executive Artist].freeze
-FACTORY_PLACES        = ['Agartala', 'Aizawi', 'Baleshwar', 'Bangalore', 'Bhopal', 'Bhubaneshwar', 'Bihar', 'Chandigarh', 'Chennai', 'Cochin', 'Dehradun', 'Dispur', 'Gandhinagar', 'Gangtok', 'Goa', 'Hanamkonda', 'Hubli', 'Hyderabad', 'Imphal', 'Itangar', 'Jaipur', 'Kanpur', 'Kochi', 'Kohima', 'Kolkata', 'Lucknow', 'Mumbai', 'Panaji', 'Patna', 'Pune', 'Raipur', 'Ranchi', 'Shillong', 'Shimla', 'Solapur', 'Srinagar and Jammu', 'Surat', 'Thiruvananthapuram'].freeze
-FACTORY_STATES        = ['Andra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jammu and Kashmir', 'Jharkhand', 'Karnataka', 'Kerala', 'Madhya Pradesh', 'Madya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Orissa', 'Paschim Banga', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Tripura', 'Uttar Pradesh', 'Uttaranchal'].freeze
-FACTORY_PURPOSES      = ['Buying a boat', 'Christmas presents', 'Wife\'s birthday'].freeze
-FACTORY_ASSETS        = ['Laptop charger', 'Laser printer', 'Mobile phone', 'Airconditioner'].freeze
-FACTORY_REPAYMENTS    = %w[Flat EquatedWeekly BulletLoan BulletLoanWithPeriodicInterest CustomPrincipal CustomPrincipalAndInterest].freeze
-FACTORY_JOURNAL_TYPES = %w[Payment Receipt Journal].freeze
-
+# If any of the constants were already defined, don't do so again
+unless defined?(FACTORY_FIRST_NAMES)
+  FACTORY_FIRST_NAMES   = %w[Helen Donald Alejandro Homer Richard Dick Jose Deborah Meryl Fred John].freeze
+  FACTORY_NAMES         = %w[Smith Anderson Rodriguez Gonzalez Campbell Parker Moore].freeze
+  FACTORY_HOLIDAYS      = %w[Diwali Holi Pongal Dussehra].freeze
+  FACTORY_OCCUPATIONS   = %w[Carpenter Astrologer Engineer Teller Cook Butcher Actuary Executive Artist].freeze
+  FACTORY_PLACES        = ['Agartala', 'Aizawi', 'Baleshwar', 'Bangalore', 'Bhopal', 'Bhubaneshwar', 'Bihar', 'Chandigarh', 'Chennai', 'Cochin', 'Dehradun', 'Dispur', 'Gandhinagar', 'Gangtok', 'Goa', 'Hanamkonda', 'Hubli', 'Hyderabad', 'Imphal', 'Itangar', 'Jaipur', 'Kanpur', 'Kochi', 'Kohima', 'Kolkata', 'Lucknow', 'Mumbai', 'Panaji', 'Patna', 'Pune', 'Raipur', 'Ranchi', 'Shillong', 'Shimla', 'Solapur', 'Srinagar and Jammu', 'Surat', 'Thiruvananthapuram'].freeze
+  FACTORY_STATES        = ['Andra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jammu and Kashmir', 'Jharkhand', 'Karnataka', 'Kerala', 'Madhya Pradesh', 'Madya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Orissa', 'Paschim Banga', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Tripura', 'Uttar Pradesh', 'Uttaranchal'].freeze
+  FACTORY_PURPOSES      = ['Buying a boat', 'Christmas presents', 'Wife\'s birthday'].freeze
+  FACTORY_ASSETS        = ['Laptop charger', 'Laser printer', 'Mobile phone', 'Airconditioner'].freeze
+  FACTORY_REPAYMENTS    = %w[Flat EquatedWeekly BulletLoan BulletLoanWithPeriodicInterest CustomPrincipal CustomPrincipalAndInterest].freeze
+  FACTORY_JOURNAL_TYPES = %w[Payment Receipt Journal].freeze
+end
 
 FactoryGirl.define do
 

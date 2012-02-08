@@ -81,6 +81,7 @@ gem 'ruby-debug19'
 group :development do
   gem 'rspec',                  '~> 1.3'
   gem 'factory_girl',           '~> 2.3'
+  gem 'spork',                  '~> 1.0rc'
 
   # Vlad is our deployment agent, only required by rake.
   gem 'vlad',                   :require => false
