@@ -77,6 +77,7 @@ namespace :vlad do
 
   task :update do
     Rake::Task['vlad:bundle'].invoke
+    Rake::Task['vlad:symlink_config'].invoke
   end
 
 
@@ -108,12 +109,12 @@ namespace :vlad do
   #   Rake::Task["vlad:start"].invoke
   # end
 
-  # desc "Symlinks the configuration files"
-  # remote_task :symlink_config, :roles => :web do
-  #   %w(database.yml).each do |file|
-  #     run "ln -s #{shared_path}/config/#{file} #{current_path}/config/#{file}"
-  #   end
-  # end
+  desc "Symlinks the db configuration"
+  remote_task :symlink_config, :roles => :web do
+    %w(database.yml mfi.yml).each do |file|
+      run "o='#{shared_path}/config/#{file}'; if [ -e $o ]; then ln -s $o #{current_path}/config/#{file}; else echo Could not link to $o; fi"
+    end
+  end
 
   # desc "Full deployment cycle: Update, migrate, restart, cleanup"
   # remote_task :deploy, :roles => :app do
