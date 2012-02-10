@@ -161,14 +161,18 @@ describe Loan do
     @loan.number_of_installments = -0
     @loan.should_not be_valid
   end
-  it "should not be valid without a scheduled_first_payment_date" do
+
+
+  it "should be valid without a scheduled_first_payment_date" do
     @loan.scheduled_first_payment_date = nil
-    @loan.should_not be_valid
+    @loan.should be_valid
   end
-  it "should not be valid without a scheduled_disbursal_date" do
+
+  it "should be valid without a scheduled_disbursal_date" do
     @loan.scheduled_disbursal_date = nil
-    @loan.should_not be_valid
+    @loan.should be_valid
   end
+
   it "should not be valid with a disbursal date earlier than the loan is approved" do
     @loan.disbursed_by = @manager
     @loan.disbursed_by = @manager
@@ -179,6 +183,7 @@ describe Loan do
     @loan.disbursal_date = @loan.approved_on + 10
     @loan.should be_valid
   end
+
   it "should not be valid when validated_on is earlier than the disbursal_date" do
     @loan.disbursed_by   = @manager
     @loan.disbursal_date = @loan.scheduled_disbursal_date
@@ -201,6 +206,7 @@ describe Loan do
     @loan.written_off_on = @loan.disbursal_date - 1
     @loan.should_not be_valid
   end
+
   it "should not be valid without approved_on earlier than scheduled_disbursal_date" do
     @loan.scheduled_disbursal_date = @loan.approved_on - 10
     @loan.should_not be_valid
@@ -209,6 +215,7 @@ describe Loan do
     @loan.scheduled_disbursal_date = @loan.approved_on + 10
     @loan.should be_valid
   end
+
   it "should not be valid without being properly written off" do
     @loan.disbursal_date = @loan.scheduled_disbursal_date
     @loan.disbursed_by   = @manager
@@ -222,6 +229,7 @@ describe Loan do
     @loan.written_off_by = @manager
     @loan.should_not be_valid
   end
+
   it "should not be valid without being properly disbursed" do
     @loan.disbursal_date = @loan.scheduled_disbursal_date
     @loan.disbursed_by   = @manager
@@ -233,6 +241,7 @@ describe Loan do
     @loan.disbursed_by   = nil
     @loan.should_not be_valid
   end
+
   it "should not be valid when scheduled_first_payment_date if before scheduled_disbursal_date" do
     @loan.scheduled_first_payment_date = @loan.scheduled_disbursal_date + 1
     @loan.should be_valid
@@ -241,20 +250,7 @@ describe Loan do
     @loan.scheduled_first_payment_date = @loan.scheduled_disbursal_date - 1  # before disbursed
     @loan.should_not be_valid
   end
-  it "should not be valid if scheduled disbursal date and scheduled first payment date are not center meeting dates" do
-#     @loan.scheduled_disbursal_date = @center.meeting_day
-#     @loan.should be_valid
-#     @loan.scheduled_first_payment_date = @center.meeting_day
-#     @loan.should be_valid
-#     @loan.scheduled_disbursal_date = @center.meeting_day + 1
-#     @loan.should_not be_valid
-#     @loan.scheduled_disbursal_date = @center.meeting_day - 1
-#     @loan.should_not be_valid
-#     @loan.scheduled_first_payment_date = @center.meeting_day + 1
-#     @loan.should_not be_valid
-#     @loan.scheduled_first_payment_date = @center.meeting_day - 1
-#     @loan.should_not be_valid
-  end
+
   
   it "should not be valid if repayment dates are not center meeting dates" do
     @loan.scheduled_disbursal_date = Date.new(2000, 11, 30)
@@ -305,10 +301,6 @@ describe Loan do
     @loan.disbursed_by   = @manager    
     @loan.should be_valid
 
-#     @loan.scheduled_first_payment_date = @loan.scheduled_first_payment_date + 1
-#     @loan.should_not be_valid
-#     @loan.scheduled_first_payment_date = @loan.scheduled_first_payment_date - 1
-    #     @loan.should_not be_valid
   end
 
   it ".shift_date_by_installments should shift dates properly, even odd ones.. and backwards." do
@@ -341,11 +333,6 @@ describe Loan do
     loan.shift_date_by_installments(Date.parse('2001-03-30'), -1).should == Date.parse('2001-02-28')
     loan.shift_date_by_installments(Date.parse('2001-03-29'), -1).should == Date.parse('2001-02-28')
     loan.shift_date_by_installments(Date.parse('2001-03-28'), -1).should == Date.parse('2001-02-28')
-  end
-
-  it ".descendants should keep track of the subclasses (just testing dm-core functionality)" do
-    class TestLoan < Loan; end
-    Loan.descendants.include?(TestLoan).should be_true
   end
 
   it ".number_of_installments_before should do what it promises" do
@@ -397,6 +384,7 @@ describe Loan do
   it ".scheduled_repaid_on give the proper date" do
     @loan.scheduled_repaid_on.should eql(Date.parse('2001-05-23'))
   end
+
   it "should have proper values for principal, interest and total to be received" do
     @loan.total_interest_to_be_received.should == 1000 * 0.2
     @loan.total_to_be_received.should == 1000 * (1.2)
@@ -414,6 +402,7 @@ describe Loan do
     @loan.status.should == :written_off
     @loan.status(@loan.scheduled_first_payment_date - 1).should == :outstanding
   end
+
   it ".status should give status accoring to changing properties up to it is repaid" do
     @loan.disbursal_date = @loan.scheduled_disbursal_date
     @loan.disbursed_by   = @manager
@@ -430,12 +419,14 @@ describe Loan do
     @loan.status.should == :repaid
     @loan.status(@loan.scheduled_disbursal_date - 1).should == :approved
   end
+
   it ".status should give status accoring to changing properties before being approved" do
     @loan.status(@loan.applied_on - 1).should == :applied_in_future
     @loan.status(@loan.applied_on).should == :pending_approval
     @loan.status(@loan.approved_on - 1).should == :pending_approval
     @loan.status.should == :approved
   end
+
   it ".status should give status accoring to changing properties when being rejected" do
     date = @loan.approved_on
     @loan.approved_on = nil
@@ -662,83 +653,6 @@ describe Loan do
   it "should do deletion of payment" do 
   end
 
-  it "should change with center meeting date change" do
-    old_dates = @loan.installment_dates
-    @loan_product.loan_validation_methods = "scheduled_dates_must_be_center_meeting_days"
-    @loan_product.save
-    @loan.scheduled_disbursal_date = Date.new(2000, 06, 14)
-    @loan.save
-    @loan.should be_valid
-
-    @center.meeting_day_change_date = Date.new(2001, 01, 26)
-    @center.meeting_day = :thursday
-    @center.save
-    @center = Center.get(@center.id)
-    @center.meeting_day_for(Date.new(2001, 01, 25)).should eql(:wednesday)
-    @center.meeting_day_for(Date.new(2001, 02, 2)).should eql(:thursday)
-    @center.meeting_day_for(Date.new(2001, 02, 27)).should eql(:thursday)
-    @center.meeting_day_for(Date.new(2001, 01, 24)).should eql(:wednesday)
-
-    @center.next_meeting_date_from(Date.new(2001, 01, 24)).should eql(Date.new(2001, 02, 1))
-    @center.previous_meeting_date_from(Date.new(2001, 02, 1)).should eql(Date.new(2001, 01, 24))
-
-    @center.next_meeting_date_from(Date.new(2001, 02, 1)).should eql(Date.new(2001, 02, 8))
-    @center.previous_meeting_date_from(Date.new(2001, 02, 8)).should eql(Date.new(2001, 02, 01))
-
-    @center.meeting_day_for(Date.new(2001, 02, 2)).should eql(:thursday)
-
-    @loan = Loan.get(@loan.id)
-    new_dates =  @loan.installment_dates
-    (old_dates.find_all{|x| x <= Date.new(2001, 01, 26)} - new_dates.find_all{|x| x <= Date.new(2001, 01, 26)}).length.should eql(0)
-    (old_dates.find_all{|x| x >  Date.new(2001, 01, 26)} - new_dates.find_all{|x| x >  Date.new(2001, 01, 26)}.map{|x| x-1}).length.should eql(0)
-
-    @loan_product.loan_validation_methods = ""
-    @loan_product.save
-  end
-
-  it "should change with center meeting date change" do
-    @loan_product.loan_validation_methods = "scheduled_dates_must_be_center_meeting_days"
-    @loan_product.save
-    @center.center_meeting_days.destroy!
-    @center = Center.get(@center.id)
-    @center.meeting_day_change_date = Date.new(2000, 1, 1)
-    @center.meeting_day = :wednesday
-    @center.save
-
-    @loan_product.loan_validation_methods = "scheduled_dates_must_be_center_meeting_days"
-    @loan_product.save
-    @loan = Loan.new(:amount => 1000, :interest_rate => 0.2, :installment_frequency => :weekly, :number_of_installments => 25, :scheduled_first_payment_date => "2000-12-06", 
-                     :applied_on => "2000-02-01", :scheduled_disbursal_date => "2000-06-14", :applied_by => @manager, :client => Client.get(@client.id), :funding_line => @funding_line, 
-                     :loan_product => @loan_product, :approved_by => @manager, :approved_on => "2000-02-03")
-    old_dates = @loan.installment_dates
-    @loan.save
-    unless @loan.valid?
-      p @loan.errors
-    end
-    @loan.should be_valid
-    
-    @center.meeting_day_change_date = Date.new(2001, 01, 27)
-    @center.meeting_day = :tuesday
-    @center.save
-    @center = Center.get(@center.id)
-    @center.meeting_day_for(Date.new(2001, 01, 24)).should eql(:wednesday)
-    @center.meeting_day_for(Date.new(2001, 01, 26)).should eql(:wednesday)
-    @center.meeting_day_for(Date.new(2001, 01, 28)).should eql(:tuesday)
-    @center.meeting_day_for(Date.new(2001, 01, 30)).should eql(:tuesday)
-
-
-    @center.next_meeting_date_from(Date.new(2001, 01, 24)).should eql(Date.new(2001, 01, 30))
-    @center.previous_meeting_date_from(Date.new(2001, 01, 30)).should eql(Date.new(2001, 01, 24))
-
-    @center.next_meeting_date_from(Date.new(2001, 01, 30)).should eql(Date.new(2001, 02, 6))
-    @center.previous_meeting_date_from(Date.new(2001, 02, 6)).should eql(Date.new(2001, 01, 30))
-
-    @loan = Loan.get(@loan.id)
-    new_dates =  @loan.installment_dates
-
-    (old_dates.find_all{|x| x <= Date.new(2001, 01, 26)} - new_dates.find_all{|x| x <= Date.new(2001, 01, 26)}).length.should eql(0)
-    (old_dates.find_all{|x| x >  Date.new(2001, 01, 26)} - new_dates.find_all{|x| x >  Date.new(2001, 01, 26)}.map{|x| x + 1}).length.should eql(0)
-  end
   
   it "should not be valid if duplicated" do
     @loan_product.loan_validation_methods = "loans_must_not_be_duplicated"
@@ -801,4 +715,9 @@ describe Loan do
     @loan.disbursed_by = @manager
     @loan.save.should be_true
   end
+
+  it "should not have a loan history if destroyed" 
+  it "should split properly for pro_rata"
+  it "should split properly for normal"
+  it "should split properly for sequential"
 end

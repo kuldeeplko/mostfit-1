@@ -49,6 +49,9 @@ Merb::BootLoader.before_app_loads do
   require 'lib/core_ext.rb'
   require 'lib/fees_container.rb'
   require 'lib/datevector.rb'
+  require 'lib/identified.rb'
+  require 'lib/from_csv.rb'
+  require 'lib/verifiable.rb'
   require 'gettext'
   require 'haml_gettext'
 
