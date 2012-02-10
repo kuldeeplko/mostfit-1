@@ -1,5 +1,3 @@
-Loan should be valid without a scheduled_first_payment_date
-Loan should be valid without a scheduled_disbursal_date
 Loan should not be valid if repayment dates are not center meeting dates
 Loan .last_loan_history_date should have some tests -- albeit more a view thing
 Loan .scheduled_repaid_on give the proper date
@@ -16,8 +14,20 @@ Loan should write the history correctly into the db
 Loan should not be deleteable if verified
 Loan .installment_dates should correctly deal with holidays
 Loan should have correct takeover schedule and balances
-Loan should change with center meeting date change
-Loan should change with center meeting date change
 Loan should not be valid if duplicated
 Loan should repay properly
 Loan should not disburse if loan fees are not paid
+
+Pending:
+
+Loan should not have a loan history if destroyed (Not Yet Implemented)
+./spec/models/loan_spec.rb:719
+
+Loan should split properly for pro_rata (Not Yet Implemented)
+./spec/models/loan_spec.rb:720
+
+Loan should split properly for normal (Not Yet Implemented)
+./spec/models/loan_spec.rb:721
+
+Loan should split properly for sequential (Not Yet Implemented)
+./spec/models/loan_spec.rb:722

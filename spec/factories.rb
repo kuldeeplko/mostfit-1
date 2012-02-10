@@ -243,10 +243,6 @@ FactoryGirl.define do
     association                   :client
     association                   :loan_product
     association                   :repayment_style
-
-    # These cached properties should probably be set automatically somewhere?
-    c_center_id                   { self.client.center.id }
-    c_branch_id                   { self.client.center.branch.id }
   end
 
   # This is a variation of the minimal :loan factory, representing a recently disbursed loan.

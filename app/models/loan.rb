@@ -43,8 +43,8 @@ class Loan
   property :weekly_off,                     Integer, :nullable => true # cwday pls
   property :client_id,                      Integer, :nullable => false, :index => true
 
-  property :scheduled_disbursal_date,       Date, :nullable => false, :auto_validation => false, :index => true
-  property :scheduled_first_payment_date,   Date, :nullable => false, :auto_validation => false, :index => true
+  property :scheduled_disbursal_date,       Date, :nullable => true, :auto_validation => false, :index => true
+  property :scheduled_first_payment_date,   Date, :nullable => true, :auto_validation => false, :index => true
   property :applied_on,                     Date, :nullable => false, :auto_validation => false, :index => true, :default => Date.today
   property :approved_on,                    Date, :auto_validation => false, :index => true
   property :rejected_on,                    Date, :auto_validation => false, :index => true
@@ -124,7 +124,7 @@ class Loan
   has n, :applicable_fees,    :child_key => [:applicable_id], :applicable_type => "Loan"
   #validations
 
-  validates_present      :client, :scheduled_disbursal_date, :scheduled_first_payment_date, :applied_by, :applied_on
+  validates_present      :client, :applied_by, :applied_on
 
   validates_with_method  :amount,                       :method => :amount_greater_than_zero?
   validates_with_method  :interest_rate,                :method => :interest_rate_greater_than_or_equal_to_zero?
@@ -1353,11 +1353,13 @@ class Loan
   end
 
   def applied_before_scheduled_to_be_disbursed?
+    return true unless scheduled_disbursal_date
     return true if scheduled_disbursal_date and applied_on and scheduled_disbursal_date >= applied_on
     [false, "Cannot be scheduled for disbusal before it is applied"]
   end
 
   def scheduled_disbursal_before_scheduled_first_payment?
+    return true unless (scheduled_first_payment_date and scheduled_disbursal_date)
     return true if scheduled_disbursal_date and scheduled_first_payment_date and scheduled_disbursal_date <= scheduled_first_payment_date
     [false, "The scheduled first payment date cannot precede the scheduled disbursal date"]
   end
