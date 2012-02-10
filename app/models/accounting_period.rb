@@ -36,6 +36,8 @@ class AccountingPeriod
   # which may bork if closed is nil instead of false
   validates_presence_of :closed
 
+  validates_presence_of :name
+
   validates_with_method :cannot_overlap
   validates_with_method :closing_done_sequentially
   validates_with_method :all_account_balances_are_verified_before_closing_accounting_period
@@ -55,31 +57,73 @@ class AccountingPeriod
     begin_date == self.model.aggregate(:begin_date).min
   end
 
+  # On save make sure the accounting_period's begin_date - end_date range does not overlap any other accounting_period.
   def cannot_overlap
-    @changed_attr_with_original_val = self.original_attributes.map{|k,v| {k.name => (k.is_a?(DataMapper::Property) && k.lazy? ? obj.send(k.name) : v)}}.inject({}){|s,x| s+=x}
-    return true if @changed_attr_with_original_val.keys.size == 1 and @changed_attr_with_original_val.keys.include?(:closed)
-    overlaps = AccountingPeriod.all(:end_date.lte => end_date, :end_date.gt => begin_date)
-    overlaps = AccountingPeriod.all(:begin_date.gte => begin_date, :begin_date.lt => end_date) if overlaps.empty?
-    return true if overlaps.empty?
-    return [false, "Your accounting period overlaps with other accounting periods"]
+    # If neither the start nor end date were set we don't have to check for overlap
+    return true unless self.attribute_dirty?(:begin_date) || self.attribute_dirty?(:end_date)
+
+    # Accounting periods can (optionally) belong to an organization. If so, we have to validate against other
+    # periods in the same organization. If not we validate against all other accounting periods.
+    scoped_periods = self.organization.blank? ? AccountingPeriod : self.organization.accounting_periods
+
+    # We know that the accounting_period overlaps if either the begin or end date fall within the range
+    # of any previous account (i.e. is higher than the begin_date and lower than the end_date.)
+    if scoped_periods.first(:begin_date.lte => self.begin_date, :end_date.gte => self.begin_date, :id.not => self.id)
+      [false, 'The begin_date of this period overlaps with another period.']
+    elsif scoped_periods.first(:begin_date.lte => self.end_date, :end_date.gte => self.end_date, :id.not => self.id)
+      [false, 'The end_date of this period overlaps with another period.']
+    else
+      true
+    end
   end
 
-  # This returns true if the current record is the very first of the open accounting periods
-  # and we've set the closed attribute to true (i.e. we're trying to close the first remaining
-  # open period) OR if we are the last of the closed periods and we've set closed to false
-  # (i.e. we're reopening the last closed period)
-  #
-  # Right now this also causes validations to fail if we're creating a new accounting period
-  # from scratch which should probably be fixed.
-  #
+#  This is the original implementation of the above validation, please remove when the above rewrite is confirmed
+#  def cannot_overlap
+#    @changed_attr_with_original_val = self.original_attributes.map{|k,v| {k.name => (k.is_a?(DataMapper::Property) && k.lazy? ? obj.send(k.name) : v)}}.inject({}){|s,x| s+=x}
+#    return true if @changed_attr_with_original_val.keys.size == 1 and @changed_attr_with_original_val.keys.include?(:closed)
+#    overlaps = AccountingPeriod.all(:end_date.lte => end_date, :end_date.gt => begin_date)
+#    overlaps = AccountingPeriod.all(:begin_date.gte => begin_date, :begin_date.lt => end_date) if overlaps.empty?
+#    return true if overlaps.empty?
+#    return [false, "Your accounting period overlaps with other accounting periods"]
+#  end
+
+  # When we're closing an accounting_period (saving with :closed => true) we have to check that all preceding
+  # accounting periods were already closed. We can never have a closed accounting period AFTER a period that's
+  # still open.
   def closing_done_sequentially
-    # This may be slightly faster if we move the first conditional before the second database query
-    closedAP = AccountingPeriod.all(:closed => true, :order => [:begin_date.asc])
-    openAP = AccountingPeriod.all(:closed => false, :order => [:begin_date.asc])
-    return true if self.id == openAP.first.id and self.closed == true
-    return true if self.id == closedAP.last.id and self.closed == false
-    return [false, "This Cannot be closed"]
+    # If we haven't changed the closed status there's no need to check for conflicts
+    return true unless self.attribute_dirty?(:closed)
+
+    # Accounting periods can (optionally) belong to an organization. If so, we have to validate against other
+    # periods in the same organization. If not we validate against all other accounting periods.
+    scoped_periods = self.organization.blank? ? AccountingPeriod : self.organization.accounting_periods
+
+    if self.closed
+      # If we are trying to close a period and there are no previous open periods, go ahead.
+      if scoped_periods.all(:closed => false, :begin_date.lt => self.begin_date).blank?
+        true
+      else
+        [false, 'You can not close an accounting_period if there are still open periods before it']
+      end
+    else
+      # If we are trying to open a period and there are no subsequent closed periods, go ahead.
+      if scoped_periods.all(:closed => true, :begin_date.gt => self.begin_date).blank?
+        true
+      else
+        [false, 'You can not open an accounting period if there are closed periods following it.']
+      end
+    end
+
   end
+
+#  This is the original implementation of the above validation left for reference. Please delete when the rewrite above is confirmed.
+#  def closing_done_sequentially
+#    closedAP = AccountingPeriod.all(:closed => true, :order => [:begin_date.asc])
+#    openAP = AccountingPeriod.all(:closed => false, :order => [:begin_date.asc])
+#    return true if self.id == openAP.first.id and self.closed == true
+#    return true if self.id == closedAP.last.id and self.closed == false
+#    return [false, "This Cannot be closed"]
+#  end
 
 =begin
   def dates_in_order

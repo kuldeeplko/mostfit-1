@@ -450,6 +450,8 @@ FactoryGirl.define do
   end
 
   factory :accounting_period do
+    name                'First period'
+    closed              false
   end
 
   factory :posting do
