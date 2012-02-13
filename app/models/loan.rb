@@ -7,169 +7,169 @@ class Loan
   include FromCsv::Loan
   include Verifiable
 
-  DAYS = [:none, :monday, :tuesday, :wednesday, :thursday, :friday, :saturday, :sunday]
+  DAYS = [              :none, :monday, :tuesday, :wednesday, :thursday, :friday, :saturday, :sunday]
 
-  before :valid?,    :parse_dates
-  before :valid?,    :convert_blank_to_nil
-  after  :save,      :update_history_caller  # also seems to do updates
-  after  :create,    :levy_fees_new          # we need a separate one for create for a variety of reasons to  do with overwriting old fees
-  before :save,      :levy_fees
-  after  :create,    :update_cycle_number
-  # before :valid?,    :set_loan_product_parameters
-  before :save,      :set_bullet_installments
+  before                :valid?,    :parse_dates
+  before                :valid?,    :convert_blank_to_nil
+  after                 :save,      :update_history_caller  # also seems to do updates
+  after                 :create,    :levy_fees_new          # we need a separate one for create for a variety of reasons to  do with overwriting old fees
+  before                :save,      :levy_fees
+  after                 :create,    :update_cycle_number
+  before                :save,      :set_bullet_installments
 
-  #  after  :destroy, :update_history
+  #  after              :destroy, :update_history
 
-  before :valid?, :set_amount
-  validates_with_method :original_properties_specified?, :when => Proc.new{|l| l.taken_over?}
-  validates_with_method :taken_over_properly?, :when => Proc.new{|l| l.taken_over?}
+  before                :valid?, :set_amount
 
-  attr_accessor :history_disabled  # set to true to disable history writing by this object
-  attr_accessor :interest_percentage
-  attr_accessor :already_updated
-  attr_accessor :orig_attrs
-  attr_accessor :loan_extended          # set to true if you have mixed in the appropriate loan repayment functions
+  attr_accessor         :history_disabled  # set to true to disable history writing by this object
+  attr_accessor         :interest_percentage
+  attr_accessor         :already_updated
+  attr_accessor         :orig_attrs
+  attr_accessor         :loan_extended          # set to true if you have mixed in the appropriate loan repayment functions
 
-  property :id,                             Serial
-  property :discriminator,                  Discriminator, :nullable => false, :index => true
+  property              :id,                             Serial
+  property              :discriminator,                  Discriminator, :nullable => false, :index => true
 
-  property :amount,                         Float, :nullable => false, :index => true  # this is the disbursed amount
-  property :amount_applied_for,             Float, :index => true
-  property :amount_sanctioned,              Float, :index => true
+  property              :amount,                         Float, :nullable => false, :index => true  # this is the disbursed amount
+  property              :amount_applied_for,             Float, :index => true
+  property              :amount_sanctioned,              Float, :index => true
 
-  property :interest_rate,                  Float, :nullable => false, :index => true
-  property :installment_frequency,          Enum.send('[]', *INSTALLMENT_FREQUENCIES), :nullable => false, :index => true
-  property :number_of_installments,         Integer, :nullable => false, :index => true
-  property :weekly_off,                     Integer, :nullable => true # cwday pls
-  property :client_id,                      Integer, :nullable => false, :index => true
+  property              :interest_rate,                  Float, :nullable => false, :index => true
+  property              :installment_frequency,          Enum.send('[]', *INSTALLMENT_FREQUENCIES), :nullable => false, :index => true
+  property              :number_of_installments,         Integer, :nullable => false, :index => true
+  property              :weekly_off,                     Integer, :nullable => true # cwday pls
+  property              :client_id,                      Integer, :nullable => false, :index => true
 
-  property :scheduled_disbursal_date,       Date, :nullable => true, :auto_validation => false, :index => true
-  property :scheduled_first_payment_date,   Date, :nullable => true, :auto_validation => false, :index => true
-  property :applied_on,                     Date, :nullable => false, :auto_validation => false, :index => true, :default => Date.today
-  property :approved_on,                    Date, :auto_validation => false, :index => true
-  property :rejected_on,                    Date, :auto_validation => false, :index => true
-  property :disbursal_date,                 Date, :auto_validation => false, :index => true
-  property :written_off_on,                 Date, :auto_validation => false, :index => true
-  property :suggested_written_off_on,       Date, :auto_validation => false, :index => true
-  property :write_off_rejected_on,          Date, :auto_validation => false, :index => true
-  property :validated_on,                   Date, :auto_validation => false, :index => true
-  property :preclosed_on,                   Date, :auto_validation => false, :index => true
+  property              :scheduled_disbursal_date,       Date, :nullable => true, :auto_validation => false, :index => true
+  property              :scheduled_first_payment_date,   Date, :nullable => true, :auto_validation => false, :index => true
+  property              :applied_on,                     Date, :nullable => false, :auto_validation => false, :index => true, :default => Date.today
+  property              :approved_on,                    Date, :auto_validation => false, :index => true
+  property              :rejected_on,                    Date, :auto_validation => false, :index => true
+  property              :disbursal_date,                 Date, :auto_validation => false, :index => true
+  property              :written_off_on,                 Date, :auto_validation => false, :index => true
+  property              :suggested_written_off_on,       Date, :auto_validation => false, :index => true
+  property              :write_off_rejected_on,          Date, :auto_validation => false, :index => true
+  property              :validated_on,                   Date, :auto_validation => false, :index => true
+  property              :preclosed_on,                   Date, :auto_validation => false, :index => true
   
-  property :validation_comment,             Text
-  property :created_at,                     DateTime, :index => true, :default => Time.now
-  property :updated_at,                     DateTime, :index => true
-  property :deleted_at,                     ParanoidDateTime
-  property :loan_product_id,                Integer,  :index => true
+  property              :validation_comment,             Text
+  property              :created_at,                     DateTime, :index => true, :default => Time.now
+  property              :updated_at,                     DateTime, :index => true
+  property              :deleted_at,                     ParanoidDateTime
+  property              :loan_product_id,                Integer,  :index => true
 
-  property :applied_by_staff_id,               Integer, :nullable => true, :index => true
-  property :approved_by_staff_id,              Integer, :nullable => true, :index => true
-  property :rejected_by_staff_id,              Integer, :nullable => true, :index => true
-  property :disbursed_by_staff_id,             Integer, :nullable => true, :index => true
-  property :written_off_by_staff_id,           Integer, :nullable => true, :index => true
-  property :preclosed_by_staff_id,             Integer, :nullable => true, :index => true
-  property :suggested_written_off_by_staff_id, Integer, :nullable => true, :index => true
-  property :write_off_rejected_by_staff_id,    Integer, :nullable => true, :index => true
-  property :validated_by_staff_id,             Integer, :nullable => true, :index => true
-  property :created_by_user_id,                Integer, :nullable => true, :index => true
-  property :cheque_number,                     String,  :length => 20, :nullable => true, :index => true
-  property :cycle_number,                      Integer, :default => 1, :nullable => false, :index => true
-  property :loan_pool_id,                      Integer, :nullable => true, :index => true
+  property              :applied_by_staff_id,               Integer, :nullable => true, :index => true
+  property              :approved_by_staff_id,              Integer, :nullable => true, :index => true
+  property              :rejected_by_staff_id,              Integer, :nullable => true, :index => true
+  property              :disbursed_by_staff_id,             Integer, :nullable => true, :index => true
+  property              :written_off_by_staff_id,           Integer, :nullable => true, :index => true
+  property              :preclosed_by_staff_id,             Integer, :nullable => true, :index => true
+  property              :suggested_written_off_by_staff_id, Integer, :nullable => true, :index => true
+  property              :write_off_rejected_by_staff_id,    Integer, :nullable => true, :index => true
+  property              :validated_by_staff_id,             Integer, :nullable => true, :index => true
+  property              :created_by_user_id,                Integer, :nullable => true, :index => true
+  property              :cheque_number,                     String,  :length => 20, :nullable => true, :index => true
+  property              :cycle_number,                      Integer, :default => 1, :nullable => false, :index => true
+  property              :loan_pool_id,                      Integer, :nullable => true, :index => true
 
   #these amount and disbursal dates are required for TakeOver loan types. 
-  property :original_amount,                    Integer
-  property :original_disbursal_date,            Date
-  property :original_first_payment_date,        Date
-  property :taken_over_on,                      Date
-  property :taken_over_on_installment_number,   Integer
+  property              :original_amount,                    Integer
+  property              :original_disbursal_date,            Date
+  property              :original_first_payment_date,        Date
+  property              :taken_over_on,                      Date
+  property              :taken_over_on_installment_number,   Integer
 
-  property :loan_utilization_id,                Integer, :lazy => true, :nullable => true
-  property :under_claim_settlement,             Date, :nullable => true
+  property              :loan_utilization_id,                Integer, :lazy => true, :nullable => true
+  property              :under_claim_settlement,             Date, :nullable => true
 
-  property :reference,                           String, :unique => true # to be used during migrations
+  property              :reference,                           String, :unique => true # to be used during migrations
   
 
   # associations
-  belongs_to :client
-  belongs_to :funding_line,              :nullable => true
-  belongs_to :loan_product
-  belongs_to :loan_purpose,              :nullable  => true
-  belongs_to :occupation,                :nullable => true
-  belongs_to :applied_by,                :child_key => [:applied_by_staff_id],                :model => 'StaffMember'
-  belongs_to :approved_by,               :child_key => [:approved_by_staff_id],               :model => 'StaffMember'
-  belongs_to :rejected_by,               :child_key => [:rejected_by_staff_id],               :model => 'StaffMember'
-  belongs_to :disbursed_by,              :child_key => [:disbursed_by_staff_id],              :model => 'StaffMember'
-  belongs_to :written_off_by,            :child_key => [:written_off_by_staff_id],            :model => 'StaffMember'
-  belongs_to :preclosed_by,              :child_key => [:preclosed_by_staff_id],            :model => 'StaffMember'
-  belongs_to :suggested_written_off_by,  :child_key => [:suggested_written_off_by_staff_id],  :model => 'StaffMember'
-  belongs_to :write_off_rejected_by,     :child_key => [:write_off_rejected_by_staff_id],     :model => 'StaffMember' 
-  belongs_to :validated_by,              :child_key => [:validated_by_staff_id],              :model => 'StaffMember'
-  belongs_to :created_by,                :child_key => [:created_by_user_id],                 :model => 'User'
-  belongs_to :loan_utilization
-  belongs_to :verified_by,               :child_key => [:verified_by_user_id],                :model => 'User'
-  belongs_to :repayment_style
+  belongs_to            :client
+  belongs_to            :funding_line,              :nullable => true
+  belongs_to            :loan_product
+  belongs_to            :loan_purpose,              :nullable  => true
+  belongs_to            :occupation,                :nullable => true
+  belongs_to            :applied_by,                :child_key => [:applied_by_staff_id],                :model => 'StaffMember'
+  belongs_to            :approved_by,               :child_key => [:approved_by_staff_id],               :model => 'StaffMember'
+  belongs_to            :rejected_by,               :child_key => [:rejected_by_staff_id],               :model => 'StaffMember'
+  belongs_to            :disbursed_by,              :child_key => [:disbursed_by_staff_id],              :model => 'StaffMember'
+  belongs_to            :written_off_by,            :child_key => [:written_off_by_staff_id],            :model => 'StaffMember'
+  belongs_to            :preclosed_by,              :child_key => [:preclosed_by_staff_id],            :model => 'StaffMember'
+  belongs_to            :suggested_written_off_by,  :child_key => [:suggested_written_off_by_staff_id],  :model => 'StaffMember'
+  belongs_to            :write_off_rejected_by,     :child_key => [:write_off_rejected_by_staff_id],     :model => 'StaffMember' 
+  belongs_to            :validated_by,              :child_key => [:validated_by_staff_id],              :model => 'StaffMember'
+  belongs_to            :created_by,                :child_key => [:created_by_user_id],                 :model => 'User'
+  belongs_to            :loan_utilization
+  belongs_to            :verified_by,               :child_key => [:verified_by_user_id],                :model => 'User'
+  belongs_to            :repayment_style
 
-  # belongs_to :loan_pool
+  # belongs_to          :loan_pool
 
-  belongs_to :organization, :parent_key => [:org_guid], :child_key => [:parent_org_guid], :nullable => true  
-  property   :parent_org_guid, String, :nullable => true
+  belongs_to            :organization, :parent_key => [:org_guid], :child_key => [:parent_org_guid], :nullable => true  
+  property              :parent_org_guid, String, :nullable => true
   
-  belongs_to :domain, :parent_key => [:domain_guid], :child_key => [:parent_domain_guid], :nullable => true
-  property   :parent_domain_guid, String, :nullable => true
+  belongs_to            :domain, :parent_key => [:domain_guid], :child_key => [:parent_domain_guid], :nullable => true
+  property              :parent_domain_guid, String, :nullable => true
 
-  has n, :loan_history,                                                                       :model => 'LoanHistory'
-  has n, :payments
-  has n, :audit_trails,       :child_key => [:auditable_id], :auditable_type => "Loan"
-  has n, :portfolio_loans
-  has 1, :insurance_policy
-  has n, :applicable_fees,    :child_key => [:applicable_id], :applicable_type => "Loan"
+  has n,                :loan_history,                                                                       :model => 'LoanHistory'
+  has n,                :payments
+  has n,                :audit_trails,       :child_key => [:auditable_id], :auditable_type => "Loan"
+  has n,                :portfolio_loans
+  has 1,                :insurance_policy
+  has n,                :applicable_fees,    :child_key => [:applicable_id], :applicable_type => "Loan"
   #validations
 
-  validates_present      :client, :applied_by, :applied_on
+  validates_present     :client, :applied_by, :applied_on
 
-  validates_with_method  :amount,                       :method => :amount_greater_than_zero?
-  validates_with_method  :interest_rate,                :method => :interest_rate_greater_than_or_equal_to_zero?
-  validates_with_method  :number_of_installments,       :method => :number_of_installments_greater_than_zero?
-  validates_with_method  :applied_on,                   :method => :applied_before_appoved?
-  validates_with_method  :approved_on,                  :method => :applied_before_appoved?
-  validates_with_method  :applied_on,                   :method => :applied_before_rejected?
-  validates_with_method  :rejected_on,                  :method => :applied_before_rejected?
-  validates_with_method  :approved_on,                  :method => :approved_before_disbursed?
-  validates_with_method  :disbursal_date,               :method => :approved_before_disbursed?
-  validates_with_method  :disbursal_date,               :method => :disbursed_before_written_off?
-  validates_with_method  :written_off_on,               :method => :disbursed_before_written_off?
-  validates_with_method  :suggested_written_off_on,     :method => :disbursed_before_suggested_written_off?
-  validates_with_method  :write_off_rejected_on,        :method => :disbursed_before_write_off_rejected?
-  validates_with_method  :write_off_rejected_on,        :method => :rejected_before_suggested_write_off?
-  validates_with_method  :disbursal_date,               :method => :disbursed_before_validated?
-  validates_with_method  :validated_on,                 :method => :disbursed_before_validated?
-  validates_with_method  :approved_on,                  :method => :applied_before_scheduled_to_be_disbursed?
-  validates_with_method  :scheduled_disbursal_date,     :method => :applied_before_scheduled_to_be_disbursed?
-  validates_with_method  :approved_on,                  :method => :properly_approved?
-  validates_with_method  :approved_by,                  :method => :properly_approved?
-  validates_with_method  :rejected_on,                  :method => :properly_rejected?
-  validates_with_method  :rejected_by,                  :method => :properly_rejected?
-  validates_with_method  :written_off_on,               :method => :properly_written_off?
-  validates_with_method  :suggested_written_off_on,     :method => :properly_suggested_for_written_off?
-  validates_with_method  :write_off_rejected_on,        :method => :properly_write_off_rejected?
-  validates_with_method  :written_off_by,               :method => :properly_written_off?
-  validates_with_method  :suggested_written_off_by,     :method => :properly_suggested_for_written_off?
-  validates_with_method  :write_off_rejected_by,        :method => :properly_write_off_rejected?
-  validates_with_method  :disbursal_date,               :method => :properly_disbursed?
-  validates_with_method  :disbursed_by,                 :method => :properly_disbursed?
-  validates_with_method  :validated_on,                 :method => :properly_validated?
-  validates_with_method  :validated_by,                 :method => :properly_validated?
-  validates_with_method  :scheduled_first_payment_date, :method => :scheduled_disbursal_before_scheduled_first_payment?
-  validates_with_method  :scheduled_disbursal_date,     :method => :scheduled_disbursal_before_scheduled_first_payment?
-  validates_with_method  :cheque_number,                :method => :check_validity_of_cheque_number
-  validates_with_method  :client_active,                :method => :is_client_active
+  validates_with_method :amount,                       :method => :amount_greater_than_zero?
+  validates_with_method :interest_rate,                :method => :interest_rate_greater_than_or_equal_to_zero?
+  validates_with_method :number_of_installments,       :method => :number_of_installments_greater_than_zero?
+  validates_with_method :applied_on,                   :method => :applied_before_appoved?
+  validates_with_method :approved_on,                  :method => :applied_before_appoved?
+  validates_with_method :applied_on,                   :method => :applied_before_rejected?
+  validates_with_method :rejected_on,                  :method => :applied_before_rejected?
+  validates_with_method :approved_on,                  :method => :approved_before_disbursed?
+  validates_with_method :disbursal_date,               :method => :approved_before_disbursed?
+  validates_with_method :disbursal_date,               :method => :disbursed_before_written_off?
+  validates_with_method :written_off_on,               :method => :disbursed_before_written_off?
+  validates_with_method :suggested_written_off_on,     :method => :disbursed_before_suggested_written_off?
+  validates_with_method :write_off_rejected_on,        :method => :disbursed_before_write_off_rejected?
+  validates_with_method :write_off_rejected_on,        :method => :rejected_before_suggested_write_off?
+  validates_with_method :disbursal_date,               :method => :disbursed_before_validated?
+  validates_with_method :validated_on,                 :method => :disbursed_before_validated?
+  validates_with_method :approved_on,                  :method => :applied_before_scheduled_to_be_disbursed?
+  validates_with_method :scheduled_disbursal_date,     :method => :applied_before_scheduled_to_be_disbursed?
+  validates_with_method :approved_on,                  :method => :properly_approved?
+  validates_with_method :approved_by,                  :method => :properly_approved?
+  validates_with_method :rejected_on,                  :method => :properly_rejected?
+  validates_with_method :rejected_by,                  :method => :properly_rejected?
+  validates_with_method :written_off_on,               :method => :properly_written_off?
+  validates_with_method :suggested_written_off_on,     :method => :properly_suggested_for_written_off?
+  validates_with_method :write_off_rejected_on,        :method => :properly_write_off_rejected?
+  validates_with_method :written_off_by,               :method => :properly_written_off?
+  validates_with_method :suggested_written_off_by,     :method => :properly_suggested_for_written_off?
+  validates_with_method :write_off_rejected_by,        :method => :properly_write_off_rejected?
+  validates_with_method :disbursal_date,               :method => :properly_disbursed?
+  validates_with_method :disbursed_by,                 :method => :properly_disbursed?
+  validates_with_method :validated_on,                 :method => :properly_validated?
+  validates_with_method :validated_by,                 :method => :properly_validated?
+  validates_with_method :scheduled_first_payment_date, :method => :scheduled_disbursal_before_scheduled_first_payment?
+  validates_with_method :scheduled_disbursal_date,     :method => :scheduled_disbursal_before_scheduled_first_payment?
+  validates_with_method :cheque_number,                :method => :check_validity_of_cheque_number
+  validates_with_method :client_active,                :method => :is_client_active
+
+  validates_with_method :original_properties_specified?, :when => Proc.new{|l| l.taken_over?}
+  validates_with_method :taken_over_properly?, :when => Proc.new{|l| l.taken_over?}
 
   #product validations
 
-  validates_with_method  :amount,                       :method => :is_valid_loan_product_amount
-  validates_with_method  :interest_rate,                :method => :is_valid_loan_product_interest_rate
-  validates_with_method  :number_of_installments,       :method => :is_valid_loan_product_number_of_installments
-  validates_with_method  :clients,                      :method => :check_client_sincerity
-  validates_with_method  :insurance_policy,             :method => :check_insurance_policy    
+  validates_with_method :amount,                       :method => :is_valid_loan_product_amount
+  validates_with_method :interest_rate,                :method => :is_valid_loan_product_interest_rate
+  validates_with_method :number_of_installments,       :method => :is_valid_loan_product_number_of_installments
+  validates_with_method :clients,                      :method => :check_client_sincerity
+  validates_with_method :insurance_policy,             :method => :check_insurance_policy    
 
 
   # This could really use a better name.
@@ -352,6 +352,7 @@ class Loan
   #               when it is :reallocate, we turn off a lot of validations on the Payment.                
 
   def repay(input, user, received_on, received_by, defer_update = false, style = NORMAL_REPAYMENT_STYLE, context = :default, desktop_id = nil, origin = nil)
+    raise "No loan history" if self.loan_history.blank?
     pmts = get_payments(input, user, received_on, received_by, defer_update, style, context, desktop_id, origin)
     make_payments(pmts, context, defer_update)
   end
@@ -367,6 +368,7 @@ class Loan
   def get_payments(input, user, received_on, received_by, defer_update = false, style = NORMAL_REPAYMENT_STYLE, context = :default, desktop_id = nil, origin = nil) 
     # this is the way to repay loans, _not_ directly on the Payment model
     # this to allow validations on the Payment to be implemented in (subclasses of) the Loan
+    debugger if $debug
     self.extend_loan
 
     # only possible if we get a hash or a single number.
@@ -827,7 +829,6 @@ class Loan
 
   def get_status(date = Date.today, total_received = nil) # we have this last parameter so we can speed up get_status
                                                           # considerably by passing total_received, i.e. from history_for
-    #return @status if @status
     @statuses ||= {}
     return @statuses[date] if @statuses[date]
     date = Date.parse(date)      if date.is_a? String
@@ -958,9 +959,7 @@ class Loan
     now = DateTime.now
     payments_hash
     
-    update_loan_cache unless c_branch_id and c_center_id
     # get fee payments. this is probably better of moved to functions in the fees_container
-
     fee_payments= Payment.all(:loan_id => id, :type => :fees).group_by{|p| p.received_on}.map do |k,v| 
       amt = v.is_a?(Array) ? (v.reduce(0){|s,h| s + h.amount} || 0) : v.amount
       [k,amt]
@@ -979,6 +978,7 @@ class Loan
     last_payments_hash = payments_hash.sort.last; 
     act_total_principal_paid = last_payments_hash[1][:total_principal]; act_total_interest_paid = last_payments_hash[1][:total_interest]
     last_status = 1; last_row = nil;
+    client_group_id                        = client.client_group_id || 0
     dates.each_with_index do |date,i|
       i_num                                  = installment_for_date(date)
       scheduled                              = get_scheduled(:all, date)
@@ -1088,7 +1088,7 @@ class Loan
         :composite_key                       => "#{id}.#{(i/10000.0).to_s.split('.')[1]}".to_f,
         :branch_id                           => client.branch_for_date(date),
         :center_id                           => client.center_for_date(date),
-        :client_group_id                     => c_client_group_id || 0,
+        :client_group_id                     => client_group_id,
         :client_id                           => client_id,
         :created_at                          => now,
         :funding_line_id                     => funding_line_id,

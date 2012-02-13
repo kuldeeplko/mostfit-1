@@ -3,6 +3,7 @@ require File.join( File.dirname(__FILE__), '..', "spec_helper" )
 describe Loan do
 
   before(:all) do
+    RepaymentStyle.all.destroy!
     @user = Factory(:user)
     @user.should be_valid
 
@@ -21,7 +22,7 @@ describe Loan do
     @client = Factory(:client, :center => @center, :created_by_user_id => @user.id)
     @client.should be_valid
 
-    @equated_weekly = RepaymentStyle.new(:style => "EquatedWeekly", :round_total_to => 1, :round_interest_to => 1)
+    @equated_weekly = RepaymentStyle.new(:style => "EquatedWeekly", :round_total_to => nil, :round_interest_to => nil)
     @equated_weekly.save
 
     @flat = RepaymentStyle.new(:style => "Flat")
@@ -36,7 +37,7 @@ describe Loan do
     @loan_product.installment_frequency = :weekly
     @loan_product.max_number_of_installments = 25
     @loan_product.min_number_of_installments = 25
-    @loan_product.repayment_style = @flat
+    @loan_product.repayment_style = @equated_weekly
     @loan_product.valid_from = Date.parse('2000-01-01')
     @loan_product.valid_upto = Date.parse('2012-01-01')
     @loan_product.save
@@ -252,56 +253,6 @@ describe Loan do
   end
 
   
-  it "should not be valid if repayment dates are not center meeting dates" do
-    @loan.scheduled_disbursal_date = Date.new(2000, 11, 30)
-    @loan.should be_valid
-
-    @loan.scheduled_disbursal_date = Date.new(2000, 11, 29)
-    @loan.should be_valid
-
-    @loan.disbursal_date = Date.new(2000, 11, 23)
-    @loan.applied_by     = @manager
-    @loan.disbursed_by   = @manager
-    @loan.valid?
-    @loan.errors.each {|e| puts e}
-    @loan.should be_valid
-
-    @loan.disbursal_date = Date.new(2000, 12, 29)
-    @loan.should be_valid
-
-    @loan.disbursal_date = Date.new(2000, 12, 30)
-    @loan.should be_valid
-
-    @loan_product.loan_validation_methods = "disbursal_dates_must_be_center_meeting_days"
-    @loan_product.save
-
-    @center.meeting_day_for(Date.new(2000, 11, 29)).should == :wednesday
-    @loan.scheduled_disbursal_date = Date.new(2000, 11, 29)
-    @loan.disbursal_date = nil
-    @loan.disbursed_by   = nil
-    @loan.valid?
-    @loan.errors.each {|e| puts e}
-    @loan.should be_valid
-
-    @loan.disbursal_date = Date.new(2000, 11, 30)
-    @loan.disbursed_by   = @manager
-    @loan.valid?
-    @loan.should_not be_valid
-
-    @loan.disbursal_date = Date.new(2000, 11, 02)
-    @loan.disbursed_by   = @manager
-    @loan.valid?
-    @loan.should_not be_valid
-
-    @loan.disbursal_date = Date.new(2000, 11, 27)
-    @loan.disbursed_by   = @manager
-    @loan.should_not be_valid
-
-    @loan.disbursal_date = Date.new(2000, 11, 22)
-    @loan.disbursed_by   = @manager    
-    @loan.should be_valid
-
-  end
 
   it ".shift_date_by_installments should shift dates properly, even odd ones.. and backwards." do
     loan = Loan.new(:installment_frequency => :daily)
@@ -394,11 +345,13 @@ describe Loan do
     @loan.status.should == :approved
     @loan.disbursal_date = @loan.scheduled_disbursal_date
     @loan.disbursed_by   = @manager
+    @loan.history_disabled=false
     @loan.save
     @loan.status.should == :outstanding
     @loan.status(@loan.disbursal_date - 1).should == :approved
     @loan.written_off_on = @loan.scheduled_first_payment_date
     @loan.written_off_by = @manager
+    @loan.clear_cache
     @loan.status.should == :written_off
     @loan.status(@loan.scheduled_first_payment_date - 1).should == :outstanding
   end
@@ -408,10 +361,9 @@ describe Loan do
     @loan.disbursed_by   = @manager
     @loan.status.should == :outstanding
     lambda{@loan.repay(@loan.total_to_be_received, @user, Date.today, @manager)}.should raise_error
-
-    @loan.save
     @loan.history_disabled=false
-    @loan.update_history
+    @loan.save
+
     # no payments on unsaved (new_record? == true) loans:
     @loan.save.should == true
     r = @loan.repay(@loan.total_to_be_received, @user, Date.today, @manager)
@@ -422,8 +374,8 @@ describe Loan do
 
   it ".status should give status accoring to changing properties before being approved" do
     @loan.status(@loan.applied_on - 1).should == :applied_in_future
-    @loan.status(@loan.applied_on).should == :pending_approval
-    @loan.status(@loan.approved_on - 1).should == :pending_approval
+    @loan.status(@loan.applied_on).should == :applied
+    @loan.status(@loan.approved_on - 1).should == :applied
     @loan.status.should == :approved
   end
 
@@ -434,7 +386,7 @@ describe Loan do
     @loan.rejected_on = date
     @loan.rejected_by = @manager
     @loan.should be_valid
-    @loan.status(@loan.rejected_on - 1).should == :pending_approval
+    @loan.status(@loan.rejected_on - 1).should == :applied
     @loan.status(@loan.rejected_on).should == :rejected
     @loan.status.should == :rejected
   end
@@ -470,6 +422,7 @@ describe Loan do
   end
 
   it ".payments_hash should give correct results" do
+    @loan.history_disabled = false
     @loan.save
     @loan.payments_hash.should_not be_blank
     @loan.disbursal_date = @loan.scheduled_disbursal_date
@@ -477,6 +430,7 @@ describe Loan do
     # @loan.id = nil
     @loan.history_disabled=false
     7.times do |i|
+      $debug = true
       status = @loan.repay(48, @user, @loan.scheduled_first_payment_date + (7*i), @manager)
       status[0].should be_true      
     end
@@ -502,6 +456,7 @@ describe Loan do
     @loan.disbursal_date = @loan.scheduled_disbursal_date
     @loan.disbursed_by = @manager
     @loan.get_status(@loan.scheduled_disbursal_date).should == :disbursed
+    @loan.history_disabled = false
     @loan.save
     @loan.errors.each {|e| puts e}
     @loan.history_disabled=false
@@ -551,9 +506,9 @@ describe Loan do
     @loan.disbursal_date = @loan.scheduled_disbursal_date
     @loan.disbursed_by = @manager
     @loan.get_status(@loan.scheduled_disbursal_date).should == :disbursed
+    @loan.history_disabled = false
     @loan.save
     @loan.errors.each {|e| puts e}
-    @loan.history_disabled=false
     7.times do |i|
       p = @loan.repay(48, @user, @loan.scheduled_first_payment_date + (7*i), @manager)
       p[1].errors.each {|e| puts e}
@@ -562,6 +517,7 @@ describe Loan do
 
   it "should not be deleteable if verified" do
     @loan.verified_by = User.first
+    @loan.history_disabled = false
     @loan.save
     @loan.destroy.should be_false
 
